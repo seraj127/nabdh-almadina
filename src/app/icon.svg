@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#004B63"/>
+      <stop offset="50%" style="stop-color:#006B8A"/>
+      <stop offset="100%" style="stop-color:#00897B"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00A8CC"/>
+      <stop offset="100%" style="stop-color:#00897B"/>
+    </linearGradient>
+  </defs>
+  <!-- Circular background -->
+  <circle cx="96" cy="96" r="96" fill="url(#bg)"/>
+  <!-- Inner ring -->
+  <circle cx="96" cy="96" r="80" fill="none" stroke="rgba(0,168,204,0.3)" stroke-width="2"/>
+  <!-- Letter N stylized -->
+  <text x="96" y="120" text-anchor="middle" font-family="system-ui, Arial, sans-serif" font-size="100" font-weight="800" fill="url(#accent)">N</text>
+</svg>

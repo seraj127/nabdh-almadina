@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+mobile-app/
+examples/
+mini-services/
+prisma/
+skills/
+public/
+*.config.js
+*.config.ts

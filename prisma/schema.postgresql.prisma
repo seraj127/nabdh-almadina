@@ -1,0 +1,802 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("SUPABASE_DATABASE_URL")
+}
+
+// ─── Users & Auth ───────────────────────────────────────────
+model User {
+  id            String   @id @default(uuid())
+  supabase_uid  String?  @unique
+  phone         String   @unique
+  name          String?
+  email         String?  @unique
+  avatar        String?
+  passwordHash  String?  // bcrypt hashed password
+  googleId      String?  @unique  // Google OAuth ID
+  provider      String?  // "local" | "google"
+  role          String   @default("customer") // customer, admin, vendor, driver
+  loyaltyTier   String   @default("bronze")   // bronze, silver, gold, platinum
+  loyaltyPoints Int      @default(0)
+  walletBalance Decimal  @default(0)
+  language      String   @default("ar")       // ar, en
+  isActive      Boolean  @default(true)
+  lastLoginAt   DateTime?  // آخر تسجيل دخول
+  loginCount    Int      @default(0) // عدد مرات تسجيل الدخول
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  orders     Order[]
+  cartItems  CartItem[]
+  addresses  Address[]
+  sessions   UserSession[]
+  favorites  FavoriteItem[]
+
+  @@index([role])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([lastLoginAt])
+}
+
+// ─── User Sessions ────────────────────────────────────────
+model UserSession {
+  id          String   @id @default(uuid())
+  userId      String
+  token       String   @unique  // JWT token ID (jti)
+  deviceInfo  Json?    // JSON: {platform, browser, os}
+  ipAddress   String?
+  platform    String   @default("web") // web, mobile, admin
+  expiresAt   DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([isActive])
+  @@index([expiresAt])
+  @@index([platform])
+}
+
+model Address {
+  id        String   @id @default(uuid())
+  userId    String
+  label     String   // home, work, etc.
+  address   String
+  city      String
+  area      String?
+  notes     String?
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Order Order?
+
+  @@index([userId])
+}
+
+model OTPVerification {
+  id        String   @id @default(uuid())
+  phone     String
+  code      String
+  verified  Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+  @@index([expiresAt])
+}
+
+// ─── Product Catalog ────────────────────────────────────────
+model Category {
+  id          String   @id @default(uuid())
+  nameAr      String
+  nameEn      String
+  slug        String   @unique
+  description String?
+  icon        String?
+  image       String?
+  sortOrder   Int      @default(0)
+  phase       String   @default("ACTIVE_MVP") // ACTIVE_MVP, PHASE_2, PHASE_3, PHASE_4
+  attributes  Json?    // JSON schema for dynamic category attributes
+  isActive    Boolean  @default(true)
+  parentId    String?  // nullable FK for subcategory hierarchy
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+  products Product[]
+
+  @@index([isActive])
+  @@index([sortOrder])
+  @@index([parentId])
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  categoryId    String
+  vendorId      String?
+  nameAr        String
+  nameEn        String
+  descriptionAr String?
+  descriptionEn String?
+  sku           String   @unique
+  price         Decimal
+  comparePrice  Decimal?
+  costPrice     Decimal?
+  images        Json     // JSON array of image URLs
+  mainImage     String?
+  video         String?  // Video URL (YouTube, etc.) or local path
+  stock         Int      @default(0)
+  reservedStock Int      @default(0)
+  weight        Decimal?
+  dimensions    Json?    // JSON: {w, h, d}
+  attributes    Json?    // JSON: dynamic attributes per category (material, size, etc.)
+  badges        Json?    // JSON array: ["new", "sale", "bestseller"]
+  rating        Decimal  @default(0)
+  reviewCount   Int      @default(0)
+  isActive      Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  category    Category     @relation(fields: [categoryId], references: [id])
+  vendor      Vendor?      @relation(fields: [vendorId], references: [id])
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  reviews     Review[]
+  favorites   FavoriteItem[]
+  inventoryMovements InventoryMovement[]
+
+  @@index([categoryId])
+  @@index([vendorId])
+  @@index([isActive])
+  @@index([isFeatured])
+  @@index([createdAt])
+  @@index([rating])
+}
+
+// ─── Shopping Cart ──────────────────────────────────────────
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  reserved  Boolean  @default(false)
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+}
+
+// ─── Orders ─────────────────────────────────────────────────
+model Order {
+  id              String   @id @default(uuid())
+  userId          String
+  orderNumber     String   @unique
+  status          String   @default("pending") // pending, confirmed, processing, shipped, delivered, cancelled, refunded
+  paymentMethod   String   @default("cod")     // cod, card, bank_transfer
+  paymentStatus   String   @default("pending") // pending, paid, failed, refunded
+  subtotal        Decimal
+  deliveryFee     Decimal  @default(0)
+  discount        Decimal  @default(0)
+  total           Decimal
+  currency        String   @default("LYD")
+  notes           String?
+  couponId        String?  // tracks which coupon was applied, for reversal on cancel
+  fraudScore      Int      @default(0)
+  fraudFlagged    Boolean  @default(false)
+  deliveredAt     DateTime?
+  cancelledAt     DateTime?
+  refundedAt      DateTime?
+  refundAmount    Decimal  @default(0)
+  refundReason    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user      User         @relation(fields: [userId], references: [id])
+  address   Address?     @relation(fields: [addressId], references: [id])
+  addressId String?      @unique
+  items     OrderItem[]
+  statusLog OrderStatusLog[]
+  shipment  Shipment?
+  shippingCompany ShippingCompany? @relation(fields: [shippingCompanyId], references: [id])
+  shippingCompanyId String?
+
+  @@index([userId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+  @@index([shippingCompanyId])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  nameAr    String
+  nameEn    String
+  price     Decimal
+  quantity  Int
+  total     Decimal
+  image     String?
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model OrderStatusLog {
+  id        String   @id @default(uuid())
+  orderId   String
+  status    String
+  note      String?
+  createdAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([createdAt])
+}
+
+// ─── Coupons & Discounts ───────────────────────────────────
+model Coupon {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  descriptionAr String?
+  descriptionEn String?
+  type        String   @default("percentage") // percentage, fixed
+  value       Decimal  // percentage: 10 = 10%, fixed: 10 = 10 LYD
+  minOrder    Decimal  @default(0) // minimum order value to apply
+  maxDiscount Decimal? // max discount amount for percentage type
+  usageLimit  Int?     // total usage limit
+  usageCount  Int      @default(0)
+  perUserLimit Int     @default(1)
+  startsAt    DateTime
+  expiresAt   DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([expiresAt])
+}
+
+// ─── Delivery Zones ─────────────────────────────────────────
+model DeliveryZone {
+  id          String   @id @default(uuid())
+  nameAr      String
+  nameEn      String
+  city        String
+  region      String   @default("طرابلس")
+  area        String?
+  fee         Decimal  @default(10)
+  freeAbove   Decimal? @default(100)
+  estimatedDays Int    @default(3)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([city])
+  @@index([region])
+  @@index([isActive])
+}
+
+// ─── Push Notification Tokens ──────────────────────────────
+model PushToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   // FCM device token
+  platform  String   @default("web") // web, android, ios
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, token])
+  @@index([userId])
+  @@index([token])
+  @@index([isActive])
+}
+
+// ─── Notifications ──────────────────────────────────────────
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String?
+  titleAr   String
+  titleEn   String
+  bodyAr    String
+  bodyEn    String
+  type      String   @default("info") // info, order, promo, system
+  createdAt DateTime @default(now())
+
+  reads     NotificationReadStatus[]
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Per-user read tracking for notifications (especially broadcast ones with userId=null)
+model NotificationReadStatus {
+  id             String       @id @default(uuid())
+  userId         String
+  notificationId String
+  readAt         DateTime     @default(now())
+
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, notificationId])
+  @@index([userId])
+  @@index([notificationId])
+}
+
+// ─── Feature Flags ──────────────────────────────────────────
+model FeatureFlag {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Boolean  @default(false)
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Audit Log ──────────────────────────────────────────────
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
+  @@index([userId])
+}
+
+// ─── Financial Ledger ──────────────────────────────────────
+model LedgerAccount {
+  id          String   @id @default(uuid())
+  code        String   @unique   // Account code e.g. "1000", "2000"
+  nameAr      String              // Arabic name
+  nameEn      String              // English name
+  type        String              // asset, liability, equity, revenue, expense
+  category    String              // e.g. "current_asset", "operating_revenue"
+  balance     Decimal  @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  entries JournalEntryLine[]
+
+  @@index([type])
+  @@index([isActive])
+}
+
+model JournalEntry {
+  id            String   @id @default(uuid())
+  entryNumber   String   @unique
+  descriptionAr String?
+  descriptionEn String?
+  reference     String?             // Order number, invoice, etc.
+  entryDate     DateTime
+  status        String   @default("draft") // draft, posted, voided
+  createdBy     String?             // userId
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  lines JournalEntryLine[]
+
+  @@index([status])
+  @@index([entryDate])
+}
+
+model JournalEntryLine {
+  id             String   @id @default(uuid())
+  entryId        String
+  accountId      String
+  debit          Decimal  @default(0)
+  credit         Decimal  @default(0)
+  description    String?
+  createdAt      DateTime @default(now())
+
+  entry         JournalEntry  @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  account       LedgerAccount @relation(fields: [accountId], references: [id])
+
+  @@index([entryId])
+  @@index([accountId])
+}
+
+// ─── Vendor (Multi-Vendor Phase 4) ─────────────────────────
+model Vendor {
+  id              String   @id @default(uuid())
+  nameAr          String
+  nameEn          String
+  type            String   @default("RETAILER") // RETAILER, BRAND_OFFICIAL, LOCAL_ARTISAN, SERVICE_PROVIDER
+  commission      Decimal  @default(10) // percentage
+  phone           String?
+  email           String?
+  logo            String?
+  descriptionAr   String?
+  descriptionEn   String?
+  bankInfo        Json?    // JSON: {bankName, iban, accountHolder}
+  isActive        Boolean  @default(true)
+  isVerified      Boolean  @default(false)
+  rating          Decimal  @default(0)
+  totalSales      Decimal  @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  products    Product[]
+  payouts     VendorPayout[]
+
+  @@index([isActive])
+  @@index([isVerified])
+}
+
+model VendorPayout {
+  id          String   @id @default(uuid())
+  vendorId    String
+  amount      Decimal
+  currency    String   @default("LYD")
+  status      String   @default("pending") // pending, processing, completed, failed
+  periodStart DateTime
+  periodEnd   DateTime
+  note        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  vendor Vendor @relation(fields: [vendorId], references: [id])
+
+  @@index([vendorId])
+  @@index([status])
+}
+
+// ─── Reviews ───────────────────────────────────────────────
+model Review {
+  id        String   @id @default(uuid())
+  productId String
+  userId    String
+  rating    Int      // 1-5
+  title     String?
+  comment   String?
+  images    Json?    // JSON array of image URLs
+  isVerified Boolean @default(false)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([productId, userId])
+  @@index([productId])
+  @@index([userId])
+  @@index([isActive])
+  @@index([rating])
+}
+
+// ─── Inventory Movements ──────────────────────────────────
+model InventoryMovement {
+  id          String   @id @default(uuid())
+  productId   String
+  type        String   // in, out, reservation, release, adjustment, return
+  quantity    Int
+  reference   String?  // order number, adjustment note, etc.
+  note        String?
+  createdBy   String?  // userId
+  createdAt   DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ─── Loyalty Transactions ─────────────────────────────────
+model LoyaltyTransaction {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // earn, redeem, expire, bonus
+  points      Int
+  orderId     String?
+  description String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ─── Wallet Transactions ─────────────────────────────────
+model WalletTransaction {
+  id          String   @id @default(uuid())
+  userId      String
+  type        String   // deposit, withdrawal, refund, cashback, adjustment
+  amount      Decimal
+  currency    String   @default("LYD")
+  reference   String?  // order number, transfer id, etc.
+  description String?
+  status      String   @default("completed") // pending, completed, failed
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ─── Shipping Carriers ──────────────────────────────────────
+model ShippingCarrier {
+  id              String   @id @default(uuid())
+  nameAr          String
+  nameEn          String
+  code            String   @unique  // e.g. "libya_post", "tawfik", "alnour"
+  type            String   @default("national") // local, national, international
+  phone           String?
+  email           String?
+  website         String?
+  logo            String?
+  apiEndpoint     String?  // API URL for integration
+  apiKey          String?  // API key (encrypted in production)
+  apiSecret       String?  // API secret (encrypted in production)
+  webhookUrl      String?  // URL for carrier callbacks
+  trackingUrl     String?  // Template: {trackingNumber} placeholder
+  coverageAreas   Json?    // JSON array of covered cities/regions
+  maxWeight       Decimal? @default(30)  // kg
+  pricePerKg      Decimal  @default(1.5) // LYD per kg
+  basePrice       Decimal  @default(5)   // minimum shipping cost in LYD
+  codFee          Decimal  @default(0)   // COD fee percentage
+  codFixedFee     Decimal  @default(0)   // COD fixed fee in LYD
+  estimatedDays   Int      @default(3)   // default delivery days
+  isActive        Boolean  @default(true)
+  isIntegrated    Boolean  @default(false) // true = has real API integration
+  integrationType String   @default("manual") // manual, api, webhook
+  rating          Decimal  @default(0)   // carrier performance rating 0-5
+  totalShipments  Int      @default(0)
+  successRate     Decimal  @default(0)   // percentage of successful deliveries
+  avgDeliveryDays Decimal  @default(0)   // actual average delivery time
+  notes           String?  // internal notes
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  shipments Shipment[]
+
+  @@index([isActive])
+  @@index([type])
+  @@index([code])
+}
+
+// ─── Shipments ──────────────────────────────────────────────
+model Shipment {
+  id              String   @id @default(uuid())
+  orderId         String   @unique
+  carrierId       String
+  trackingNumber  String?  // carrier's tracking number
+  waybillNumber   String?  // waybill / BOL number
+  status          String   @default("created") // created, picked_up, in_transit, out_for_delivery, delivered, failed, returned
+  weight          Decimal? // actual weight in kg
+  shippingCost    Decimal  @default(0)  // cost charged by carrier in LYD
+  codAmount       Decimal  @default(0)  // cash on delivery amount
+  codCollected    Boolean  @default(false)
+  estimatedPickup DateTime?
+  actualPickup    DateTime?
+  estimatedDelivery DateTime?
+  actualDelivery  DateTime?
+  failedAttempts  Int      @default(0)
+  failureReason   String?
+  notes           String?  // delivery notes
+  carrierData     Json?    // JSON: raw response from carrier API
+  lastSyncedAt    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  order   Order           @relation(fields: [orderId], references: [id])
+  carrier ShippingCarrier @relation(fields: [carrierId], references: [id])
+  logs    ShipmentLog[]
+
+  @@index([carrierId])
+  @@index([status])
+  @@index([trackingNumber])
+  @@index([createdAt])
+}
+
+// ─── Shipment Tracking Log ──────────────────────────────────
+model ShipmentLog {
+  id          String   @id @default(uuid())
+  shipmentId  String
+  status      String
+  location    String?  // city, hub name, etc.
+  descriptionAr String?
+  descriptionEn String?
+  latitude    Decimal?
+  longitude   Decimal?
+  occurredAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  shipment Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([shipmentId])
+  @@index([occurredAt])
+}
+
+// ─── Shipping Companies ──────────────────────────────────────
+model ShippingCompany {
+  id              String   @id @default(uuid())
+  nameAr          String
+  nameEn          String
+  slug            String   @unique
+  logo            String?  // emoji or image URL
+  phone           String?
+  email           String?
+  website         String?
+  descriptionAr   String?
+  descriptionEn   String?
+  apiEndpoint     String?  // API URL for carrier integration
+  apiKey          String?  // API key (encrypted in production)
+  apiSecret       String?  // API secret (encrypted in production)
+  trackingUrl     String?  // Template: {trackingNumber} placeholder
+  isActive        Boolean  @default(true)
+  isDefault       Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  baseFee         Decimal  @default(0)   // base shipping fee in LYD
+  freeAbove       Decimal? @default(0)  // free shipping above this amount in LYD
+  weightLimit     Decimal? @default(30) // max weight in kg
+  codSupported    Boolean  @default(true)
+  codFee          Decimal  @default(0)  // COD fee in LYD
+  coverageType    String   @default("all") // all or regional
+  totalDeliveries Int      @default(0)
+  successRate     Decimal  @default(0)  // percentage of successful deliveries
+  avgDeliveryDays Int      @default(3)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  coverageZones ShippingCoverageZone[]
+  orders        Order[]
+
+  @@index([isActive])
+  @@index([slug])
+  @@index([sortOrder])
+}
+
+model ShippingCoverageZone {
+  id            String   @id @default(uuid())
+  companyId     String
+  regionId      String?  // e.g. 'central', 'western', 'eastern', 'southern'
+  regionNameAr  String?  // Arabic region name
+  cityName      String   // required city name
+  areaName      String?  // optional area, null means entire city
+  fee           Decimal  @default(0)  // shipping fee for this zone in LYD
+  freeAbove     Decimal? @default(0)  // free shipping above this amount in LYD
+  estimatedDays Int      @default(3)  // estimated delivery days
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  company ShippingCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([cityName])
+  @@index([regionId])
+  @@index([isActive])
+}
+
+// ─── Email Log ──────────────────────────────────────────────
+model EmailLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  to          String   // recipient email
+  subjectAr   String
+  subjectEn   String
+  template    String   // template name: welcome, order_confirmation, order_shipped, order_delivered, otp, password_reset, payment_confirmed, wallet_deposit, promo
+  status      String   @default("pending") // pending, sent, failed
+  data        Json?    // JSON: template variables
+  error       String?  // error message if failed
+  sentAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([status])
+  @@index([template])
+  @@index([createdAt])
+}
+
+// ─── Favorite Items ────────────────────────────────────────
+model FavoriteItem {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+}
+
+// ─── Store Settings ────────────────────────────────────────
+model StoreSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Contact Messages ──────────────────────────────────────
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  email     String?
+  category  String   @default("general") // general, order, complaint, suggestion, technical, return
+  subject   String?
+  message   String
+  status    String   @default("new") // new, read, replied, closed
+  userId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+}
+
+// ─── Payment Transactions ─────────────────────────────────
+model PaymentTransaction {
+  id              String   @id @default(uuid())
+  orderId         String?
+  userId          String
+  amount          Decimal
+  currency        String   @default("LYD")
+  method          String   // card, bank_transfer, wallet, cod
+  status          String   @default("pending") // pending, processing, completed, failed, refunded, cancelled
+  gatewayTxnId    String?  // Gateway transaction ID
+  gatewayName     String?  // e.g. "sadad", "moflihpay", "wallet"
+  cardLast4       String?  // Last 4 digits of card (if card payment)
+  cardBrand       String?  // visa, mastercard, etc.
+  bankReference   String?  // Bank transfer reference number
+  receiptUrl      String?  // Receipt/bank transfer proof upload URL
+  metadata        String?  // JSON: additional payment data
+  refundReason    String?
+  refundedAt      DateTime?
+  paidAt          DateTime?
+  expiresAt       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([userId])
+  @@index([status])
+  @@index([method])
+  @@index([gatewayTxnId])
+  @@index([createdAt])
+}
+
+// ─── Newsletter Subscribers ──────────────────────────────────
+model NewsletterSubscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([isActive])
+  @@index([createdAt])
+}

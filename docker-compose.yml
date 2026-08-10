@@ -1,0 +1,59 @@
+# ═══════════════════════════════════════════════════════════
+# City Pulse — نبض المدينة | Docker Compose
+# Production-ready configuration
+# ═══════════════════════════════════════════════════════════
+
+services:
+  # ─── Main Application ──────────────────────────────────
+  citypulse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: citypulse-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"    # Main Next.js app
+      - "3004:3004"    # Socket.io sync service
+      - "3031:3031"    # Download service
+    volumes:
+      # Persist database
+      - citypulse-db:/app/db
+      # Persist uploads
+      - citypulse-uploads:/app/upload
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:./db/custom.db
+      - JWT_SECRET=${JWT_SECRET:-change-me-to-a-secure-random-string}
+      - PORT=3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ─── Caddy Reverse Proxy (Optional) ────────────────────
+  caddy:
+    image: caddy:2-alpine
+    container_name: citypulse-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - citypulse-caddy-data:/data
+      - citypulse-caddy-config:/config
+    depends_on:
+      citypulse:
+        condition: service_healthy
+
+volumes:
+  citypulse-db:
+    driver: local
+  citypulse-uploads:
+    driver: local
+  citypulse-caddy-data:
+    driver: local
+  citypulse-caddy-config:
+    driver: local

@@ -1,0 +1,92 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+local-*
+.claude
+.z-ai-config
+*.log
+dev.log
+dev.out.log
+test
+prompt
+server.log
+
+# Skills directory
+/skills/
+
+# ─── Project-specific ignores ──────────────────────────────────
+# AI agent context files
+agent-ctx/
+
+# User uploads
+upload/
+
+# Release builds (APK, tar.gz)
+releases/
+*.apk
+*.tar.gz
+
+# Screenshots
+screenshot-*.png
+*-screenshot.png
+home-screen.png
+mobile-screenshot.png
+splash-screen.png
+store-check.png
+store-final.png
+
+# Lock files (project uses bun)
+package-lock.json
+
+# Expo/RN build artifacts
+public/_expo/
+public/mobile/
+public/assets/
+
+# PID files
+*.pid
+
+# Development notes
+worklog.md
+AUDIT-REPORT.md
+FILES-DETAIL.md
+MOBILE_APP_STATE.md
+gen-log.txt

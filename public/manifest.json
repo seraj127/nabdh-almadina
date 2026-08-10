@@ -1,0 +1,35 @@
+{
+  "name": "نبض المدينة - Nabd Al-Madina",
+  "short_name": "نبض المدينة",
+  "description": "متجرك الإلكتروني الليبي - تسوق بأفضل الأسعار مع التوصيل لجميع مدن ليبيا",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#004B63",
+  "theme_color": "#00A8CC",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "ar",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=ly.nabd.almadina"
+    }
+  ]
+}

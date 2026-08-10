@@ -1,0 +1,15 @@
+export { DashboardView, RecentOrdersTable } from './dashboard-view';
+export { ProductsView, ProductFormDialog } from './products-view';
+export { OrdersView } from './orders-view';
+export { FinancialView } from './financial-view';
+export { CustomersView } from './customers-view';
+export { LogisticsView } from './logistics-view';
+export { WalletLoyaltyView } from './wallet-loyalty-view';
+export { AnalyticsView } from './analytics-view';
+export { SettingsView } from './settings-view';
+export { CouponsView } from './coupons-view';
+export { ReviewsView } from './reviews-view';
+export { AuditLogView } from './audit-log-view';
+export { NotificationsView } from './notifications-view';
+export { InventoryView } from './inventory-view';
+export { SubcategoriesView } from './subcategories-view';
