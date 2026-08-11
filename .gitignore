@@ -84,6 +84,11 @@ public/assets/
 # PID files
 *.pid
 
+# Local databases
+prisma/dev.db
+db/*.db
+*.db-journal
+
 # Development notes
 worklog.md
 AUDIT-REPORT.md
