@@ -1,4 +1,4 @@
--- ============================================================================
+﻿-- ============================================================================
 -- نبض المدينة (City Pulse) - Database Seed File
 -- بيانات تجريبية واقعية لليبيا
 -- Supabase PostgreSQL
@@ -227,7 +227,7 @@ INSERT INTO "Category" ("id", "nameAr", "nameEn", "slug", "description", "icon",
 INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "descriptionAr", "descriptionEn", "sku", "price", "comparePrice", "costPrice", "images", "mainImage", "video", "stock", "reservedStock", "weight", "dimensions", "attributes", "badges", "rating", "reviewCount", "isActive", "isFeatured") VALUES
 
 -- ─── هواتف ──────────────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000001', 'c1200000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000001', 'c1200000-0000-0000-0000-000000000001', NULL,
  'آيفون 15 برو ماكس', 'iPhone 15 Pro Max',
  'هاتف آيفون 15 برو ماكس بشريحة A17 Pro وكاميرا 48 ميجابكسل وشاشة Super Retina XDR مقاس 6.7 إنش. يأتي بتصميم من التيتانيوم وبطارية تدوم طوال اليوم.',
  'iPhone 15 Pro Max with A17 Pro chip, 48MP camera, 6.7-inch Super Retina XDR display. Titanium design with all-day battery life.',
@@ -238,7 +238,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Apple", "storage": "256GB", "ram": "8GB", "color": "Natural Titanium"}'::jsonb,
  '["new", "bestseller"]'::jsonb, 4.80, 127, true, true),
 
-('p1000000-0000-0000-0000-000000000002', 'c1200000-0000-0000-0000-000000000002', NULL,
+('a1000000-0000-0000-0000-000000000002', 'c1200000-0000-0000-0000-000000000002', NULL,
  'سامسونج غالاكسي S24 ألترا', 'Samsung Galaxy S24 Ultra',
  'هاتف سامسونج غالاكسي S24 ألترا بشريحة Snapdragon 8 Gen 3 وكاميرا 200 ميجابكسل وقلم S Pen مدمج. شاشة Dynamic AMOLED 2X مقاس 6.8 إنش.',
  'Samsung Galaxy S24 Ultra with Snapdragon 8 Gen 3, 200MP camera, built-in S Pen. 6.8-inch Dynamic AMOLED 2X display.',
@@ -249,7 +249,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Samsung", "storage": "256GB", "ram": "12GB", "color": "Titanium Black"}'::jsonb,
  '["new", "bestseller"]'::jsonb, 4.70, 98, true, true),
 
-('p1000000-0000-0000-0000-000000000003', 'c1200000-0000-0000-0000-000000000003', NULL,
+('a1000000-0000-0000-0000-000000000003', 'c1200000-0000-0000-0000-000000000003', NULL,
  'شاومي 14 برو', 'Xiaomi 14 Pro',
  'هاتف شاومي 14 برو بشريحة Snapdragon 8 Gen 3 وكاميرا Leica مزدوجة وشحن سريع 120 واط. أداء ممتاز بسعر مميز.',
  'Xiaomi 14 Pro with Snapdragon 8 Gen 3, Leica dual camera, 120W fast charging. Excellent performance at a great price.',
@@ -260,7 +260,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Xiaomi", "storage": "256GB", "ram": "12GB", "color": "Black"}'::jsonb,
  '["sale"]'::jsonb, 4.50, 63, true, true),
 
-('p1000000-0000-0000-0000-000000000004', 'c1200000-0000-0000-0000-000000000004', NULL,
+('a1000000-0000-0000-0000-000000000004', 'c1200000-0000-0000-0000-000000000004', NULL,
  'هواوي بورا 70 برو', 'Huawei Pura 70 Pro',
  'هاتف هواوي بورا 70 برو بكاميرا XMAGE متطورة وشاشة OLED منحنية وبطارية كبيرة 5050 مللي أمبير.',
  'Huawei Pura 70 Pro with advanced XMAGE camera, curved OLED display, and 5050mAh large battery.',
@@ -272,7 +272,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["new"]'::jsonb, 4.40, 32, true, false),
 
 -- ─── إلكترونيات ─────────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000005', 'c1100000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000005', 'c1100000-0000-0000-0000-000000000001', NULL,
  'ماك بوك برو M3', 'MacBook Pro M3',
  'لابتوب ماك بوك برو بمعالج Apple M3 Pro وشاشة Liquid Retina XDR مقاس 14 إنش وذاكرة 18 جيجابايت وتخزين 512 جيجابايت SSD. مثالي للمحترفين والمبدعين.',
  'MacBook Pro with Apple M3 Pro chip, 14-inch Liquid Retina XDR display, 18GB memory, 512GB SSD. Ideal for professionals and creators.',
@@ -283,7 +283,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Apple", "processor": "M3 Pro", "ram": "18GB", "storage": "512GB SSD"}'::jsonb,
  '["new", "bestseller"]'::jsonb, 4.90, 54, true, true),
 
-('p1000000-0000-0000-0000-000000000006', 'c1100000-0000-0000-0000-000000000003', NULL,
+('a1000000-0000-0000-0000-000000000006', 'c1100000-0000-0000-0000-000000000003', NULL,
  'سوني WH-1000XM5', 'Sony WH-1000XM5',
  'سماعات سوني اللاسلكية بإلغاء الضوضاء الرائد في فئتها وصوت Hi-Res وبطارية تدوم 30 ساعة. تصميم خفيف ومريح للاستخدام اليومي.',
  'Sony wireless headphones with industry-leading noise cancellation, Hi-Res audio, 30-hour battery. Lightweight and comfortable for daily use.',
@@ -294,7 +294,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Sony", "type": "Over-ear", "battery": "30 hours", "anc": true}'::jsonb,
  '["bestseller"]'::jsonb, 4.70, 89, true, true),
 
-('p1000000-0000-0000-0000-000000000007', 'c1100000-0000-0000-0000-000000000002', NULL,
+('a1000000-0000-0000-0000-000000000007', 'c1100000-0000-0000-0000-000000000002', NULL,
  'شاشة سامسونج 27 إنش 4K', 'Samsung 27" 4K Monitor',
  'شاشة سامسونج بدقة 4K UHD وحجم 27 إنش مع تقنية HDR10 وزمن استجابة 5 مللي ثانية. مثالية للتصميم والمونتاج والألعاب.',
  'Samsung 27-inch 4K UHD monitor with HDR10, 5ms response time. Perfect for design, editing, and gaming.',
@@ -305,7 +305,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Samsung", "size": "27 inch", "resolution": "4K UHD", "panel": "IPS"}'::jsonb,
  '[]'::jsonb, 4.30, 27, true, false),
 
-('p1000000-0000-0000-0000-000000000008', 'c1100000-0000-0000-0000-000000000004', NULL,
+('a1000000-0000-0000-0000-000000000008', 'c1100000-0000-0000-0000-000000000004', NULL,
  'كاميرا كانون EOS R6 Mark II', 'Canon EOS R6 Mark II',
  'كاميرا كانون بدون مرآة بدقة 24.2 ميجابكسل وتصوير فيديو 4K 60fps وتثبيت صورة مدمج بخمس نقاط. مثالية للتصوير الاحترافي.',
  'Canon mirrorless camera with 24.2MP, 4K 60fps video, 5-axis IBIS. Perfect for professional photography.',
@@ -317,7 +317,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["new"]'::jsonb, 4.80, 19, true, false),
 
 -- ─── أجهزة منزلية ───────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000009', 'c1300000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000009', 'c1300000-0000-0000-0000-000000000001', NULL,
  'غسالة LG أوتوماتيك 8 كجم', 'LG Washing Machine 8kg',
  'غسالة LG أوتوماتيكية بسعة 8 كجم ومحرك Inverter Direct Drive هادئ بتقنية البخار. 14 برنامج غسيل وفلتر تنظيف ذاتي.',
  'LG automatic washing machine, 8kg capacity, Inverter Direct Drive quiet motor with steam technology. 14 wash programs and self-cleaning filter.',
@@ -328,7 +328,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "LG", "capacity": "8kg", "type": "Front Load", "motor": "Inverter"}'::jsonb,
  '["bestseller"]'::jsonb, 4.50, 76, true, true),
 
-('p1000000-0000-0000-0000-000000000010', 'c1300000-0000-0000-0000-000000000002', NULL,
+('a1000000-0000-0000-0000-000000000010', 'c1300000-0000-0000-0000-000000000002', NULL,
  'ثلاجة سامسونج 400 لتر', 'Samsung Refrigerator 400L',
  'ثلاجة سامسونج بسعة 400 لتر مع تقنية Twin Cooling Plus للحفاظ على الطعام طازجاً فترة أطول. تصميم أنيق بابين مع فريزر سفلي.',
  'Samsung refrigerator with 400L capacity and Twin Cooling Plus technology to keep food fresher longer. Elegant two-door design with bottom freezer.',
@@ -339,7 +339,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Samsung", "capacity": "400L", "type": "Two Door", "cooling": "Twin Cooling Plus"}'::jsonb,
  '["sale"]'::jsonb, 4.60, 58, true, true),
 
-('p1000000-0000-0000-0000-000000000011', 'c1300000-0000-0000-0000-000000000003', NULL,
+('a1000000-0000-0000-0000-000000000011', 'c1300000-0000-0000-0000-000000000003', NULL,
  'مكيف جري 1.5 طن سبليت', 'Gree AC 1.5 Ton Split',
  'مكيف جري سبليت بقوة 1.5 طن مع تقنية Inverter لتوفير الطاقة. يعمل بهدوء مع فلتر هواء متطور وضمان 5 سنوات على الكمبروسر.',
  'Gree split AC with 1.5 ton capacity and Inverter technology for energy saving. Quiet operation with advanced air filter and 5-year compressor warranty.',
@@ -351,7 +351,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["bestseller"]'::jsonb, 4.40, 102, true, true),
 
 -- ─── رياضة ولياقة ──────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000012', 'c1800000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000012', 'c1800000-0000-0000-0000-000000000001', NULL,
  'حذاء أديداس للجري Ultraboost', 'Adidas Ultraboost Running Shoes',
  'حذاء أديداس للجري بتقنية Boost للطاقة المرتدة ونعل Continental المطاطي لقبضة ممتازة. تصميم مريح ومناسب للاستخدام اليومي والتمارين.',
  'Adidas running shoes with Boost energy return technology and Continental rubber outsole for excellent grip. Comfortable for daily use and workouts.',
@@ -362,7 +362,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Adidas", "type": "Running", "size": "42", "material": "Primeknit"}'::jsonb,
  '["sale"]'::jsonb, 4.60, 145, true, true),
 
-('p1000000-0000-0000-0000-000000000013', 'c1800000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000013', 'c1800000-0000-0000-0000-000000000001', NULL,
  'حذاء نايك إير ماكس 270', 'Nike Air Max 270',
  'حذاء نايك إير ماكس 270 بأكبر وحدة Air في تاريخ نايك لراحة فائقة طوال اليوم. تصميم عصري يناسب جميع الإطلالات.',
  'Nike Air Max 270 with the largest Air unit in Nike history for all-day comfort. Modern design that suits all looks.',
@@ -374,7 +374,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["bestseller"]'::jsonb, 4.70, 203, true, true),
 
 -- ─── إكسسوارات ──────────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000014', 'c1c00000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000014', 'c1c00000-0000-0000-0000-000000000001', NULL,
  'ساعة أبل Series 9', 'Apple Watch Series 9',
  'ساعة أبل الذكية Series 9 بشريحة S9 وشاشة Always-On Retina ومراقبة صحة متقدمة تشمل الأكسجين في الدم وتخطيط القلب.',
  'Apple Watch Series 9 with S9 chip, Always-On Retina display, advanced health monitoring including blood oxygen and ECG.',
@@ -385,7 +385,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Apple", "size": "45mm", "connectivity": "GPS + Cellular", "water_resistance": "50m"}'::jsonb,
  '["new", "bestseller"]'::jsonb, 4.80, 87, true, true),
 
-('p1000000-0000-0000-0000-000000000015', 'c1c00000-0000-0000-0000-000000000002', NULL,
+('a1000000-0000-0000-0000-000000000015', 'c1c00000-0000-0000-0000-000000000002', NULL,
  'سلسال ذهب 18 قيراط', '18K Gold Necklace',
  'سلسال ذهب عيار 18 قيراط بتصميم إيطالي أنيق ووزن 4 جرام. مثالي للإطلالات اليومية والمناسبات الخاصة.',
  '18K gold necklace with elegant Italian design, 4 grams weight. Perfect for everyday wear and special occasions.',
@@ -396,7 +396,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"karat": "18K", "weight": "4g", "color": "Yellow Gold", "origin": "Italian"}'::jsonb,
  '[]'::jsonb, 4.90, 34, true, false),
 
-('p1000000-0000-0000-0000-000000000016', 'c1c00000-0000-0000-0000-000000000003', NULL,
+('a1000000-0000-0000-0000-000000000016', 'c1c00000-0000-0000-0000-000000000003', NULL,
  'نظارة راي بان أفياتور', 'Ray-Ban Aviator Sunglasses',
  'نظارة راي بان أفياتور الكلاسيكية بعدسات بولارايزد وإطار معدني ذهبي. حماية كاملة من أشعة UV مع تصميم لا يفوت.',
  'Classic Ray-Ban Aviator sunglasses with polarized lenses and gold metal frame. Full UV protection with timeless design.',
@@ -408,7 +408,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["sale"]'::jsonb, 4.50, 67, true, false),
 
 -- ─── مستحضرات تجميل ────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000017', 'c1700000-0000-0000-0000-000000000002', NULL,
+('a1000000-0000-0000-0000-000000000017', 'c1700000-0000-0000-0000-000000000002', NULL,
  'عطر عود ملكي فاخر', 'Royal Oud Perfume',
  'عطر عود ملكي فاخر بمزيج العود الكمبودي والورد الطائفي والمسك الأبيض. رائحة شرقية أصيلة تدوم طويلاً مناسبة للمناسبات.',
  'Premium royal oud perfume with Cambodian oud, Taifi rose, and white musk. Authentic oriental scent that lasts long, suitable for occasions.',
@@ -420,7 +420,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["bestseller"]'::jsonb, 4.80, 156, true, true),
 
 -- ─── أثاث ومنزل ─────────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000018', 'c1b00000-0000-0000-0000-000000000002', NULL,
+('a1000000-0000-0000-0000-000000000018', 'c1b00000-0000-0000-0000-000000000002', NULL,
  'صالون 3 قطع مودرن', 'Modern 3-Piece Living Room Set',
  'صالون مودرن من 3 قطع (كنبة 3 مقاعد + كنبة 2 مقاعد + كرسي) بخامة قماش فاخر وأرجل معدنية. تصميم عصري مريح يناسب الصالات الكبيرة.',
  'Modern 3-piece living room set (3-seater sofa + 2-seater sofa + armchair) with premium fabric and metal legs. Contemporary comfortable design for large halls.',
@@ -432,7 +432,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["new"]'::jsonb, 4.30, 18, true, true),
 
 -- ─── أغذية ومشروبات ────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000019', 'c1a00000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000019', 'c1a00000-0000-0000-0000-000000000001', NULL,
  'تمور ليبية فاخرة 1 كجم', 'Premium Libyan Dates 1kg',
  'تمور ليبية فاخرة من أجود أنواع التمور في ليبيا. طبيعية 100% بدون إضافات. غنية بالألياف والمعادن ومثالية لشهر رمضان المبارك.',
  'Premium Libyan dates from the finest date varieties in Libya. 100% natural with no additives. Rich in fiber and minerals, ideal for Ramadan.',
@@ -444,7 +444,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["bestseller"]'::jsonb, 4.90, 234, true, true),
 
 -- ─── كتب ─────────────────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000020', 'c1900000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000020', 'c1900000-0000-0000-0000-000000000001', NULL,
  'كتاب أسرار النجاح المالي', 'Secrets of Financial Success Book',
  'كتاب شامل عن أساسيات النجاح المالي وإدارة المال بذكاء. يغطي موضوعات الادخار والاستثمار وريادة الأعمال بأسلوب مبسط وعملي.',
  'Comprehensive book on financial success fundamentals and smart money management. Covers saving, investing, and entrepreneurship in a practical style.',
@@ -456,7 +456,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '[]'::jsonb, 4.20, 45, true, false),
 
 -- ─── ملابس رجالية ──────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000021', 'c1400000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000021', 'c1400000-0000-0000-0000-000000000001', NULL,
  'قميص رجالي كتان فاخر', 'Premium Linen Men''s Shirt',
  'قميص رجالي من الكتان الطبيعي الفاخر بتصميم كاجوال أنيق. خامة مريحة ومتنفسة مثالية للطقس الحار في ليبيا.',
  'Premium men''s shirt made from natural linen with a casual elegant design. Comfortable and breathable fabric, ideal for hot Libyan weather.',
@@ -468,7 +468,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["sale"]'::jsonb, 4.40, 56, true, false),
 
 -- ─── ملابس نسائية ──────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000022', 'c1500000-0000-0000-0000-000000000002', NULL,
+('a1000000-0000-0000-0000-000000000022', 'c1500000-0000-0000-0000-000000000002', NULL,
  'عباية سوداء مطرزة فاخرة', 'Premium Embroidered Black Abaya',
  'عباية سوداء فاخرة بتطريز يدوي راقي على الأكمام والأطراف. خامة كريب خفيف ومريح مع حزام داخلي لقصّة أنيقة ومحتشمة.',
  'Premium black abaya with elegant hand embroidery on sleeves and edges. Lightweight comfortable crepe fabric with internal belt for a chic modest look.',
@@ -480,7 +480,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["bestseller"]'::jsonb, 4.70, 189, true, true),
 
 -- ─── أجهزة كهربائية ────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000023', 'c1600000-0000-0000-0000-000000000002', NULL,
+('a1000000-0000-0000-0000-000000000023', 'c1600000-0000-0000-0000-000000000002', NULL,
  'خلاط كهربائي متعدد السرعات', 'Multi-Speed Electric Blender',
  'خلاط كهربائي قوي بسرعات متعددة وكوب زجاجي كبير سعة 1.5 لتر. مثالي لإعداد العصائر والشوربات والصلصات بسهولة.',
  'Powerful electric blender with multiple speeds and large 1.5L glass jar. Perfect for making smoothies, soups, and sauces easily.',
@@ -491,7 +491,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '{"brand": "Generic", "capacity": "1.5L", "speeds": "5", "jar": "Glass"}'::jsonb,
  '["sale"]'::jsonb, 4.20, 41, true, false),
 
-('p1000000-0000-0000-0000-000000000024', 'c1600000-0000-0000-0000-000000000003', NULL,
+('a1000000-0000-0000-0000-000000000024', 'c1600000-0000-0000-0000-000000000003', NULL,
  'ماكينة قهوة إسبريسو أوتوماتيك', 'Automatic Espresso Coffee Machine',
  'ماكينة قهوة أوتوماتيك بالكامل مع مطحنة مدمجة ورغوة حليب. تحضير جميع أنواع القهوة بضغطة زر واحدة. مثالية لمحبي القهوة العربية.',
  'Fully automatic espresso machine with built-in grinder and milk frother. Prepare all coffee types with one button press. Ideal for Arabic coffee lovers.',
@@ -503,7 +503,7 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
  '["new"]'::jsonb, 4.50, 23, true, true),
 
 -- ─── عناية بالبشرة ──────────────────────────────────────────────────────────
-('p1000000-0000-0000-0000-000000000025', 'c1700000-0000-0000-0000-000000000001', NULL,
+('a1000000-0000-0000-0000-000000000025', 'c1700000-0000-0000-0000-000000000001', NULL,
  'كريم مرطب للبشرة الجافة 200 مل', 'Moisturizing Cream for Dry Skin 200ml',
  'كريم مرطب غني بالألوفيرا وفيتامين E للبشرة الجافة والحساسة. يرطب بعمق ويحمي البشرة من الجفاف طوال اليوم. مناسب لجميع أنواع البشرة.',
  'Rich moisturizing cream with Aloe Vera and Vitamin E for dry and sensitive skin. Deep hydration and all-day dryness protection. Suitable for all skin types.',
@@ -520,14 +520,14 @@ INSERT INTO "Product" ("id", "categoryId", "vendorId", "nameAr", "nameEn", "desc
 -- ============================================================================
 
 INSERT INTO "DeliveryZone" ("id", "nameAr", "nameEn", "city", "region", "area", "fee", "freeAbove", "estimatedDays", "isActive") VALUES
-('dz000001-0000-0000-0000-000000000001', 'طرابلس المركز', 'Tripoli Central', 'طرابلس', 'طرابلس', 'المركز', 10.00, 100.00, 1, true),
-('dz000001-0000-0000-0000-000000000002', 'بنغازي المركز', 'Benghazi Central', 'بنغازي', 'بنغازي', 'المركز', 15.00, 150.00, 2, true),
-('dz000001-0000-0000-0000-000000000003', 'مصراتة المركز', 'Misrata Central', 'مصراتة', 'مصراتة', 'المركز', 12.00, 120.00, 2, true),
-('dz000001-0000-0000-0000-000000000004', 'زليتن المركز', 'Zliten Central', 'زليتن', 'مرزق', 'المركز', 12.00, 120.00, 2, true),
-('dz000001-0000-0000-0000-000000000005', 'الخمس المركز', 'Khoms Central', 'الخمس', 'مرزق', 'المركز', 13.00, 130.00, 3, true),
-('dz000001-0000-0000-0000-000000000006', 'سبها المركز', 'Sebha Central', 'سبها', 'سبها', 'المركز', 25.00, 200.00, 4, true),
-('dz000001-0000-0000-0000-000000000007', 'درنة المركز', 'Derna Central', 'درنة', 'درنة', 'المركز', 20.00, 180.00, 3, true),
-('dz000001-0000-0000-0000-000000000008', 'طبرق المركز', 'Tobruk Central', 'طبرق', 'طبرق', 'المركز', 22.00, 190.00, 4, true);
+('d0000001-0000-0000-0000-000000000001', 'طرابلس المركز', 'Tripoli Central', 'طرابلس', 'طرابلس', 'المركز', 10.00, 100.00, 1, true),
+('d0000001-0000-0000-0000-000000000002', 'بنغازي المركز', 'Benghazi Central', 'بنغازي', 'بنغازي', 'المركز', 15.00, 150.00, 2, true),
+('d0000001-0000-0000-0000-000000000003', 'مصراتة المركز', 'Misrata Central', 'مصراتة', 'مصراتة', 'المركز', 12.00, 120.00, 2, true),
+('d0000001-0000-0000-0000-000000000004', 'زليتن المركز', 'Zliten Central', 'زليتن', 'مرزق', 'المركز', 12.00, 120.00, 2, true),
+('d0000001-0000-0000-0000-000000000005', 'الخمس المركز', 'Khoms Central', 'الخمس', 'مرزق', 'المركز', 13.00, 130.00, 3, true),
+('d0000001-0000-0000-0000-000000000006', 'سبها المركز', 'Sebha Central', 'سبها', 'سبها', 'المركز', 25.00, 200.00, 4, true),
+('d0000001-0000-0000-0000-000000000007', 'درنة المركز', 'Derna Central', 'درنة', 'درنة', 'المركز', 20.00, 180.00, 3, true),
+('d0000001-0000-0000-0000-000000000008', 'طبرق المركز', 'Tobruk Central', 'طبرق', 'طبرق', 'المركز', 22.00, 190.00, 4, true);
 
 
 -- ============================================================================
@@ -535,7 +535,7 @@ INSERT INTO "DeliveryZone" ("id", "nameAr", "nameEn", "city", "region", "area", 
 -- ============================================================================
 
 INSERT INTO "ShippingCompany" ("id", "nameAr", "nameEn", "slug", "logo", "phone", "email", "website", "descriptionAr", "descriptionEn", "apiEndpoint", "apiKey", "apiSecret", "trackingUrl", "isActive", "isDefault", "sortOrder", "baseFee", "freeAbove", "weightLimit", "codSupported", "codFee", "coverageType", "totalDeliveries", "successRate", "avgDeliveryDays") VALUES
-('sc000001-0000-0000-0000-000000000001',
+('c0000001-0000-0000-0000-000000000001',
  'البريد الليبي', 'Libya Post', 'libya-post',
  '/logo-circle.png', '+218213333333', 'info@libyapost.ly', 'https://libyapost.ly',
  'البريد الليبي هو الشركة الرسمية للبريد والشحن في ليبيا. تغطي جميع المدن والمناطق الليبية بخبرة تمتد لأكثر من 50 عاماً.',
@@ -543,7 +543,7 @@ INSERT INTO "ShippingCompany" ("id", "nameAr", "nameEn", "slug", "logo", "phone"
  NULL, NULL, NULL, 'https://libyapost.ly/track/{trackingNumber}',
  true, true, 1, 5.00, 100.00, 30.00, true, 1.00, 'all', 15000, 92.50, 3),
 
-('sc000001-0000-0000-0000-000000000002',
+('c0000001-0000-0000-0000-000000000002',
  'توفيق للشحن', 'Tawfik Shipping', 'tawfik-shipping',
  '/logo-circle.png', '+218912345678', 'info@tawfikshipping.ly', 'https://tawfikshipping.ly',
  'شركة توفيق للشحن من أبرز شركات الشحن الخاصة في ليبيا. تتميز بالسرعة والموثوقية وتغطي المدن الرئيسية.',
@@ -551,7 +551,7 @@ INSERT INTO "ShippingCompany" ("id", "nameAr", "nameEn", "slug", "logo", "phone"
  NULL, NULL, NULL, 'https://tawfikshipping.ly/track/{trackingNumber}',
  true, false, 2, 8.00, 120.00, 25.00, true, 1.50, 'regional', 8500, 95.00, 2),
 
-('sc000001-0000-0000-0000-000000000003',
+('c0000001-0000-0000-0000-000000000003',
  'النور السريع', 'Alnour Express', 'alnour-express',
  '/logo-circle.png', '+218923456789', 'info@alnourexp.ly', 'https://alnourexp.ly',
  'شركة النور السريع للتوصيل السريع في ليبيا. تقدم خدمة توصيل سريعة خلال 24-48 ساعة في المدن الكبرى.',
@@ -565,21 +565,21 @@ INSERT INTO "ShippingCompany" ("id", "nameAr", "nameEn", "slug", "logo", "phone"
 -- ============================================================================
 
 INSERT INTO "ShippingCarrier" ("id", "nameAr", "nameEn", "code", "type", "phone", "email", "website", "logo", "apiEndpoint", "apiKey", "apiSecret", "webhookUrl", "trackingUrl", "coverageAreas", "maxWeight", "pricePerKg", "basePrice", "codFee", "codFixedFee", "estimatedDays", "isActive", "isIntegrated", "integrationType", "rating", "totalShipments", "successRate", "avgDeliveryDays", "notes") VALUES
-('src00001-0000-0000-0000-000000000001',
+('cc000001-0000-0000-0000-000000000001',
  'البريد الليبي', 'Libya Post', 'libya_post', 'national',
  '+218213333333', 'info@libyapost.ly', 'https://libyapost.ly', '/logo-circle.png',
  NULL, NULL, NULL, NULL, 'https://libyapost.ly/track/{trackingNumber}',
  '["طرابلس", "بنغازي", "مصراتة", "زليتن", "الخمس", "سبها", "درنة", "طبرق", "سرت", "اجدابيا", "الزاوية", "زوارة", "ترهونة", "بني وليد", "الكفرة"]'::jsonb,
  30.00, 1.50, 5.00, 0.00, 0.00, 3, true, false, 'manual', 4.20, 15000, 92.50, 3.50, 'الشركة الرسمية - تغطي جميع المدن الليبية'),
 
-('src00001-0000-0000-0000-000000000002',
+('cc000001-0000-0000-0000-000000000002',
  'توفيق للشحن', 'Tawfik Shipping', 'tawfik', 'national',
  '+218912345678', 'info@tawfikshipping.ly', 'https://tawfikshipping.ly', '/logo-circle.png',
  NULL, NULL, NULL, NULL, 'https://tawfikshipping.ly/track/{trackingNumber}',
  '["طرابلس", "بنغازي", "مصراتة", "زليتن", "الخمس", "سرت"]'::jsonb,
  25.00, 2.00, 8.00, 1.50, 5.00, 2, true, false, 'manual', 4.50, 8500, 95.00, 2.50, 'شركة خاصة - تغطي المدن الرئيسية'),
 
-('src00001-0000-0000-0000-000000000003',
+('cc000001-0000-0000-0000-000000000003',
  'النور السريع', 'Alnour Express', 'alnour', 'local',
  '+218923456789', 'info@alnourexp.ly', 'https://alnourexp.ly', '/logo-circle.png',
  NULL, NULL, NULL, NULL, 'https://alnourexp.ly/track/{trackingNumber}',
@@ -593,21 +593,21 @@ INSERT INTO "ShippingCarrier" ("id", "nameAr", "nameEn", "code", "type", "phone"
 
 INSERT INTO "ShippingCoverageZone" ("id", "companyId", "regionId", "regionNameAr", "cityName", "areaName", "fee", "freeAbove", "estimatedDays", "isActive") VALUES
 -- البريد الليبي
-('scz00001-0000-0000-0000-000000000001', 'sc000001-0000-0000-0000-000000000001', 'western', 'غرب ليبيا', 'طرابلس', 'المركز', 10.00, 100.00, 1, true),
-('scz00001-0000-0000-0000-000000000002', 'sc000001-0000-0000-0000-000000000001', 'eastern', 'شرق ليبيا', 'بنغازي', 'المركز', 15.00, 150.00, 2, true),
-('scz00001-0000-0000-0000-000000000003', 'sc000001-0000-0000-0000-000000000001', 'western', 'غرب ليبيا', 'مصراتة', 'المركز', 12.00, 120.00, 2, true),
-('scz00001-0000-0000-0000-000000000004', 'sc000001-0000-0000-0000-000000000001', 'southern', 'جنوب ليبيا', 'سبها', 'المركز', 25.00, 200.00, 4, true),
-('scz00001-0000-0000-0000-000000000005', 'sc000001-0000-0000-0000-000000000001', 'eastern', 'شرق ليبيا', 'طبرق', 'المركز', 22.00, 190.00, 4, true),
+('cb000001-0000-0000-0000-000000000001', 'c0000001-0000-0000-0000-000000000001', 'western', 'غرب ليبيا', 'طرابلس', 'المركز', 10.00, 100.00, 1, true),
+('cb000001-0000-0000-0000-000000000002', 'c0000001-0000-0000-0000-000000000001', 'eastern', 'شرق ليبيا', 'بنغازي', 'المركز', 15.00, 150.00, 2, true),
+('cb000001-0000-0000-0000-000000000003', 'c0000001-0000-0000-0000-000000000001', 'western', 'غرب ليبيا', 'مصراتة', 'المركز', 12.00, 120.00, 2, true),
+('cb000001-0000-0000-0000-000000000004', 'c0000001-0000-0000-0000-000000000001', 'southern', 'جنوب ليبيا', 'سبها', 'المركز', 25.00, 200.00, 4, true),
+('cb000001-0000-0000-0000-000000000005', 'c0000001-0000-0000-0000-000000000001', 'eastern', 'شرق ليبيا', 'طبرق', 'المركز', 22.00, 190.00, 4, true),
 
 -- توفيق للشحن
-('scz00001-0000-0000-0000-000000000006', 'sc000001-0000-0000-0000-000000000002', 'western', 'غرب ليبيا', 'طرابلس', 'المركز', 8.00, 120.00, 1, true),
-('scz00001-0000-0000-0000-000000000007', 'sc000001-0000-0000-0000-000000000002', 'eastern', 'شرق ليبيا', 'بنغازي', 'المركز', 12.00, 150.00, 2, true),
-('scz00001-0000-0000-0000-000000000008', 'sc000001-0000-0000-0000-000000000002', 'western', 'غرب ليبيا', 'مصراتة', 'المركز', 10.00, 130.00, 2, true),
+('cb000001-0000-0000-0000-000000000006', 'c0000001-0000-0000-0000-000000000002', 'western', 'غرب ليبيا', 'طرابلس', 'المركز', 8.00, 120.00, 1, true),
+('cb000001-0000-0000-0000-000000000007', 'c0000001-0000-0000-0000-000000000002', 'eastern', 'شرق ليبيا', 'بنغازي', 'المركز', 12.00, 150.00, 2, true),
+('cb000001-0000-0000-0000-000000000008', 'c0000001-0000-0000-0000-000000000002', 'western', 'غرب ليبيا', 'مصراتة', 'المركز', 10.00, 130.00, 2, true),
 
 -- النور السريع
-('scz00001-0000-0000-0000-000000000009', 'sc000001-0000-0000-0000-000000000003', 'western', 'غرب ليبيا', 'طرابلس', 'المركز', 10.00, 150.00, 1, true),
-('scz00001-0000-0000-0000-000000000010', 'sc000001-0000-0000-0000-000000000003', 'eastern', 'شرق ليبيا', 'بنغازي', 'المركز', 18.00, 200.00, 2, true),
-('scz00001-0000-0000-0000-000000000011', 'sc000001-0000-0000-0000-000000000003', 'western', 'غرب ليبيا', 'مصراتة', 'المركز', 12.00, 160.00, 1, true);
+('cb000001-0000-0000-0000-000000000009', 'c0000001-0000-0000-0000-000000000003', 'western', 'غرب ليبيا', 'طرابلس', 'المركز', 10.00, 150.00, 1, true),
+('cb000001-0000-0000-0000-000000000010', 'c0000001-0000-0000-0000-000000000003', 'eastern', 'شرق ليبيا', 'بنغازي', 'المركز', 18.00, 200.00, 2, true),
+('cb000001-0000-0000-0000-000000000011', 'c0000001-0000-0000-0000-000000000003', 'western', 'غرب ليبيا', 'مصراتة', 'المركز', 12.00, 160.00, 1, true);
 
 
 -- ============================================================================
@@ -615,19 +615,19 @@ INSERT INTO "ShippingCoverageZone" ("id", "companyId", "regionId", "regionNameAr
 -- ============================================================================
 
 INSERT INTO "Coupon" ("id", "code", "descriptionAr", "descriptionEn", "type", "value", "minOrder", "maxDiscount", "usageLimit", "usageCount", "perUserLimit", "startsAt", "expiresAt", "isActive") VALUES
-('cpn00001-0000-0000-0000-000000000001',
+('ca000001-0000-0000-0000-000000000001',
  'WELCOME10',
  'خصم ترحيبي 10% للمستخدمين الجدد', '10% welcome discount for new users',
  'percentage', 10.00, 0, 500.00, 1000, 0, 1,
  '2024-01-01T00:00:00Z', '2025-12-31T23:59:59Z', true),
 
-('cpn00001-0000-0000-0000-000000000002',
+('ca000001-0000-0000-0000-000000000002',
  'SUMMER2024',
  'خصم صيفي 15% على جميع المنتجات', '15% summer discount on all products',
  'percentage', 15.00, 200.00, 800.00, 500, 0, 2,
  '2024-06-01T00:00:00Z', '2025-09-30T23:59:59Z', true),
 
-('cpn00001-0000-0000-0000-000000000003',
+('ca000001-0000-0000-0000-000000000003',
  'FREESHIP',
  'شحن مجاني على الطلبات فوق 50 دينار', 'Free shipping on orders above 50 LYD',
  'fixed', 15.00, 50.00, 15.00, 2000, 0, 3,
@@ -687,7 +687,7 @@ INSERT INTO "StoreSetting" ("key", "value") VALUES
 -- هذا حساب مدير تجريبي فقط
 
 INSERT INTO "User" ("id", "phone", "name", "email", "role", "language", "isActive") VALUES
-('usr00001-0000-0000-0000-000000000001', '+218910000001', 'مدير النظام', 'admin@citypulse.ly', 'admin', 'ar', true);
+('d1000001-0000-0000-0000-000000000001', '+218910000001', 'مدير النظام', 'admin@citypulse.ly', 'admin', 'ar', true);
 
 
 -- ============================================================================

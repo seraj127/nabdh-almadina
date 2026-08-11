@@ -12,9 +12,6 @@ const nextConfig: NextConfig = {
     typescript: { ignoreBuildErrors: true },
     images: { unoptimized: true },
   } : {}),
-  turbopack: {
-    root: "/home/z/my-project",
-  },
   allowedDevOrigins: [
     'preview-chat-eab2da02-1033-444d-941f-34f38f266f82.space-z.ai',
     '.space-z.ai',

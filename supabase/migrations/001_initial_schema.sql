@@ -164,7 +164,7 @@ COMMENT ON TABLE "Category" IS 'جدول الأقسام - تصنيفات الم�
 CREATE TABLE "Product" (
     "id"            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "categoryId"    UUID NOT NULL REFERENCES "Category"("id") ON DELETE RESTRICT,
-    "vendorId"      UUID REFERENCES "Vendor"("id") ON DELETE SET NULL,
+    "vendorId"      UUID,
     "nameAr"        TEXT NOT NULL,
     "nameEn"        TEXT NOT NULL,
     "descriptionAr" TEXT,
@@ -262,7 +262,7 @@ CREATE TABLE "Order" (
     "updatedAt"         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     "addressId"         UUID UNIQUE REFERENCES "Address"("id") ON DELETE SET NULL,
-    "shippingCompanyId" UUID REFERENCES "ShippingCompany"("id") ON DELETE SET NULL,
+    "shippingCompanyId" UUID,
 
     CONSTRAINT "Order_orderNumber_key" UNIQUE ("orderNumber")
 );
@@ -1623,3 +1623,7 @@ CREATE POLICY "Admins can delete newsletter subscribers"
 -- تم إنشاء جميع الجداول والفهارس والقيود وسياسات الأمان
 -- نبض المدينة - City Pulse
 -- ============================================================================
+
+-- إضافة القيود المرجعية بعد إنشاء جميع الجداول
+ALTER TABLE "Product" ADD CONSTRAINT "Product_vendorId_fkey" FOREIGN KEY ("vendorId") REFERENCES "Vendor"("id") ON DELETE SET NULL;
+ALTER TABLE "Order" ADD CONSTRAINT "Order_shippingCompanyId_fkey" FOREIGN KEY ("shippingCompanyId") REFERENCES "ShippingCompany"("id") ON DELETE SET NULL;
