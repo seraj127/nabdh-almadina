@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const isBuild = process.env.BUILD_MOBILE === '1';
 
 const nextConfig: NextConfig = {
-  output: isBuild ? "export" : "standalone",
+  output: isBuild ? "export" : process.env.VERCEL ? undefined : "standalone",
   ...(isBuild ? { skipTrailingSlashRedirect: true } : {}),
   reactStrictMode: false,
   devIndicators: false,
