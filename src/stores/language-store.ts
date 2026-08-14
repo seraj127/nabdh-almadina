@@ -3,6 +3,10 @@ import { create } from 'zustand';
 export type Language = 'ar' | 'en';
 export type Direction = 'rtl' | 'ltr';
 
+// Timestamp of the last local (user-initiated) language change — used to
+// guard against a concurrent profile fetch reverting it before the server echo.
+let _lastLocalLanguageChangeAt = 0;
+
 const translations: Record<string, Record<Language, string>> = {
   // ─── Navigation ───
   'nav.home': { ar: 'الرئيسية', en: 'Home' },
@@ -1956,7 +1960,7 @@ const translations: Record<string, Record<Language, string>> = {
   'contact.faqTitle': { ar: 'الأسئلة الشائعة', en: 'Frequently Asked Questions' },
   'contact.faqSubtitle': { ar: 'إجابات سريعة على أكثر الأسئلة تكراراً', en: 'Quick answers to the most frequently asked questions' },
   'contact.faq1Q': { ar: 'كم تستغرق عملية التوصيل؟', en: 'How long does delivery take?' },
-  'contact.faq1A': { ar: 'التوصيل يستغرق من 1 إلى 5 أيام عمل حسب منطقتك. نقدم توصيل مجاني للطلبات فوق 100 د.ل', en: 'Delivery takes 1-5 business days depending on your area. We offer free delivery for orders above 100 LYD' },
+  'contact.faq1A': { ar: 'التوصيل يستغرق من 1 إلى 5 أيام عمل حسب منطقتك. تُحتسب رسوم التوصيل حسب المنطقة المختارة.', en: 'Delivery takes 1-5 business days depending on your area. Delivery fees are calculated based on the selected area.' },
   'contact.faq2Q': { ar: 'ما هي طرق الدفع المتاحة؟', en: 'What payment methods are available?' },
   'contact.faq2A': { ar: 'نوفر الدفع عند الاستلام والتحويل البنكي. جميع المعاملات آمنة ومشفرة', en: 'We offer Cash on Delivery and Bank Transfer. All transactions are secure and encrypted' },
   'contact.faq3Q': { ar: 'كيف يمكنني إرجاع منتج؟', en: 'How can I return a product?' },
@@ -2780,6 +2784,7 @@ interface LanguageState {
 
   // Actions
   setLanguage: (lang: Language) => void;
+  applyServerLanguage: (lang: Language) => void;
   t: (key: string, params?: Record<string, string | number>) => string;
   rehydrate: () => void;
 }
@@ -2800,6 +2805,37 @@ export const useLanguageStore = create<LanguageState>()((set, get) => ({
         set({ language: lang, direction });
         // Save to localStorage
         try { localStorage.setItem('nabdh-language-storage', JSON.stringify({ language: lang, direction })); } catch { /* ignore */ }
+        // Remember when the user changed it locally so a concurrent profile
+        // fetch doesn't briefly revert the change before the server echoes it
+        _lastLocalLanguageChangeAt = Date.now();
+
+        // Sync language to the server so it follows the user across devices
+        import('@/stores/ui-store').then(({ useUIStore }) => {
+          const cu = useUIStore.getState().currentUser;
+          if (cu?.id && !cu.id.startsWith('local-') && !cu.id.startsWith('offline-')) {
+            fetch('/api/auth/profile', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ language: lang }),
+            }).catch(() => { /* offline — local only */ });
+          }
+        }).catch(() => { /* ignore */ });
+      },
+
+      // Apply a language received from the server (no echo to the server).
+      // Called by profile fetches so a change made on another device is reflected here.
+      applyServerLanguage: (lang: Language) => {
+        if (lang !== 'ar' && lang !== 'en') return;
+        if (get().language === lang) return;
+        // Skip if the user changed the language locally just now (echo race)
+        if (Date.now() - _lastLocalLanguageChangeAt < 2000) return;
+        const direction: Direction = lang === 'ar' ? 'rtl' : 'ltr';
+        set({ language: lang, direction });
+        try { localStorage.setItem('nabdh-language-storage', JSON.stringify({ language: lang, direction })); } catch { /* ignore */ }
+        if (typeof document !== 'undefined') {
+          document.documentElement.dir = direction;
+          document.documentElement.lang = lang;
+        }
       },
 
       t: (key: string, params?: Record<string, string | number>): string => {

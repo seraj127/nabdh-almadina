@@ -15,16 +15,24 @@ import {
 // ═══════════════════════════════════════════════════════════════════════
 // FAVORITES TAB — PROFESSIONAL ADVANCED
 // ═══════════════════════════════════════════════════════════════════════
-export function FavoritesTab({ products, favorites, toggleFavorite, onSelectProduct }: { products: Product[]; favorites: string[]; toggleFavorite: (id: string) => void; onSelectProduct: (p: Product) => void }) {
+export function FavoritesTab({ favoriteProducts, toggleFavorite, onSelectProduct }: { favoriteProducts: Product[]; toggleFavorite: (id: string) => void; onSelectProduct: (p: Product) => void }) {
   const { t, language } = useLanguageStore();
   const direction = language === 'ar' ? 'rtl' : 'ltr';
   const addItem = useCartStore((s) => s.addItem);
-  // Filter favorites to only products that exist in the products array
-  const favProducts = useMemo(() => products.filter((p) => favorites.includes(p.id)), [products, favorites]);
+  // favoriteProducts is maintained by the store (server-backed with full details),
+  // so favorites from the web or from pages beyond the loaded feed still appear.
+  const favProducts = favoriteProducts;
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showRemoveConfirm, setShowRemoveConfirm] = useState<string | null>(null);
   const [sortMode, setSortMode] = useState<'default' | 'price-asc' | 'price-desc' | 'name'>('default');
+
+  // ─── Refresh favorite products whenever this tab is opened ─────────
+  // The store may not have refreshed yet (e.g. a favorite was added on the web
+  // and this tab was opened right after) — refresh to be safe.
+  useEffect(() => {
+    useMobileStore.getState().refreshFavoriteProducts().catch(() => {});
+  }, []);
 
   // ─── Scroll to top on mount ────────────────────────────────────────
   useEffect(() => {

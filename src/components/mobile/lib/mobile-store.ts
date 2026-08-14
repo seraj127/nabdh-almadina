@@ -14,6 +14,53 @@ export { normalizePhone } from '@/lib/phone-utils';
 let _refreshIntervalId: ReturnType<typeof setInterval> | null = null;
 let _visibilityListenerAdded = false;
 
+// ─── Favorites sync bookkeeping ──────────────────────────────────────
+// Same philosophy as the web favorites store: a local favorite toggle that
+// happened AFTER the last successful server sync is a pending change and makes
+// the local list authoritative; otherwise the server list wins (removals made
+// on another device are never resurrected).
+let _favLastServerSyncAt = 0;
+let _favLastEditAt = 0;
+const FAV_META_KEY = 'mobile_favorites_meta';
+
+function favMetaNow() {
+  return Date.now();
+}
+
+function saveFavMeta(lastServerSyncAt = _favLastServerSyncAt, lastEditAt = _favLastEditAt) {
+  try {
+    localStorage.setItem(FAV_META_KEY, JSON.stringify({ lastServerSyncAt, lastEditAt }));
+  } catch { /* ignore */ }
+}
+
+function loadFavMeta() {
+  try {
+    const raw = localStorage.getItem(FAV_META_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (typeof parsed?.lastServerSyncAt === 'number') _favLastServerSyncAt = parsed.lastServerSyncAt;
+    if (typeof parsed?.lastEditAt === 'number') _favLastEditAt = parsed.lastEditAt;
+  } catch { /* ignore */ }
+}
+
+function favHasPendingEdits() {
+  return _favLastEditAt > _favLastServerSyncAt;
+}
+
+/** Push the given favorites to the server as the authoritative list (full replace). */
+async function pushFavorites(ids: string[]): Promise<boolean> {
+  try {
+    const res = await fetch('/api/favorites', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productIds: ids }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 // ─── AppNotification type ─────────────────────────────────────────────
 export interface AppNotification {
   id: string;
@@ -144,7 +191,9 @@ interface MobileAppState {
 
   // Favorites
   favorites: string[];
+  favoriteProducts: Product[];
   toggleFavorite: (id: string) => void;
+  refreshFavoriteProducts: () => Promise<void>;
   cleanupOrphanedFavorites: () => void;
   syncFavoritesToServer: () => Promise<void>;
   fetchFavoritesFromServer: () => Promise<void>;
@@ -165,11 +214,13 @@ interface MobileAppState {
   deleteAddress: (id: string) => Promise<void>;
   setDefaultAddress: (id: string) => Promise<void>;
 
-  // Coupon
-  appliedCoupon: { code: string; type: string; value: number; discount: number } | null;
-  applyCoupon: (code: string, subtotal: number) => Promise<boolean>;
-  removeCoupon: () => void;
-  getCouponDiscount: (subtotal: number) => number;
+  // Orders (synced with DB)
+  orders: Order[];
+  fetchOrders: () => Promise<void>;
+
+  // Notification preferences (synced with DB via user profile)
+  notificationPrefs: { orders: boolean; offers: boolean; points: boolean; news: boolean };
+  setNotificationPrefs: (prefs: Partial<{ orders: boolean; offers: boolean; points: boolean; news: boolean }>) => void;
 
   // User profile data (from DB)
   loyaltyPoints: number;
@@ -299,18 +350,17 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
         set({ user: u, screen: 'main', loading: false, isReturningUser: data.isReturningUser || false });
         saveLocal('mobile_user', u);
         useUIStore.getState().login({ id: u.id, name: u.name, phone: u.phone, email: u.email, avatar: u.avatar, role: u.role });
-        // Fetch user profile, addresses, and delivery zones after login
+        // Fetch user profile, addresses, orders, and delivery zones after login
         get().fetchUserProfile();
         get().fetchAddresses();
+        get().fetchOrders();
         get().fetchDeliveryZones();
-        // Merge guest favorites with user account
-        get().syncFavoritesToServer();
-        get().fetchFavoritesFromServer();
-        // Sync cart with server
+        // Merge guest favorites with user account (pull + reconcile + push)
+        await get().fetchFavoritesFromServer();
+        // Sync cart with server (fetchFromServer merges guest items and pushes if needed)
         try {
           const { useCartStore } = await import('@/stores/cart-store');
-          useCartStore.getState().fetchFromServer();
-          useCartStore.getState().syncToServer();
+          await useCartStore.getState().fetchFromServer();
         } catch { /* silent */ }
         return true;
       }
@@ -406,11 +456,11 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
       user: null,
       screen: 'login',
       addresses: [],
+      orders: [],
       loyaltyPoints: 0,
       walletBalance: 0,
       loyaltyTier: 'bronze',
       isReturningUser: false,
-      appliedCoupon: null,
       selectedOrder: null,
       trackingOrderNumber: null,
       unreadNotificationCount: 0,
@@ -427,7 +477,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
 
   // Data
   products: [],
-  categories: [],
+  categories: LOCAL_CATEGORIES,
   searchQuery: '',
   setSearchQuery: (searchQuery) => set({ searchQuery }),
   productsPage: 1,
@@ -513,11 +563,19 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
       const res = await fetch('/api/categories');
       if (res.ok) {
         const data = await res.json();
-        // Preserve children arrays from API response — each parent category may include a children array
-        const categories = (data.categories || []).map((cat: Category & { children?: Subcategory[] }) => ({
+        // Use the complete local catalog so every section (pets, kids,
+        // plants, gifts, etc.) always appears even if the live database only
+        // holds the original seed categories. DB categories with matching
+        // slugs are used to enrich (children/productCount), never to inflate.
+        const dbCats: Category[] = (data.categories || []).map((cat: Category & { children?: Subcategory[] }) => ({
           ...cat,
           children: cat.children || [],
         }));
+        const dbBySlug = new Map(dbCats.map((c) => [c.slug, c]));
+        const categories = LOCAL_CATEGORIES.map((local) => {
+          const db = dbBySlug.get(local.slug);
+          return db ? { ...db, ...local, children: db.children || [] } : local;
+        });
         set({ categories });
         return;
       }
@@ -539,22 +597,36 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
 
   // Favorites
   favorites: [],
+  favoriteProducts: [],
   toggleFavorite: (productId) => {
     const user = get().user;
-    set((state) => {
-      const next = state.favorites.includes(productId)
-        ? state.favorites.filter((id) => id !== productId)
-        : [...state.favorites, productId];
-      saveLocal('mobile_favorites', next);
-      return { favorites: next };
-    });
-    // Sync to server if logged in
+    // Explicit intent (add/remove) instead of a state-agnostic toggle — see the
+    // web favorites store for why (toggle inverts the server when states drift).
+    const wasFav = get().favorites.includes(productId);
+    const next = wasFav
+      ? get().favorites.filter((id) => id !== productId)
+      : [...get().favorites, productId];
+    set({ favorites: next });
+    _favLastEditAt = favMetaNow();
+    saveLocal('mobile_favorites', next);
+    saveFavMeta();
+    // Sync to server if logged in — idempotent add (POST) or remove (DELETE)
     if (user && !user.id.startsWith('local-')) {
-      fetch('/api/favorites/toggle', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId }),
-      }).catch(() => {});
+      const req = wasFav
+        ? fetch(`/api/favorites?productId=${encodeURIComponent(productId)}`, { method: 'DELETE' })
+        : fetch('/api/favorites', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId }),
+          });
+      req
+        .then(async (res) => {
+          if (res.ok) {
+            _favLastServerSyncAt = favMetaNow();
+            saveFavMeta();
+          }
+        })
+        .catch(() => {});
     }
     // ─── Cross-store sync: update web favorites store too ───
     const updatedFavs = get().favorites;
@@ -562,14 +634,87 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
       syncMobileToFavoritesStore(updatedFavs);
       dispatchSyncEvent('nabdh:favorites-changed', updatedFavs);
     }).catch(() => {});
+    // Refresh the products shown on the favorites screen
+    get().refreshFavoriteProducts().catch(() => {});
+  },
+  /**
+   * Rebuild the products list shown on the favorites screen.
+   *
+   * The favorites screen must NOT depend on the paginated `products` feed — a
+   * favorite made on the web (or on page 2+ of the feed) would be invisible.
+   * For logged-in users we fetch full details via includeProducts (server truth,
+   * includes products outside the loaded feed); for guests we fall back to the
+   * loaded products.
+   */
+  refreshFavoriteProducts: async () => {
+    const favIds = get().favorites;
+    const favSet = new Set(favIds);
+    const buildLocal = () => {
+      const byId = new Map<string, Product>();
+      for (const p of get().products) byId.set(p.id, p);
+      set({ favoriteProducts: [...byId.values()].filter((p) => favSet.has(p.id)) });
+    };
+    // Instant local feedback (products already loaded)
+    buildLocal();
+    const user = get().user;
+    if (user && !user.id.startsWith('local-')) {
+      try {
+        const res = await fetch('/api/favorites?includeProducts=true');
+        if (res.ok) {
+          const data = await res.json();
+          const favs: Array<{ productId: string; product?: Record<string, unknown> }> = data.favorites || [];
+          const byId = new Map<string, Product>();
+          for (const f of favs) {
+            if (!f.product) continue;
+            const p = normalizeProduct(f.product);
+            byId.set(p.id, p);
+          }
+          // Keep any locally-known favorite the server response might not carry
+          for (const p of get().products) {
+            if (!byId.has(p.id)) byId.set(p.id, p);
+          }
+          set({ favoriteProducts: [...byId.values()].filter((p) => favSet.has(p.id)) });
+          return;
+        }
+      } catch {
+        // Fall through to per-id fetch below
+      }
+    }
+    // Guest / fallback: fetch details for any favorite outside the loaded feed
+    // from the public product API, so favorites made on the web still render.
+    const known = new Set(get().products.map((p) => p.id));
+    const missing = favIds.filter((id) => !known.has(id));
+    if (missing.length > 0) {
+      const fetched = await Promise.all(missing.map(async (id) => {
+        try {
+          const res = await fetch(`/api/products/${encodeURIComponent(id)}`);
+          if (!res.ok) return null;
+          const data = await res.json();
+          const p = data.product || data;
+          return p && p.id ? normalizeProduct(p) : null;
+        } catch {
+          return null;
+        }
+      }));
+      const byId = new Map<string, Product>();
+      for (const p of get().products) byId.set(p.id, p);
+      for (const p of fetched) {
+        if (p) byId.set(p.id, p);
+      }
+      set({ favoriteProducts: [...byId.values()].filter((p) => favSet.has(p.id)) });
+    }
   },
   cleanupOrphanedFavorites: () => {
-    const { favorites, products } = get();
-    if (favorites.length === 0 || products.length === 0) return;
-    const productIds = new Set(products.map((p) => p.id));
-    const validFavorites = favorites.filter((id) => productIds.has(id));
+    const { favorites, products, user } = get();
+    // Never clean server-backed favorites (they are synced from the server and
+    // may legitimately reference products outside the loaded feed).
+    if (user && !user.id.startsWith('local-')) return;
+    // Only prune ids that are NOT present in the store's loaded catalog at all.
+    // This is a display helper: the favorites screen silently skips products it
+    // cannot load, so pruning must never remove a favorite that might simply be
+    // on a later page of the paginated feed.
+    const validFavorites = favorites.filter((id) => products.some((p) => p.id === id));
     if (validFavorites.length !== favorites.length) {
-      const removed = favorites.length - validFavorites.length;
       // Cleaned up orphaned favorites silently
       saveLocal('mobile_favorites', validFavorites);
       set({ favorites: validFavorites });
@@ -716,63 +861,32 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     });
   },
 
-  // Coupon
-  appliedCoupon: null,
-  applyCoupon: async (code, subtotal) => {
-    const upperCode = code.toUpperCase();
-    const userId = get().user?.id;
-    // Try public API first
+  // ─── Orders (synced with DB) ──────────────────────────────────────
+  orders: [],
+  fetchOrders: async () => {
+    const user = get().user;
+    if (!user || user.id.startsWith('local-')) return;
     try {
-      const res = await fetch('/api/coupons/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: upperCode, subtotal, userId }),
-      });
+      const res = await fetch(`/api/orders?userId=${user.id}`);
+      if (res.status === 401) {
+        get().logout();
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
-        if (data.valid && data.coupon) {
-          set({ appliedCoupon: { code: data.coupon.code, type: data.coupon.type, value: Number(data.coupon.value), discount: Number(data.coupon.discount) || 0 } });
-          return true;
-        }
-        // Return false with error info
-        return false;
+        set({ orders: data.orders || [] });
+        saveLocal('mobile_orders', data.orders || []);
       }
     } catch {
-      console.warn('Coupon validation API failed, using offline fallback');
+      // Silent — keep whatever is in the store
     }
-    // Offline fallback: hardcoded coupons (match seed data)
-    const hardcodedCoupons: Record<string, { type: string; value: number }> = {
-      WELCOME10: { type: 'percentage', value: 10 },
-      KITCHEN25: { type: 'fixed', value: 25 },
-      SAVE15: { type: 'percentage', value: 15 },
-    };
-    const coupon = hardcodedCoupons[upperCode];
-    if (coupon) {
-      let discount = 0;
-      if (coupon.type === 'percentage') {
-        discount = Math.round(subtotal * coupon.value) / 100;
-      } else {
-        discount = Math.min(coupon.value, subtotal);
-      }
-      set({ appliedCoupon: { code: upperCode, type: coupon.type, value: coupon.value, discount } });
-      return true;
-    }
-    return false;
   },
-  removeCoupon: () => {
-    set({ appliedCoupon: null });
-  },
-  getCouponDiscount: (subtotal) => {
-    const coupon = get().appliedCoupon;
-    if (!coupon) return 0;
-    // Use pre-computed discount from API if available
-    if (coupon.discount && coupon.discount > 0) return coupon.discount;
-    // Fallback calculation
-    if (coupon.type === 'percentage') {
-      return Math.round(subtotal * coupon.value) / 100;
-    }
-    // Fixed type
-    return Math.min(coupon.value, subtotal);
+
+  // ─── Notification Preferences (synced with DB) ────────────────────
+  notificationPrefs: { orders: true, offers: true, points: true, news: false },
+  setNotificationPrefs: (prefs) => {
+    set({ notificationPrefs: { ...get().notificationPrefs, ...prefs } });
+    try { localStorage.setItem('nabdh-notif-prefs', JSON.stringify(get().notificationPrefs)); } catch { /* ignore */ }
   },
 
   // ─── User Profile Data (from DB) ───────────────────────────────────
@@ -784,6 +898,11 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     if (!user || user.id.startsWith('local-')) return;
     try {
       const res = await fetch(`/api/auth/profile?userId=${user.id}`);
+      if (res.status === 401) {
+        // Session revoked/expired (e.g. logged out from another device) → full logout
+        get().logout();
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         if (data.user) {
@@ -792,6 +911,23 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
             loyaltyTier: data.user.loyaltyTier || 'bronze',
             walletBalance: data.user.walletBalance || 0,
           });
+          // Apply server-side language (changed on another device)
+          if (data.user.language === 'ar' || data.user.language === 'en') {
+            import('@/stores/language-store').then(({ useLanguageStore }) => {
+              useLanguageStore.getState().applyServerLanguage(data.user.language);
+            }).catch(() => {});
+          }
+          // Apply notification preferences from the server
+          const notif = data.user.preferences?.notifications;
+          if (notif && typeof notif === 'object') {
+            const next = { ...get().notificationPrefs };
+            if (typeof notif.orders === 'boolean') next.orders = notif.orders;
+            if (typeof notif.offers === 'boolean') next.offers = notif.offers;
+            if (typeof notif.points === 'boolean') next.points = notif.points;
+            if (typeof notif.news === 'boolean') next.news = notif.news;
+            set({ notificationPrefs: next });
+            try { localStorage.setItem('nabdh-notif-prefs', JSON.stringify(next)); } catch { /* ignore */ }
+          }
           // Also update user data if name/email/avatar changed
           if (data.user.name !== user.name || data.user.email !== user.email || data.user.avatar !== user.avatar) {
             const updatedUser: MobileUser = {
@@ -928,13 +1064,10 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     const favorites = get().favorites;
     if (!user || user.id.startsWith('local-') || favorites.length === 0) return;
     try {
-      // For each favorite, ensure it exists on server
-      for (const productId of favorites) {
-        await fetch('/api/favorites', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productId }),
-        });
+      const ok = await pushFavorites(favorites);
+      if (ok) {
+        _favLastServerSyncAt = favMetaNow();
+        saveFavMeta();
       }
     } catch { /* silent */ }
   },
@@ -947,16 +1080,47 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
       const res = await fetch('/api/favorites');
       if (res.ok) {
         const data = await res.json();
-        const serverFavorites = (data.favorites || []).map((f: any) => f.productId);
-        // Merge with local favorites (union)
+        const serverFavorites = Array.from(new Set(
+          (data.favorites || []).map((f: { productId: string }) => f.productId)
+        ));
         const localFavorites = get().favorites;
-        const merged = [...new Set([...localFavorites, ...serverFavorites])];
-        set({ favorites: merged });
-        saveLocal('mobile_favorites', merged);
+
+        let finalIds: string[];
+        let needsPush = false;
+
+        if (_favLastServerSyncAt === 0 && localFavorites.length > 0) {
+          // Never synced on this device → guest favorites → merge with server (union)
+          finalIds = Array.from(new Set([...localFavorites, ...serverFavorites]));
+          needsPush = true;
+        } else if (favHasPendingEdits()) {
+          // Pending local toggles → local is authoritative
+          finalIds = localFavorites;
+          needsPush = true;
+        } else {
+          // No pending edits → server is the cross-device truth (removals propagate)
+          finalIds = serverFavorites;
+        }
+
+        set({ favorites: finalIds });
+        saveLocal('mobile_favorites', finalIds);
+
+        if (needsPush) {
+          const ok = await pushFavorites(finalIds);
+          if (ok) {
+            _favLastServerSyncAt = favMetaNow();
+            saveFavMeta();
+          }
+        } else {
+          _favLastServerSyncAt = favMetaNow();
+          saveFavMeta();
+        }
+
         // ─── Cross-store sync: update web favorites store too ───
         import('@/lib/sync-bridge').then(({ syncMobileToFavoritesStore }) => {
-          syncMobileToFavoritesStore(merged);
+          syncMobileToFavoritesStore(finalIds);
         }).catch(() => {});
+        // Rebuild the favorites-screen products with full details from the server
+        get().refreshFavoriteProducts().catch(() => {});
       }
     } catch { /* silent */ }
   },
@@ -971,6 +1135,7 @@ export function initMobileStore() {
   }
   const _onboardingDone = loadLocal<boolean>('mobile_onboarding_done'); // kept for localStorage compat
   const savedFavs = loadLocal<string[]>('mobile_favorites');
+  loadFavMeta();
   // Dark mode is always on — no longer reading from localStorage
   const savedAddresses = loadLocal<Address[]>('mobile_addresses');
 
@@ -984,21 +1149,19 @@ export function initMobileStore() {
     useMobileStore.setState(updates);
   }
 
-  // ─── Initial bidirectional favorites sync ───
-  // Merge web store favorites with mobile store favorites on startup
-  import('@/lib/sync-bridge').then(({ syncFavoritesBidirectional, setupSyncListeners }) => {
-    // Setup cross-component event listeners
+  // ─── Setup cross-component event listeners ───
+  // Server sync (fetchFavoritesFromServer) handles reconciliation now; the old
+  // bidirectional union-merge was removed because it resurrected items that
+  // were unfavorited on another device.
+  import('@/lib/sync-bridge').then(({ setupSyncListeners }) => {
     setupSyncListeners();
-    // Do an initial bidirectional merge of favorites
-    if (savedFavs && savedFavs.length > 0) {
-      syncFavoritesBidirectional();
-    }
   }).catch(() => {});
 
   // Fetch initial data
   useMobileStore.getState().fetchProducts().then(() => {
-    // Clean up orphaned favorites after products are loaded
-    useMobileStore.getState().cleanupOrphanedFavorites();
+    // Build the favorites-screen products (guests fetch missing favorites by id
+    // from the public API, so web-added favorites outside the feed still render)
+    useMobileStore.getState().refreshFavoriteProducts().catch(() => {});
   });
   useMobileStore.getState().fetchCategories();
   useMobileStore.getState().fetchDeliveryZones();
@@ -1007,6 +1170,7 @@ export function initMobileStore() {
   if (savedUser && !savedUser.id.startsWith('local-')) {
     useMobileStore.getState().fetchUserProfile();
     useMobileStore.getState().fetchAddresses();
+    useMobileStore.getState().fetchOrders();
     useMobileStore.getState().fetchFavoritesFromServer();
     // Sync cart with server (dynamic import to avoid circular dep)
     import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
@@ -1026,8 +1190,12 @@ export function initMobileStore() {
       const user = useMobileStore.getState().user;
       if (user && !user.id.startsWith('local-')) {
         useMobileStore.getState().fetchUserProfile();
+        useMobileStore.getState().fetchAddresses();
+        useMobileStore.getState().fetchOrders();
         // Sync favorites from server periodically
         useMobileStore.getState().fetchFavoritesFromServer();
+        // Keep cart in sync with the web store
+        import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
       }
     }, 5 * 60 * 1000);
 
@@ -1047,6 +1215,8 @@ export function initMobileStore() {
           const user = useMobileStore.getState().user;
           if (user && !user.id.startsWith('local-')) {
             useMobileStore.getState().fetchUserProfile();
+            useMobileStore.getState().fetchAddresses();
+            useMobileStore.getState().fetchOrders();
             useMobileStore.getState().fetchFavoritesFromServer();
             // Also sync cart from server
             import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
@@ -1056,7 +1226,11 @@ export function initMobileStore() {
             const u = useMobileStore.getState().user;
             if (u && !u.id.startsWith('local-')) {
               useMobileStore.getState().fetchUserProfile();
+              useMobileStore.getState().fetchAddresses();
+              useMobileStore.getState().fetchOrders();
               useMobileStore.getState().fetchFavoritesFromServer();
+              // Keep cart in sync with the web store
+              import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
             }
           }, 5 * 60 * 1000);
         }

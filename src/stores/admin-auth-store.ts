@@ -78,8 +78,8 @@ export const useAdminAuthStore = create<AdminAuthState>()(
 
       logout: async () => {
         try {
-          // Call the logout API to revoke the session server-side
-          await fetch('/api/auth/logout', {
+          // Call the logout API to revoke only the current session server-side
+          await fetch('/api/auth/logout?single=true', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
           });

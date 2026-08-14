@@ -158,13 +158,7 @@ export function CheckoutDialog({ open, onOpenChange }: CheckoutDialogProps) {
   const [isLoadingWallet, setIsLoadingWallet] = useState(false);
 
   const subtotal = getSubtotal();
-  const deliveryFee = selectedZone
-    ? subtotal >= 100
-      ? 0
-      : selectedZone.fee
-    : subtotal >= 100
-      ? 0
-      : 10;
+  const deliveryFee = selectedZone ? selectedZone.fee : 10;
   // IMPORTANT: coupon discount is dynamically recalculated from current subtotal
   const couponDiscount = useMemo(() => {
     if (!appliedCoupon || subtotal <= 0) return 0;

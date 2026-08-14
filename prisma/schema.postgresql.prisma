@@ -23,6 +23,7 @@ model User {
   loyaltyPoints Int      @default(0)
   walletBalance Decimal  @default(0)
   language      String   @default("ar")       // ar, en
+  preferences   Json?    // syncable user preferences (notifications, etc.)
   isActive      Boolean  @default(true)
   lastLoginAt   DateTime?  // آخر تسجيل دخول
   loginCount    Int      @default(0) // عدد مرات تسجيل الدخول
@@ -53,6 +54,7 @@ model UserSession {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   lastSeenAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -360,7 +362,7 @@ model AuditLog {
   action    String
   entity    String
   entityId  String?
-  details   String?
+  details   Json?
   ip        String?
   createdAt DateTime @default(now())
 

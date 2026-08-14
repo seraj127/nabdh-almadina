@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
             price: true,
             mainImage: true,
             stock: true,
+            reservedStock: true,
           },
         },
       },
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
       quantity: item.quantity,
       image: item.product.mainImage || '',
       stock: item.product.stock,
+      available: Math.max(0, item.product.stock - (item.product.reservedStock || 0)),
     }));
 
     return NextResponse.json({ items });

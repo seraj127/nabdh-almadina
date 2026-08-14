@@ -362,62 +362,45 @@ export async function POST(request: NextRequest) {
       })
       if (coupon && coupon.isActive) {
         const now = new Date()
-        if (now >= coupon.startsAt && now <= coupon.expiresAt) {
-          if (!coupon.usageLimit || coupon.usageCount < coupon.usageLimit) {
-            // Check per-user limit
-            if (coupon.perUserLimit && userId) {
-              const userUsageCount = await db.order.count({
-                where: {
-                  userId,
-                  couponId: coupon.id,
-                },
-              })
-              if (userUsageCount >= coupon.perUserLimit) {
-                // User exceeded their per-user limit — skip coupon silently
-                console.warn(`[COUPON] User ${userId} exceeded perUserLimit (${coupon.perUserLimit}) for coupon ${coupon.code}`)
-              } else {
-                let couponDiscount = 0
-                if (coupon.type === 'percentage') {
-                  couponDiscount = (subtotal * Number(coupon.value)) / 100
-                  if (coupon.maxDiscount && couponDiscount > Number(coupon.maxDiscount)) {
-                    couponDiscount = Number(coupon.maxDiscount)
-                  }
-                } else {
-                  // Fixed discount - clamp to subtotal so discount doesn't exceed order value
-                  couponDiscount = Math.min(Number(coupon.value), subtotal)
-                }
-                // Check minimum order
-                if (!coupon.minOrder || subtotal >= Number(coupon.minOrder)) {
-                  discount = couponDiscount
-                  appliedCouponId = coupon.id
-                  // Increment coupon usage
-                  await db.coupon.update({
-                    where: { id: coupon.id },
-                    data: { usageCount: { increment: 1 } },
-                  })
-                }
+        const started = !coupon.startsAt || now >= coupon.startsAt
+        const notExpired = !coupon.expiresAt || now <= coupon.expiresAt
+        const underLimit = !coupon.usageLimit || coupon.usageCount < coupon.usageLimit
+        if (started && notExpired && underLimit) {
+          // Check per-user limit
+          let userAllowed = true
+          if (coupon.perUserLimit && userId) {
+            const userUsageCount = await db.order.count({
+              where: {
+                userId,
+                couponId: coupon.id,
+              },
+            })
+            if (userUsageCount >= coupon.perUserLimit) {
+              // User exceeded their per-user limit — skip coupon silently
+              userAllowed = false
+              console.warn(`[COUPON] User ${userId} exceeded perUserLimit (${coupon.perUserLimit}) for coupon ${coupon.code}`)
+            }
+          }
+          if (userAllowed) {
+            let couponDiscount = 0
+            if (coupon.type === 'percentage') {
+              couponDiscount = (subtotal * Number(coupon.value)) / 100
+              if (coupon.maxDiscount && couponDiscount > Number(coupon.maxDiscount)) {
+                couponDiscount = Number(coupon.maxDiscount)
               }
             } else {
-              let couponDiscount = 0
-              if (coupon.type === 'percentage') {
-                couponDiscount = (subtotal * Number(coupon.value)) / 100
-                if (coupon.maxDiscount && couponDiscount > Number(coupon.maxDiscount)) {
-                  couponDiscount = Number(coupon.maxDiscount)
-                }
-              } else {
-                // Fixed discount - clamp to subtotal so discount doesn't exceed order value
-                couponDiscount = Math.min(Number(coupon.value), subtotal)
-              }
-              // Check minimum order
-              if (!coupon.minOrder || subtotal >= Number(coupon.minOrder)) {
-                discount = couponDiscount
-                appliedCouponId = coupon.id
-                // Increment coupon usage
-                await db.coupon.update({
-                  where: { id: coupon.id },
-                  data: { usageCount: { increment: 1 } },
-                })
-              }
+              // Fixed discount - clamp to subtotal so discount doesn't exceed order value
+              couponDiscount = Math.min(Number(coupon.value), subtotal)
+            }
+            // Check minimum order
+            if (!coupon.minOrder || subtotal >= Number(coupon.minOrder)) {
+              discount = Math.round(couponDiscount * 100) / 100
+              appliedCouponId = coupon.id
+              // Increment coupon usage
+              await db.coupon.update({
+                where: { id: coupon.id },
+                data: { usageCount: { increment: 1 } },
+              })
             }
           }
         }
@@ -447,46 +430,68 @@ export async function POST(request: NextRequest) {
       savedAddressId = newAddr.id
     }
 
-    // Create order with items and initial status log
-    const order = await db.order.create({
-      data: {
-        userId,
-        orderNumber,
-        status: 'pending',
-        paymentMethod: paymentMethod || 'cod',
-        paymentStatus: 'pending',
-        subtotal,
-        deliveryFee,
-        discount,
-        total,
-        currency: 'LYD',
-        notes: notes || null,
-        couponId: appliedCouponId,
-        addressId: savedAddressId,
-        items: {
-          create: orderItemsData.map((item) => ({
-            productId: item.productId,
-            nameAr: item.nameAr,
-            nameEn: item.nameEn,
-            price: item.price,
-            quantity: item.quantity,
-            total: item.total,
-            image: item.image,
-          })),
-        },
-        statusLog: {
-          create: {
-            status: 'pending',
-            note: 'Order created',
+    // Create order with items and initial status log, reserving stock atomically
+    const order = await db.$transaction(async (tx) => {
+      const createdOrder = await tx.order.create({
+        data: {
+          userId,
+          orderNumber,
+          status: 'pending',
+          paymentMethod: paymentMethod || 'cod',
+          paymentStatus: 'pending',
+          subtotal,
+          deliveryFee,
+          discount,
+          total,
+          currency: 'LYD',
+          notes: notes || null,
+          couponId: appliedCouponId,
+          addressId: savedAddressId,
+          items: {
+            create: orderItemsData.map((item) => ({
+              productId: item.productId,
+              nameAr: item.nameAr,
+              nameEn: item.nameEn,
+              price: item.price,
+              quantity: item.quantity,
+              total: item.total,
+              image: item.image,
+            })),
+          },
+          statusLog: {
+            create: {
+              status: 'pending',
+              note: 'Order created',
+            },
           },
         },
-      },
-      include: {
-        items: true,
-        statusLog: {
-          orderBy: { createdAt: 'asc' },
+        include: {
+          items: true,
+          statusLog: {
+            orderBy: { createdAt: 'asc' },
+          },
         },
-      },
+      })
+
+      // Reserve stock for each order item (atomic with order creation)
+      for (const item of orderItemsData) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { reservedStock: { increment: item.quantity } },
+        })
+        await tx.inventoryMovement.create({
+          data: {
+            productId: item.productId,
+            type: 'reservation',
+            quantity: item.quantity,
+            reference: createdOrder.orderNumber,
+            note: 'Stock reserved for order',
+            createdBy: userId,
+          },
+        })
+      }
+
+      return createdOrder
     })
 
     // ─── Create notification for the user ──────────────────────────────

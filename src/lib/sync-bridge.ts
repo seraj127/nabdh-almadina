@@ -58,6 +58,9 @@ export async function syncFavoritesToMobileStore(favoriteIds: string[]) {
     try {
       localStorage.setItem('mobile_favorites', JSON.stringify(favoriteIds));
     } catch { /* ignore */ }
+    // Rebuild the favorites-screen products (fetches full details from the server
+    // so a favorite made on the web appears even if it's outside the mobile feed)
+    useMobileStore.getState().refreshFavoriteProducts().catch(() => {});
   } catch {
     // Silent fail — might be circular import
   }

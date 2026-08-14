@@ -42,12 +42,21 @@ export function CartSheet() {
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const clearCart = useCartStore((s) => s.clearCart);
+  const fetchFromServer = useCartStore((s) => s.fetchFromServer);
   const getSubtotal = useCartStore((s) => s.getSubtotal);
   const getTotalItems = useCartStore((s) => s.getTotalItems);
   const isLoggedIn = useUIStore((s) => s.isLoggedIn);
   const currentUser = useUIStore((s) => s.currentUser);
 
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+
+  // Pull the cart from the server each time the sheet opens — keeps the web
+  // cart in sync with changes made in the mobile app (and vice versa).
+  useEffect(() => {
+    if (isCartOpen && currentUser?.id && !currentUser.id.startsWith('local-')) {
+      fetchFromServer().catch(() => {});
+    }
+  }, [isCartOpen, currentUser?.id, fetchFromServer]);
 
   // Fetch user's default address for delivery fee display
   const [defaultAddress, setDefaultAddress] = useState<{ city: string; area?: string } | null>(null);

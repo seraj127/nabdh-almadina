@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
         loyaltyPoints: true,
         walletBalance: true,
         language: true,
+        preferences: true,
         isActive: true,
         lastLoginAt: true,
         loginCount: true,
@@ -101,13 +102,14 @@ export async function PATCH(request: NextRequest) {
 
     const userId = authResult.userId;
     const body = await request.json();
-    const { name, email, language, avatar } = body;
+    const { name, email, language, avatar, preferences } = body;
 
     const updateData: Record<string, unknown> = {};
     if (name !== undefined) updateData.name = name;
     if (email !== undefined) updateData.email = email;
     if (language !== undefined) updateData.language = language;
     if (avatar !== undefined) updateData.avatar = avatar;
+    if (preferences !== undefined) updateData.preferences = preferences;
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
@@ -127,6 +129,7 @@ export async function PATCH(request: NextRequest) {
         loyaltyPoints: true,
         walletBalance: true,
         language: true,
+        preferences: true,
       },
     });
 

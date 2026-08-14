@@ -90,7 +90,7 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
 
     if (session.expiresAt < new Date()) {
       // Mark expired session
-      await db.userSession.update({
+      await db.userSession.updateMany({
         where: { token: payload.jti },
         data: { isActive: false },
       }).catch(() => {});
@@ -102,7 +102,7 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
     const lastUpdate = _lastSeenCache.get(payload.jti) || 0;
     if (now - lastUpdate > LAST_SEEN_THROTTLE_MS) {
       _lastSeenCache.set(payload.jti, now);
-      db.userSession.update({
+      db.userSession.updateMany({
         where: { token: payload.jti },
         data: { lastSeenAt: new Date() },
       }).catch(() => {}); // Fire-and-forget, non-critical
@@ -120,12 +120,12 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
  */
 export async function revokeSession(jti: string): Promise<void> {
   try {
-    await db.userSession.update({
+    await db.userSession.updateMany({
       where: { token: jti },
       data: { isActive: false },
     });
-  } catch {
-    // Session may not exist in DB
+  } catch (error) {
+    console.error('revokeSession failed for jti ' + jti + ':', error);
   }
 }
 
@@ -163,7 +163,8 @@ export async function revokeAllUserSessions(userId: string): Promise<number> {
       data: { isActive: false },
     });
     return result.count;
-  } catch {
+  } catch (error) {
+    console.error('revokeAllUserSessions failed for ' + userId + ':', error);
     return 0;
   }
 }

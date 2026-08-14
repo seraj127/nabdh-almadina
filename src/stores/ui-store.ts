@@ -343,6 +343,23 @@ export const useUIStore = create<UIState>()((set) => ({
                   const update = { currentUser: updatedUser };
                   set(update);
                   saveUIState({ ...useUIStore.getState(), ...update } as Partial<UIState>);
+                  // Apply server-side language + notification preferences
+                  if (data.user.language === 'ar' || data.user.language === 'en') {
+                    import('@/stores/language-store').then(({ useLanguageStore }) => {
+                      useLanguageStore.getState().applyServerLanguage(data.user.language);
+                    }).catch(() => {});
+                  }
+                  const notif = data.user.preferences?.notifications;
+                  if (notif && typeof notif === 'object') {
+                    const merged: Record<string, boolean> = {};
+                    if (typeof notif.orders === 'boolean') merged.orders = notif.orders;
+                    if (typeof notif.offers === 'boolean') merged.offers = notif.offers;
+                    if (typeof notif.points === 'boolean') merged.points = notif.points;
+                    if (typeof notif.news === 'boolean') merged.news = notif.news;
+                    if (Object.keys(merged).length > 0) {
+                      try { localStorage.setItem('nabdh-notif-prefs', JSON.stringify(merged)); } catch { /* ignore */ }
+                    }
+                  }
                 }
               }).catch(() => {});
               // Sync cart and favorites from server (non-blocking)
@@ -357,3 +374,52 @@ export const useUIStore = create<UIState>()((set) => ({
     }
   },
 }));
+
+// ─── Session watchdog: auto-logout when the session is revoked elsewhere ───
+let _authWatchdogStarted = false;
+let _authCheckInFlight = false;
+
+/**
+ * Periodically validates the session against the server via the lightweight
+ * /api/auth/session endpoint. If the session was revoked on another device
+ * (or expired), the client performs a full logout so it can't keep operating
+ * with a dead session. This gives cross-device logout sync: logging out on
+ * one device logs out all of them.
+ */
+export function setupAuthWatchdog(): void {
+  if (_authWatchdogStarted || typeof window === 'undefined') return;
+  _authWatchdogStarted = true;
+
+  const isNativeApp = typeof (window as unknown as { Capacitor?: unknown }).Capacitor !== 'undefined';
+
+  const check = async () => {
+    const s = useUIStore.getState();
+    const user = s.currentUser;
+    if (!user || !user.id || user.id.startsWith('local-')) return;
+    if (_authCheckInFlight) return;
+    _authCheckInFlight = true;
+    try {
+      const res = await fetch('/api/auth/session', { method: 'GET', credentials: 'include' });
+      if (res.status === 401) {
+        await useUIStore.getState().logout();
+      }
+    } catch {
+      // Network error — assume offline, keep the session
+    } finally {
+      _authCheckInFlight = false;
+    }
+  };
+
+  // Run every 3 minutes (covers the native app as well)
+  window.setInterval(check, 3 * 60 * 1000);
+
+  // Also check when the page regains focus/visibility (web only;
+  // the mobile app performs its own foreground refresh)
+  if (!isNativeApp) {
+    const onVisibility = () => {
+      if (!document.hidden) check();
+    };
+    window.addEventListener('focus', onVisibility);
+    document.addEventListener('visibilitychange', onVisibility);
+  }
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { useLanguageStore } from '@/stores/language-store';
 import { useCartStore } from '@/stores/cart-store';
 import { useUIStore } from '@/stores/ui-store';
@@ -12,6 +12,7 @@ import {
   ArrowLeft, ArrowRight, Clock, Search, Copy, CheckCheck,
 } from 'lucide-react';
 import { LIBYA_DELIVERY_DATA, getDeliveryPrice, getDeliveryDuration, getAreasForRegion } from '../lib/libya-delivery-data';
+import type { Address } from '../lib/types';
 
 // ═══════════════════════════════════════════════════════════════════════
 // BRAND COLORS
@@ -28,6 +29,24 @@ const COLORS = {
   warning: '#D29922',
   error: '#FF3B30',
 } as const;
+
+const INPUT_TEXT_COLOR = '#0B1120';
+
+// Forces Android WebView to re-raster an input's text layer. Known WebView
+// compositing bug: typed text stays invisible until the field is manually
+// selected (the raster is stale). Bouncing a fresh GPU layer + re-affirming
+// the text color on every keystroke fixes the stale raster.
+function forceInputRepaint(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null) {
+  if (!input || typeof window === 'undefined') return;
+  input.style.setProperty('-webkit-text-fill-color', INPUT_TEXT_COLOR);
+  input.style.transform = 'translateZ(0)';
+  requestAnimationFrame(() => {
+    if (input) {
+      input.style.removeProperty('-webkit-text-fill-color');
+      input.style.removeProperty('transform');
+    }
+  });
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // TYPES
@@ -77,17 +96,14 @@ const slideVariants = {
   enter: (dir: number) => ({
     x: dir > 0 ? 280 : -280,
     opacity: 0,
-    scale: 0.96,
   }),
   center: {
     x: 0,
     opacity: 1,
-    scale: 1,
   },
   exit: (dir: number) => ({
     x: dir > 0 ? -280 : 280,
     opacity: 0,
-    scale: 0.96,
   }),
 };
 
@@ -205,6 +221,7 @@ function FormInput({
   error?: string;
 }) {
   const [focused, setFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <motion.div className="mb-4" variants={staggerItem}>
@@ -228,9 +245,14 @@ function FormInput({
           </div>
         )}
         <input
+          ref={inputRef}
           type={type}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            onChange(e.target.value);
+            forceInputRepaint(inputRef.current);
+          }}
+          onInput={() => forceInputRepaint(inputRef.current)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder={placeholder}
@@ -240,6 +262,11 @@ function FormInput({
             paddingLeft: icon && dir !== 'rtl' ? 44 : 16,
             paddingRight: icon && dir === 'rtl' ? 44 : 16,
             textAlign: dir === 'rtl' ? 'right' : 'left',
+            color: INPUT_TEXT_COLOR,
+            WebkitTextFillColor: INPUT_TEXT_COLOR,
+            caretColor: COLORS.primary,
+            userSelect: 'text',
+            WebkitUserSelect: 'text',
           }}
         />
       </div>
@@ -373,6 +400,113 @@ function ConfettiParticles() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// FIREWORKS EFFECT
+// ═══════════════════════════════════════════════════════════════════════
+function FireworksEffect() {
+  const fireworks = [
+    { x: '18%', y: '22%', color: '#00A8CC', delay: 0 },
+    { x: '82%', y: '16%', color: '#FBBF24', delay: 0.4 },
+    { x: '50%', y: '10%', color: '#F472B6', delay: 0.8 },
+    { x: '30%', y: '38%', color: '#4ADE80', delay: 1.3 },
+    { x: '70%', y: '42%', color: '#00897B', delay: 1.7 },
+    { x: '12%', y: '55%', color: '#00C4E8', delay: 2.2 },
+    { x: '88%', y: '55%', color: '#FBBF24', delay: 2.8 },
+    { x: '50%', y: '70%', color: '#F472B6', delay: 3.3 },
+  ];
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+      {fireworks.map((fw, fi) => (
+        <div key={`fw-${fi}`} className="absolute" style={{ left: fw.x, top: fw.y }}>
+          {/* Rocket trail — rises up then explodes */}
+          <motion.div
+            className="absolute"
+            initial={{ y: 90, opacity: 1 }}
+            animate={{ y: 0, opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 0.5, delay: fw.delay, ease: 'easeOut' }}
+          >
+            <div className="w-1 h-3 rounded-full" style={{ background: fw.color, boxShadow: `0 0 6px ${fw.color}` }} />
+          </motion.div>
+          {/* Burst particles — explode outward in a circle */}
+          {Array.from({ length: 14 }, (_, pi) => {
+            const angle = (pi / 14) * Math.PI * 2;
+            const distance = 32 + Math.random() * 42;
+            const size = 2 + Math.random() * 4;
+            return (
+              <motion.div
+                key={pi}
+                className="absolute rounded-full"
+                style={{
+                  width: size,
+                  height: size,
+                  background: fw.color,
+                  boxShadow: `0 0 8px ${fw.color}, 0 0 3px ${fw.color}`,
+                }}
+                initial={{ x: 0, y: 0, scale: 1, opacity: 0 }}
+                animate={{
+                  x: Math.cos(angle) * distance,
+                  y: Math.sin(angle) * distance,
+                  scale: [0, 1.2, 0],
+                  opacity: [0, 1, 0],
+                }}
+                transition={{
+                  duration: 0.8 + Math.random() * 0.4,
+                  delay: fw.delay + 0.5,
+                  ease: 'easeOut',
+                }}
+              />
+            );
+          })}
+          {/* Secondary smaller burst — inner ring */}
+          {Array.from({ length: 8 }, (_, pi) => {
+            const angle = (pi / 8) * Math.PI * 2 + Math.PI / 8;
+            const distance = 14 + Math.random() * 20;
+            const secColor = ['#ffffff', '#FDE68A', '#A7F3D0'][pi % 3];
+            const size = 1.5 + Math.random() * 2;
+            return (
+              <motion.div
+                key={`s-${pi}`}
+                className="absolute rounded-full"
+                style={{
+                  width: size,
+                  height: size,
+                  background: secColor,
+                  boxShadow: `0 0 6px ${secColor}`,
+                }}
+                initial={{ x: 0, y: 0, scale: 0, opacity: 0 }}
+                animate={{
+                  x: Math.cos(angle) * distance,
+                  y: Math.sin(angle) * distance,
+                  scale: [0, 1, 0],
+                  opacity: [0, 0.9, 0],
+                }}
+                transition={{
+                  duration: 0.6 + Math.random() * 0.3,
+                  delay: fw.delay + 0.55,
+                  ease: 'easeOut',
+                }}
+              />
+            );
+          })}
+          {/* Central flash glow */}
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              width: 16,
+              height: 16,
+              background: `radial-gradient(circle, ${fw.color}80 0%, transparent 70%)`,
+            }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: [0, 2.5, 0], opacity: [0, 1, 0] }}
+            transition={{ duration: 0.5, delay: fw.delay + 0.4, ease: 'easeOut' }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // MAIN CHECKOUT FLOW COMPONENT
 // ═══════════════════════════════════════════════════════════════════════
 export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutFlowProps) {
@@ -428,6 +562,44 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
 
   // Validation errors
   const [addressErrors, setAddressErrors] = useState<Partial<Record<keyof DeliveryAddress, string>>>({});
+
+  // Saved account addresses — used to prefill the address step
+  const mobileAddresses = useMobileStore((s) => s.addresses);
+  const addAddress = useMobileStore((s) => s.addAddress);
+  const fetchAddresses = useMobileStore((s) => s.fetchAddresses);
+
+  // Prefill the address step from the user's saved (default) address
+  useEffect(() => {
+    let cancelled = false;
+    const applySaved = (list: Address[]) => {
+      if (cancelled || !list || list.length === 0) return;
+      const saved = list.find((a) => a.isDefault) || list[0];
+      if (!saved) return;
+      setAddress((prev) => {
+        const next = { ...prev };
+        if (saved.city && !next.city) next.city = saved.city;
+        if (saved.area && !next.area) next.area = saved.area;
+        if (saved.address && !next.streetAddress) next.streetAddress = saved.address;
+        if (saved.notes && !next.notes) next.notes = saved.notes;
+        return next;
+      });
+      if (saved.city) {
+        const region = LIBYA_DELIVERY_DATA.find(
+          (r) => r.nameAr === saved.city || r.nameEn === saved.city
+        );
+        if (region) setSelectedRegionId(region.id);
+      }
+    };
+    const loggedIn = !!(user && !user.id.startsWith('local-'));
+    if (mobileAddresses.length > 0) {
+      applySaved(mobileAddresses);
+    } else if (loggedIn) {
+      fetchAddresses().then(() => {
+        applySaved(useMobileStore.getState().addresses);
+      }).catch(() => {});
+    }
+    return () => { cancelled = true; };
+  }, []);
 
   // Refs
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -514,11 +686,29 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
   const handleNext = useCallback(() => {
     if (currentStep === 0) {
       if (!validateAddress()) return;
+      // Save the address to the account as they leave the address step
+      if (user && !user.id.startsWith('local-') && address.streetAddress.trim()) {
+        const savedList = useMobileStore.getState().addresses;
+        const alreadySaved = savedList.some(
+          (a) => a.city === address.city && a.area === address.area && a.address === address.streetAddress.trim()
+        );
+        if (!alreadySaved) {
+          addAddress({
+            id: '',
+            label: 'منزل',
+            address: address.streetAddress.trim(),
+            city: address.city,
+            area: address.area,
+            notes: address.notes,
+            isDefault: true,
+          }).catch(() => {});
+        }
+      }
     }
     if (currentStep < 3) {
       goToStep((currentStep + 1) as CheckoutStep);
     }
-  }, [currentStep, goToStep, validateAddress]);
+  }, [currentStep, goToStep, validateAddress, user, address, addAddress]);
 
   const handleBack = useCallback(() => {
     if (currentStep > 0) {
@@ -604,6 +794,28 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
       setSavedTotal(totalAmount);
       if (res.ok && data.order) {
         setOrderNumber(data.order.orderNumber || data.order.id);
+        // Save this shipping address to the account so it's prefilled next time
+        if (user && !user.id.startsWith('local-') && address.streetAddress.trim()) {
+          const alreadySaved = mobileAddresses.some(
+            (a) =>
+              a.city === address.city &&
+              a.area === address.area &&
+              a.address === address.streetAddress.trim()
+          );
+          if (!alreadySaved) {
+            addAddress({
+              id: '',
+              label: 'منزل',
+              address: address.streetAddress.trim(),
+              city: address.city,
+              area: address.area,
+              notes: address.notes,
+              isDefault: true,
+            }).then(() => {
+              useMobileStore.getState().fetchAddresses().catch(() => {});
+            }).catch(() => {});
+          }
+        }
         clearCart();
         goToStep(3);
       } else {
@@ -627,7 +839,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
     } finally {
       setIsPlacing(false);
     }
-  }, [isPlacing, user, currentUser, cartItems, paymentMethod, address, couponApplied, appliedCouponCode, discountAmount, deliveryFee, isRTL, clearCart, goToStep]);
+  }, [isPlacing, user, currentUser, cartItems, paymentMethod, address, couponApplied, appliedCouponCode, discountAmount, deliveryFee, isRTL, clearCart, goToStep, mobileAddresses, addAddress]);
 
   // Scroll to top on step change
   useEffect(() => {
@@ -791,9 +1003,17 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
                 setAddress((p) => ({ ...p, city: newCity, area: '' }));
                 setAreaSearchQuery('');
                 if (addressErrors.city) setAddressErrors((p) => ({ ...p, city: undefined }));
+                forceInputRepaint(e.target);
               }}
               className="w-full py-3.5 px-4 bg-white/60 text-sm outline-none appearance-none"
-              style={{ textAlign: isRTL ? 'right' : 'left' }}
+              style={{
+                textAlign: isRTL ? 'right' : 'left',
+                color: INPUT_TEXT_COLOR,
+                WebkitTextFillColor: INPUT_TEXT_COLOR,
+                caretColor: COLORS.primary,
+                userSelect: 'text',
+                WebkitUserSelect: 'text',
+              }}
               dir={direction}
             >
               {LIBYA_DELIVERY_DATA.map((region) => (
@@ -844,12 +1064,21 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
             <input
               type="text"
               value={areaSearchQuery}
-              onChange={(e) => setAreaSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setAreaSearchQuery(e.target.value);
+                forceInputRepaint(e.target);
+              }}
+              onInput={(e) => forceInputRepaint(e.currentTarget)}
               placeholder={selectedRegionId === 'tripoli' ? 'ابحث عن الحي...' : 'ابحث عن المدينة...'}
               className="w-full py-2.5 px-4 bg-white/60 text-xs outline-none"
               style={{
                 textAlign: isRTL ? 'right' : 'left',
                 [isRTL ? 'paddingRight' : 'paddingLeft']: 36,
+                color: INPUT_TEXT_COLOR,
+                WebkitTextFillColor: INPUT_TEXT_COLOR,
+                caretColor: COLORS.primary,
+                userSelect: 'text',
+                WebkitUserSelect: 'text',
               }}
               dir={direction}
             />
@@ -868,9 +1097,17 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
                 setAddress((p) => ({ ...p, area: selectedArea }));
                 setAreaSearchQuery('');
                 if (addressErrors.area) setAddressErrors((p) => ({ ...p, area: undefined }));
+                forceInputRepaint(e.target);
               }}
               className="w-full py-3.5 px-4 bg-white/60 text-sm outline-none appearance-none"
-              style={{ textAlign: isRTL ? 'right' : 'left' }}
+              style={{
+                textAlign: isRTL ? 'right' : 'left',
+                color: INPUT_TEXT_COLOR,
+                WebkitTextFillColor: INPUT_TEXT_COLOR,
+                caretColor: COLORS.primary,
+                userSelect: 'text',
+                WebkitUserSelect: 'text',
+              }}
               dir={direction}
             >
               <option value="">{selectedRegionId === 'tripoli' ? 'اختر الحي' : 'اختر المدينة'}</option>
@@ -1344,7 +1581,10 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
           variants={staggerItem}
           className="flex flex-col items-center py-6 relative"
         >
-          <ConfettiParticles />
+          <MotionConfig reducedMotion="never">
+            <ConfettiParticles />
+            <FireworksEffect />
+          </MotionConfig>
           <AnimatedCheckmark size={72} />
 
           <motion.h2
@@ -1553,15 +1793,16 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
   // MAIN RENDER
   // ═══════════════════════════════════════════════════════════════════════
   return (
-    <motion.div
-      className="absolute inset-0 z-50 flex flex-col"
-      style={{ background: '#F4F6F9' }}
-      initial={{ x: isRTL ? -300 : 300, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: isRTL ? -300 : 300, opacity: 0 }}
-      transition={{ type: 'spring' as const, stiffness: 260, damping: 28 }}
-      dir={direction}
-    >
+    <MotionConfig reducedMotion="always">
+      <motion.div
+        className="absolute inset-0 z-50 flex flex-col"
+        style={{ background: '#F4F6F9' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        dir={direction}
+      >
       {/* ─── Header ─── */}
       <div
         className="relative flex-shrink-0"
@@ -1722,7 +1963,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
             <div className="mt-3 flex items-center gap-2">
               <Truck size={14} style={{ color: COLORS.teal }} />
               <span className="text-[11px] font-semibold" style={{ color: COLORS.teal }}>
-                {t('mobile.checkout.deliveryFeeTo')} {address.area}: {deliveryFee} {t('product.currency')} • {currentDeliveryInfo.duration}
+                {t('mobile.checkout.deliveryFeeTo')} {address.area}: {deliveryFee === 0 ? t('common.free') : `${deliveryFee} ${t('product.currency')}`} • {currentDeliveryInfo.duration}
               </span>
             </div>
           )}
@@ -1731,6 +1972,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
 
       {/* Confirmation step bottom */}
       {currentStep === 3 && <div className="flex-shrink-0 h-4" />}
-    </motion.div>
+      </motion.div>
+    </MotionConfig>
   );
 }

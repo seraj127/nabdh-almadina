@@ -654,8 +654,12 @@ export function FavoritesPage() {
             });
           }
           setProducts(favProducts);
-          const serverIds = [...seen];
-          useFavoritesStore.getState().syncIds(serverIds);
+          // Sync ALL server ids (not just the displayed ones) so inactive or
+          // missing products never get wiped from the server by the page visit.
+          const allServerIds = Array.from(new Set(
+            (data.favorites as Array<{ productId: string }>).map((f) => f.productId)
+          ));
+          useFavoritesStore.getState().syncIds(allServerIds);
         }
       } else {
         await loadLocalFavoriteProducts();
@@ -689,6 +693,21 @@ export function FavoritesPage() {
   }, []);
 
   useEffect(() => { loadFavorites(); }, [loadFavorites]);
+
+  // Refresh when the user returns to this tab/window (favorites may have been
+  // added/removed in another tab, from the mobile view, or on another device).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onVisible = () => {
+      if (!document.hidden) loadFavorites();
+    };
+    window.addEventListener('focus', onVisible);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      window.removeEventListener('focus', onVisible);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [loadFavorites]);
 
   // ─── Computed: filtered & sorted products ────
   const processedProducts = useMemo(() => {

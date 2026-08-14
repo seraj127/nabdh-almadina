@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { Prisma } from '@prisma/client';
 import { requireAuth } from '@/lib/auth-utils';
 
 export const dynamic = "force-dynamic";
@@ -102,26 +101,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const favorite = await db.favoriteItem.create({
-      data: { userId, productId },
+    // Idempotent add — the client now sends an explicit ADD intent (never a
+    // state-agnostic toggle), so a repeat request must be a success, not a 409.
+    await db.favoriteItem.createMany({
+      data: [{ userId, productId }],
+      skipDuplicates: true,
     });
 
     return NextResponse.json({
-      favorite: {
-        id: favorite.id,
-        productId: favorite.productId,
-        createdAt: favorite.createdAt,
-      },
+      isFavorite: true,
+      productId,
     });
   } catch (error) {
-    // Handle unique constraint violation (already favorited)
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-      return NextResponse.json(
-        { error: 'المنتج مضاف للمفضلة مسبقاً' },
-        { status: 409 }
-      );
-    }
-
     console.error('Error adding to favorites:', error);
     return NextResponse.json(
       { error: 'فشل في إضافة المنتج إلى المفضلة' },
@@ -130,9 +121,68 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE: Remove product from favorites
-export async function DELETE(request: NextRequest) {
+// PUT: Replace the user's favorites with the given list (full sync).
+// The client's list is the source of truth — items not present are removed,
+// items present are added. This lets removals propagate across devices.
+export async function PUT(request: NextRequest) {
   try {
+    const authResult = await requireAuth(request);
+    if (authResult instanceof NextResponse) return authResult;
+    const { userId: authUserId } = authResult;
+
+    const body = await request.json();
+    const { productIds } = body as { productIds?: string[] };
+    const userId = authUserId;
+
+    const incoming = Array.isArray(productIds)
+      ? Array.from(new Set(productIds.filter((id): id is string => typeof id === 'string' && id.length > 0)))
+      : [];
+
+    // Fetch current favorites and current products in one pass
+    const [existing, products] = await Promise.all([
+      db.favoriteItem.findMany({ where: { userId }, select: { id: true, productId: true } }),
+      incoming.length > 0
+        ? db.product.findMany({ where: { id: { in: incoming }, isActive: true }, select: { id: true } })
+        : Promise.resolve([]),
+    ]);
+
+    const validIds = new Set(products.map((p) => p.id));
+    const effectiveIds = incoming.filter((id) => validIds.has(id));
+    const effectiveSet = new Set(effectiveIds);
+
+    const toRemove = existing.filter((e) => !effectiveSet.has(e.productId));
+    if (toRemove.length > 0) {
+      await db.favoriteItem.deleteMany({
+        where: { userId, productId: { in: toRemove.map((e) => e.productId) } },
+      });
+    }
+
+    const existingIds = new Set(existing.map((e) => e.productId));
+    const toAdd = effectiveIds.filter((id) => !existingIds.has(id));
+    if (toAdd.length > 0) {
+      await db.favoriteItem.createMany({
+        data: toAdd.map((productId) => ({ userId, productId })),
+      });
+    }
+
+    const favorites = await db.favoriteItem.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      select: { productId: true },
+    });
+
+    return NextResponse.json({ favorites: favorites.map((f) => f.productId) });
+  } catch (error) {
+    console.error('Error replacing favorites:', error);
+    return NextResponse.json(
+      { error: 'فشل في مزامنة المفضلة' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE: Remove product from favorites
+export async function DELETE(request: NextRequest) {  try {
     const authResult = await requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
     const { userId: authUserId } = authResult;

@@ -328,6 +328,18 @@ export function SettingsPage() {
         });
         setName(u.name || '');
         setEmail(u.email || '');
+        // Server-side notification preferences win (synced across devices)
+        const notif = u.preferences?.notifications;
+        if (notif && typeof notif === 'object') {
+          const merged: Record<string, boolean> = {};
+          if (typeof notif.orders === 'boolean') { merged.orders = notif.orders; setNotifOrders(notif.orders); }
+          if (typeof notif.offers === 'boolean') { merged.offers = notif.offers; setNotifOffers(notif.offers); }
+          if (typeof notif.points === 'boolean') { merged.points = notif.points; setNotifPoints(notif.points); }
+          if (typeof notif.news === 'boolean') { merged.news = notif.news; setNotifNews(notif.news); }
+          if (Object.keys(merged).length > 0) {
+            try { localStorage.setItem('nabdh-notif-prefs', JSON.stringify(merged)); } catch { /* ignore */ }
+          }
+        }
       }
     } catch { /* ignore */ }
   }, []);
@@ -356,11 +368,16 @@ export function SettingsPage() {
     } catch { /* ignore */ }
   }, []);
 
-  // Save notification preferences to localStorage
+  // Save notification preferences to localStorage AND sync to the server
   const saveNotifPrefs = useCallback((prefs: Record<string, boolean>) => {
     try {
       localStorage.setItem('nabdh-notif-prefs', JSON.stringify(prefs));
     } catch { /* ignore */ }
+    fetch('/api/auth/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ preferences: { notifications: prefs } }),
+    }).catch(() => { /* offline — local only */ });
   }, []);
 
   useEffect(() => {

@@ -199,16 +199,20 @@ export async function POST(request: NextRequest) {
       switch (type) {
         case 'in':
         case 'return':
-        case 'release':
           stockChange = quantity;
           break;
         case 'out':
-        case 'reservation':
           stockChange = -quantity;
           break;
         case 'adjustment':
           // For adjustment, quantity is the absolute change
           stockChange = quantity; // positive = increase
+          break;
+        case 'reservation':
+        case 'release':
+          // Reservation/release only move reservedStock; stock is unaffected
+          // (available to sell = stock - reservedStock)
+          stockChange = 0;
           break;
       }
 

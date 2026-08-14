@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
             price: true,
             mainImage: true,
             stock: true,
+            reservedStock: true,
             isActive: true,
           },
         },
@@ -52,6 +53,7 @@ export async function GET(request: NextRequest) {
       price: Number(item.product.price),
       image: item.product.mainImage || '',
       stock: item.product.stock,
+      available: Math.max(0, item.product.stock - (item.product.reservedStock || 0)),
       isActive: item.product.isActive,
     }));
 
@@ -65,7 +67,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// ─── POST: Sync cart - merge local cart with server ─────────
+// ─── POST: Sync cart - server-authoritative full replace ─────────
+// The client's cart is the source of truth at push time. Server replaces its
+// cart with the payload (deleting items not present), clamps quantities to the
+// available stock, and returns the resulting full cart so the client adopts it.
+// This makes removals/quantity decreases propagate to all devices.
 export async function POST(request: NextRequest) {
   try {
     const authResult = await requireAuth(request);
@@ -74,65 +80,76 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { items } = body as {
-      items: Array<{
+      items?: Array<{
         productId: string;
         quantity: number;
-        nameAr: string;
-        nameEn: string;
-        price: number;
-        image: string;
-        stock: number;
       }>;
     };
 
     const userId = authUserId;
 
-    // Get existing server cart
+    // Aggregate the payload into a unique productId → quantity map
+    const incoming = new Map<string, number>();
+    if (Array.isArray(items)) {
+      for (const item of items) {
+        if (!item || !item.productId) continue;
+        const qty = Math.max(1, Math.floor(Number(item.quantity) || 1));
+        incoming.set(item.productId, (incoming.get(item.productId) || 0) + qty);
+      }
+    }
+
+    // An empty payload means the client's cart is empty — clear the server cart.
+    if (incoming.size === 0) {
+      await db.cartItem.deleteMany({ where: { userId } });
+      return NextResponse.json(
+        { items: [], synced: true },
+        { headers: corsHeaders }
+      );
+    }
+
+    // Fetch current server cart
     const existingCart = await db.cartItem.findMany({
       where: { userId },
     });
 
+    // Delete server items NOT in the payload (propagates removals across devices)
+    const incomingIds = new Set(incoming.keys());
+    const toRemove = existingCart.filter((i) => !incomingIds.has(i.productId));
+    if (toRemove.length > 0) {
+      await db.cartItem.deleteMany({
+        where: { userId, productId: { in: toRemove.map((i) => i.productId) } },
+      });
+    }
+
     const existingMap = new Map(existingCart.map((i) => [i.productId, i]));
 
-    const results: Array<Record<string, unknown>> = [];
-
-    for (const item of items) {
-      // Verify product exists
+    // Upsert incoming items (clamped to available stock)
+    for (const [productId, quantity] of incoming) {
       const product = await db.product.findUnique({
-        where: { id: item.productId },
+        where: { id: productId },
       });
 
       if (!product || !product.isActive) continue;
 
-      const existing = existingMap.get(item.productId);
+      const available = Math.max(1, product.stock - (product.reservedStock || 0));
+      const clamped = Math.min(quantity, available);
 
+      const existing = existingMap.get(productId);
       if (existing) {
-        // Update quantity if local is higher (merge: take max)
-        if (item.quantity > existing.quantity) {
-          const updated = await db.cartItem.update({
-            where: { id: existing.id },
-            data: { quantity: Math.min(item.quantity, product.stock) },
-          });
-          results.push(updated);
-        } else {
-          results.push(existing);
-        }
-        existingMap.delete(item.productId);
+        await db.cartItem.update({
+          where: { id: existing.id },
+          data: { quantity: clamped },
+        });
       } else {
-        // Add new item
-        const created = await db.cartItem.create({
+        await db.cartItem.create({
           data: {
             userId,
-            productId: item.productId,
-            quantity: Math.min(item.quantity, product.stock),
+            productId,
+            quantity: clamped,
           },
         });
-        results.push(created);
       }
     }
-
-    // Items in existingMap are server-only items (not in local cart)
-    // We keep them on server so they sync to other devices
 
     // Fetch full cart with product info
     const fullCart = await db.cartItem.findMany({
@@ -146,6 +163,7 @@ export async function POST(request: NextRequest) {
             price: true,
             mainImage: true,
             stock: true,
+            reservedStock: true,
             isActive: true,
           },
         },
@@ -164,6 +182,7 @@ export async function POST(request: NextRequest) {
         price: Number(item.product.price),
         image: item.product.mainImage || '',
         stock: item.product.stock,
+        available: Math.max(0, item.product.stock - (item.product.reservedStock || 0)),
       }));
 
     return NextResponse.json(
@@ -268,6 +287,7 @@ export async function PUT(request: NextRequest) {
             price: true,
             mainImage: true,
             stock: true,
+            reservedStock: true,
             isActive: true,
           },
         },
@@ -286,6 +306,7 @@ export async function PUT(request: NextRequest) {
         price: Number(item.product.price),
         image: item.product.mainImage || '',
         stock: item.product.stock,
+        available: Math.max(0, item.product.stock - (item.product.reservedStock || 0)),
       }));
 
     return NextResponse.json({ items }, { headers: corsHeaders });

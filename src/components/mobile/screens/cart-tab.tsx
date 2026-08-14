@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/stores/cart-store';
 import { useLanguageStore } from '@/stores/language-store';
 import { useUIStore } from '@/stores/ui-store';
+import { useMobileStore } from '@/components/mobile/lib/mobile-store';
 import { getDeliveryPrice, getDeliveryDuration } from '../lib/libya-delivery-data';
 import { CheckoutFlow } from './checkout-flow';
 import { OrderTrackingScreen } from './order-tracking';
@@ -54,20 +55,6 @@ const COLORS = {
   textSecondary: '#666666',
   textDisabled: '#999999',
 } as const;
-
-// ═══════════════════════════════════════════════════════════════════════
-// FREE DELIVERY THRESHOLD
-// ═══════════════════════════════════════════════════════════════════════
-const FREE_DELIVERY_THRESHOLD = 100;
-
-// ═══════════════════════════════════════════════════════════════════════
-// OFFLINE FALLBACK COUPONS
-// ═══════════════════════════════════════════════════════════════════════
-const OFFLINE_COUPONS: Record<string, { discount: number; labelAr: string; labelEn: string }> = {
-  WELCOME10: { discount: 10, labelAr: 'خصم ترحيبي 10%', labelEn: 'Welcome 10% Off' },
-  NABD20: { discount: 20, labelAr: 'خصم نبض 20%', labelEn: 'Nabd 20% Off' },
-  FREE15: { discount: 15, labelAr: 'خصم 15%', labelEn: '15% Off' },
-};
 
 // ═══════════════════════════════════════════════════════════════════════
 // ANIMATION VARIANTS
@@ -175,6 +162,7 @@ export function CartTab() {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const clearCart = useCartStore((s) => s.clearCart);
+  const fetchFromServer = useCartStore((s) => s.fetchFromServer);
   const getSubtotal = useCartStore((s) => s.getSubtotal);
   const getDeliveryFee = useCartStore((s) => s.getDeliveryFee);
   const getTotal = useCartStore((s) => s.getTotal);
@@ -197,6 +185,14 @@ export function CartTab() {
       .catch(() => {});
   }, [isLoggedIn, currentUser?.id]);
 
+  // ─── Pull the cart from the server when the tab opens / login changes ──
+  // Keeps the mobile cart in sync with items added on the web store.
+  useEffect(() => {
+    if (currentUser?.id && !currentUser.id.startsWith('local-')) {
+      fetchFromServer().catch(() => {});
+    }
+  }, [currentUser?.id, fetchFromServer]);
+
   // ─── Local State ────────────────────────────────────────────────────
   const [showCheckoutFlow, setShowCheckoutFlow] = useState(false);
   const [trackingOrderNum, setTrackingOrderNum] = useState<string | null>(null);
@@ -210,6 +206,8 @@ export function CartTab() {
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponPercentage, setCouponPercentage] = useState(0);
+  const [couponType, setCouponType] = useState<'percentage' | 'fixed'>('percentage');
+  const [couponValue, setCouponValue] = useState(0);
   const [couponError, setCouponError] = useState('');
   const [couponSuccess, setCouponSuccess] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
@@ -221,9 +219,6 @@ export function CartTab() {
   const totalItems = getTotalItems();
   const discountAmount = couponDiscount;
   const totalAmount = subtotal + deliveryFee - discountAmount;
-  const deliveryProgress = Math.min((subtotal / FREE_DELIVERY_THRESHOLD) * 100, 100);
-  const remainingForFreeDelivery = Math.max(FREE_DELIVERY_THRESHOLD - subtotal, 0);
-  const isFreeDelivery = subtotal >= FREE_DELIVERY_THRESHOLD;
 
   // ─── Helper: Translate with fallback ────────────────────────────────
   const tx = useCallback(
@@ -277,57 +272,36 @@ export function CartTab() {
     setCouponSuccess('');
 
     try {
-      // Try API first
-      const res = await fetch('/api/admin/coupons/validate', {
+      const res = await fetch('/api/coupons/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, subtotal }),
+        body: JSON.stringify({ code, subtotal, userId: currentUser?.id }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data.valid && data.coupon) {
-          const disc =
-            data.coupon.type === 'percentage'
-              ? (subtotal * data.coupon.value) / 100
-              : data.coupon.value;
-          const capped = data.coupon.maxDiscount
-            ? Math.min(disc, data.coupon.maxDiscount)
-            : disc;
-          setCouponDiscount(capped);
-          setCouponPercentage(
-            data.coupon.type === 'percentage' ? data.coupon.value : 0
-          );
-          setCouponApplied(true);
-          setCouponSuccess(
-            isRTL
-              ? `تم تطبيق الخصم ${data.coupon.type === 'percentage' ? `${data.coupon.value}%` : `${data.coupon.value} د.ل`}`
-              : `Discount applied: ${data.coupon.type === 'percentage' ? `${data.coupon.value}%` : `${data.coupon.value} LYD`}`
-          );
-          setCouponLoading(false);
-          return;
-        }
+      const data = await res.json();
+      if (res.ok && data.valid && data.coupon) {
+        const discount = Number(data.coupon.discount) || 0;
+        const isPercent = data.coupon.type === 'percentage';
+        const couponVal = Number(data.coupon.value) || 0;
+        setCouponDiscount(discount);
+        setCouponType(isPercent ? 'percentage' : 'fixed');
+        setCouponValue(couponVal);
+        setCouponPercentage(isPercent ? couponVal : 0);
+        setCouponApplied(true);
+        setCouponSuccess(
+          isRTL
+            ? `تم تطبيق الخصم ${isPercent ? `${couponVal}%` : `${discount} د.ل`}`
+            : `Discount applied: ${isPercent ? `${couponVal}%` : `${discount} LYD`}`
+        );
+      } else {
+        setCouponError(data.error || (isRTL ? 'كود الخصم غير صالح' : 'Invalid coupon code'));
       }
     } catch {
-      // API failed, fall through to offline coupons
-    }
-
-    // Offline fallback coupons
-    const offlineCoupon = OFFLINE_COUPONS[code];
-    if (offlineCoupon) {
-      const disc = (subtotal * offlineCoupon.discount) / 100;
-      setCouponDiscount(disc);
-      setCouponPercentage(offlineCoupon.discount);
-      setCouponApplied(true);
-      setCouponSuccess(
-        isRTL ? `تم تطبيق الخصم ${offlineCoupon.discount}%` : `Discount applied: ${offlineCoupon.discount}%`
-      );
-    } else {
       setCouponError(isRTL ? 'كود الخصم غير صالح' : 'Invalid coupon code');
+    } finally {
+      setCouponLoading(false);
     }
-
-    setCouponLoading(false);
-  }, [couponCode, subtotal, isRTL]);
+  }, [couponCode, subtotal, isRTL, currentUser]);
 
   // ─── Remove Coupon ──────────────────────────────────────────────────
   const handleRemoveCoupon = useCallback(() => {
@@ -335,6 +309,8 @@ export function CartTab() {
     setCouponApplied(false);
     setCouponDiscount(0);
     setCouponPercentage(0);
+    setCouponType('percentage');
+    setCouponValue(0);
     setCouponError('');
     setCouponSuccess('');
   }, []);
@@ -358,6 +334,16 @@ export function CartTab() {
           setShowCheckoutFlow(false);
           setTrackingOrderNum(orderNumber);
         }}
+        initialCoupon={
+          couponApplied
+            ? {
+                code: couponCode.trim().toUpperCase(),
+                type: couponType,
+                value: couponValue,
+                discount: couponDiscount,
+              }
+            : null
+        }
       />
     );
   }
@@ -492,6 +478,7 @@ export function CartTab() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
+            onClick={() => useMobileStore.getState().setActiveTab('home')}
           >
             {/* Shimmer */}
             <motion.div
@@ -714,91 +701,20 @@ export function CartTab() {
           initial="hidden"
           animate="visible"
         >
-          {/* ═══ FREE DELIVERY PROGRESS BAR ═══ */}
+          {/* ═══ DELIVERY NOTE ═══ */}
           <motion.div variants={itemVariants}>
-            {isFreeDelivery ? (
-              <motion.div
-                className="rounded-2xl p-3.5 flex items-center gap-3 relative overflow-hidden"
-                style={{
-                  background: `${COLORS.success}08`,
-                  border: `1px solid ${COLORS.success}20`,
-                }}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-              >
-                <motion.div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background: `linear-gradient(90deg, transparent, ${COLORS.success}06, transparent)`,
-                  }}
-                  animate={{ x: ['-100%', '200%'] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                />
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
-                >
-                  <Truck size={20} style={{ color: COLORS.success }} />
-                </motion.div>
-                <span className="text-sm font-bold relative z-10" style={{ color: COLORS.success }}>
-                  🎉 {isRTL ? 'التوصيل مجاني!' : 'Free Delivery!'}
-                </span>
-                <Check size={16} style={{ color: COLORS.success }} className="ms-auto" />
-              </motion.div>
-            ) : (
-              <div
-                className="rounded-2xl p-3.5"
-                style={{
-                  background: `${COLORS.warning}06`,
-                  border: `1px solid ${COLORS.warning}15`,
-                }}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Truck size={16} style={{ color: COLORS.warning }} />
-                    <span className="text-xs font-semibold" style={{ color: COLORS.warning }}>
-                      {isRTL
-                        ? `أضف ${remainingForFreeDelivery.toFixed(2)} د.ل للتوصيل المجاني`
-                        : `Add ${remainingForFreeDelivery.toFixed(2)} LYD for free delivery`}
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-bold" style={{ color: COLORS.warning }}>
-                    {Math.round(deliveryProgress)}%
-                  </span>
-                </div>
-                {/* Progress bar */}
-                <div
-                  className="w-full h-2.5 rounded-full overflow-hidden"
-                  style={{ background: `${COLORS.warning}15` }}
-                >
-                  <motion.div
-                    className="h-full rounded-full relative overflow-hidden"
-                    style={{
-                      background: `linear-gradient(90deg, ${COLORS.warning}, ${COLORS.gold})`,
-                    }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${deliveryProgress}%` }}
-                    transition={{ duration: 0.8, ease: 'easeOut' }}
-                  >
-                    {/* Shimmer */}
-                    <motion.div
-                      className="absolute inset-0"
-                      style={{
-                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
-                      }}
-                      animate={{ x: ['-100%', '200%'] }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                    />
-                  </motion.div>
-                </div>
-                <p className="text-[10px] mt-1.5" style={{ color: COLORS.textDisabled }}>
-                  {isRTL
-                    ? `التوصيل مجاني للطلبات فوق ${FREE_DELIVERY_THRESHOLD} د.ل`
-                    : `Free delivery for orders over ${FREE_DELIVERY_THRESHOLD} LYD`}
-                </p>
-              </div>
-            )}
+            <div
+              className="rounded-2xl p-3.5 flex items-center gap-3"
+              style={{
+                background: `${COLORS.teal}06`,
+                border: `1px solid ${COLORS.teal}15`,
+              }}
+            >
+              <Truck size={18} style={{ color: COLORS.teal }} />
+              <span className="text-xs font-semibold" style={{ color: COLORS.teal }}>
+                {isRTL ? '🚚 رسوم التوصيل حسب المنطقة المختارة' : '🚚 Delivery fee based on selected area'}
+              </span>
+            </div>
           </motion.div>
 
           {/* ═══ CART ITEMS ═══ */}

@@ -95,9 +95,13 @@ export async function POST(
 
       // 3. Release reserved stock for each order item
       for (const item of order.items) {
+        const prod = await tx.product.findUnique({
+          where: { id: item.productId },
+          select: { reservedStock: true },
+        });
         await tx.product.update({
           where: { id: item.productId },
-          data: { reservedStock: { decrement: item.quantity } },
+          data: { reservedStock: Math.max(0, (prod?.reservedStock || 0) - item.quantity) },
         });
 
         // Create inventory movement of type 'release' for each item

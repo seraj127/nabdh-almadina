@@ -2,9 +2,9 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useEffect, Component, ReactNode } from 'react';
-import { useUIStore, registerCartStore, registerFavoritesStore, registerCouponStore } from '@/stores/ui-store';
-import { useCartStore } from '@/stores/cart-store';
-import { useFavoritesStore } from '@/stores/favorites-store';
+import { useUIStore, registerCartStore, registerFavoritesStore, registerCouponStore, setupAuthWatchdog } from '@/stores/ui-store';
+import { useCartStore, setupCartSyncListeners } from '@/stores/cart-store';
+import { useFavoritesStore, setupFavoritesSyncListeners } from '@/stores/favorites-store';
 import { useCouponStore } from '@/stores/coupon-store';
 import { useLanguageStore } from '@/stores/language-store';
 import dynamic from 'next/dynamic';
@@ -82,6 +82,12 @@ function AppContent() {
     useCartStore.getState().rehydrate();
     useFavoritesStore.getState().rehydrate();
     useLanguageStore.getState().rehydrate();
+    // Cross-tab + window-focus cart sync (pull from server when returning to the window)
+    setupCartSyncListeners();
+    // Cross-tab + window-focus favorites sync
+    setupFavoritesSyncListeners();
+    // Session watchdog: auto-logout if the session was revoked on another device
+    setupAuthWatchdog();
     // UI store rehydrate triggers async API calls (auth profile) — defer slightly
     requestAnimationFrame(() => {
       useUIStore.getState().rehydrate();

@@ -279,9 +279,13 @@ export async function PATCH(
       if (isCancellation && !wasAlreadyCancelled) {
         // Restore stock — decrement reservedStock for each order item
         for (const item of existing.items) {
+          const prod = await tx.product.findUnique({
+            where: { id: item.productId },
+            select: { reservedStock: true },
+          });
           await tx.product.update({
             where: { id: item.productId },
-            data: { reservedStock: { decrement: item.quantity } },
+            data: { reservedStock: Math.max(0, (prod?.reservedStock || 0) - item.quantity) },
           });
           // Inventory movement for the release
           await tx.inventoryMovement.create({
@@ -316,6 +320,35 @@ export async function PATCH(
               points: pointsToRefund,
               orderId: id,
               description: `Points reversed due to admin cancellation of order #${existing.orderNumber}`,
+            },
+          });
+        }
+      }
+
+      // 5. Delivery side-effects — deduct stock permanently and release reservation
+      if (status === 'delivered' && existing.status !== 'delivered') {
+        for (const item of existing.items) {
+          const prod = await tx.product.findUnique({
+            where: { id: item.productId },
+            select: { stock: true, reservedStock: true },
+          });
+          if (!prod) continue;
+          await tx.product.update({
+            where: { id: item.productId },
+            data: {
+              stock: Math.max(0, Number(prod.stock) - item.quantity),
+              reservedStock: Math.max(0, (prod.reservedStock || 0) - item.quantity),
+            },
+          });
+          // Inventory movement for the sale
+          await tx.inventoryMovement.create({
+            data: {
+              productId: item.productId,
+              type: 'out',
+              quantity: item.quantity,
+              reference: existing.orderNumber,
+              note: 'Stock deducted on order delivery',
+              createdBy: request.headers.get('x-user-id') || undefined,
             },
           });
         }

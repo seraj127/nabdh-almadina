@@ -5,10 +5,16 @@ import { db } from '@/lib/db'
 export const dynamic = "force-dynamic";
 
 /**
- * Logout endpoint — revokes session and clears cookies.
- * Supports:
- * - POST /api/auth/logout — revoke current session (default)
- * - POST /api/auth/logout?all=true — revoke all sessions for the user
+ * Logout endpoint — revokes sessions and clears cookies.
+ *
+ * Cross-device sync: logging out from ANY device revokes ALL of the user's
+ * sessions by default, so the other devices are logged out too (their next
+ * authenticated request gets a 401).
+ *
+ * Supported:
+ * - POST /api/auth/logout            — revoke ALL sessions for the user (default)
+ * - POST /api/auth/logout?all=true   — same (explicit full logout)
+ * - POST /api/auth/logout?single=true— revoke ONLY the current session/device
  */
 export async function POST(request: NextRequest) {
   try {
@@ -17,28 +23,19 @@ export async function POST(request: NextRequest) {
                          request.cookies.get('admin_session')?.value;
 
     let userId: string | null = null;
+    let jti: string | null = null;
     let platform: string = 'web';
 
     if (sessionToken) {
       const payload = await verifySessionToken(sessionToken);
       if (payload) {
         userId = payload.userId;
+        jti = payload.jti;
         platform = payload.platform;
-
-        const searchParams = new URL(request.url).searchParams;
-        const logoutAll = searchParams.get('all') === 'true';
-
-        if (logoutAll) {
-          // Revoke all sessions for the user
-          await revokeAllUserSessions(payload.userId);
-        } else {
-          // Revoke only the current session
-          await revokeSession(payload.jti);
-        }
       }
     }
 
-    // Also try to get userId from request body (for backward compatibility)
+    // Fallback: get userId from request body (for backward compatibility)
     if (!userId) {
       try {
         const body = await request.json();
@@ -46,8 +43,20 @@ export async function POST(request: NextRequest) {
       } catch { /* no body */ }
     }
 
-    // Create audit log entry
     if (userId) {
+      const searchParams = new URL(request.url).searchParams;
+      const single = searchParams.get('single') === 'true';
+      const all = searchParams.get('all') === 'true';
+
+      if (single && jti) {
+        // Revoke only the current session/device
+        await revokeSession(jti);
+      } else {
+        // Default + ?all=true → revoke all sessions (full cross-device logout)
+        await revokeAllUserSessions(userId);
+      }
+
+      // Create audit log entry
       try {
         const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
         await db.auditLog.create({
@@ -56,7 +65,7 @@ export async function POST(request: NextRequest) {
             action: 'logout',
             entity: 'User',
             entityId: userId,
-            details: `User logged out via ${platform}`,
+            details: `User logged out (${all ? 'all devices' : single ? 'this device' : 'all devices'}) via ${platform}`,
             ip,
           },
         });

@@ -833,8 +833,8 @@ export function DeliveryZonesPage() {
           </div>
           <p className="mt-3 text-[10px] text-muted-foreground/60">
             {isAr
-              ? '* جميع الأسعار قابلة للتغيير. يتم التحديث يومياً لضمان دقة المعلومات. الطلبات فوق 100 د.ل قد تحصل على توصيل مجاني.'
-              : '* All prices are subject to change. Updated daily for accuracy. Orders above 100 LYD may qualify for free delivery.'}
+              ? '* جميع الأسعار قابلة للتغيير. يتم التحديث يومياً لضمان دقة المعلومات. تُحتسب رسوم التوصيل حسب المنطقة المختارة.'
+              : '* All prices are subject to change. Updated daily for accuracy. Delivery fees are calculated based on the selected area.'}
           </p>
         </motion.div>
 

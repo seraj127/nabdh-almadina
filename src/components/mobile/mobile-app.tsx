@@ -1,5 +1,8 @@
 'use client';
 
+import { patchFetchForNative } from '@/lib/api-bridge';
+patchFetchForNative();
+
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguageStore } from '@/stores/language-store';
@@ -275,7 +278,15 @@ function SplashScreen() {
         stepIndex++;
       } else {
         clearInterval(interval);
-        setTimeout(() => setShowButtons(true), 300);
+        setTimeout(() => {
+          // If a user is already logged in (persisted session), skip straight to the main screen
+          const savedUser = useMobileStore.getState().user;
+          if (savedUser && savedUser.id) {
+            setScreen('main');
+          } else {
+            setShowButtons(true);
+          }
+        }, 300);
       }
     }, 220);
     return () => clearInterval(interval);
@@ -2306,6 +2317,7 @@ function MainScreen() {
   const products = useMobileStore((s) => s.products);
   const categories = useMobileStore((s) => s.categories);
   const favorites = useMobileStore((s) => s.favorites);
+  const favoriteProducts = useMobileStore((s) => s.favoriteProducts);
   const toggleFavorite = useMobileStore((s) => s.toggleFavorite);
   const searchQuery = useMobileStore((s) => s.searchQuery);
   const setSearchQuery = useMobileStore((s) => s.setSearchQuery);
@@ -2440,16 +2452,17 @@ function MainScreen() {
           ) : (
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: 'easeOut' as const }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' as const }}
+              style={{ transform: 'none' }}
               className="min-h-full"
             >
               {activeTab === 'home' && <HomeTab products={products} categories={categories} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onSelectProduct={setSelectedProduct} favorites={favorites} toggleFavorite={toggleFavorite} />}
               {activeTab === 'categories' && <CategoriesTab categories={categories} products={products} onSelectProduct={setSelectedProduct} />}
               {activeTab === 'cart' && <CartTab />}
-              {activeTab === 'favorites' && <FavoritesTab products={products} favorites={favorites} toggleFavorite={toggleFavorite} onSelectProduct={setSelectedProduct} />}
+              {activeTab === 'favorites' && <FavoritesTab favoriteProducts={favoriteProducts} toggleFavorite={toggleFavorite} onSelectProduct={setSelectedProduct} />}
               {activeTab === 'profile' && <ProfileTab user={user} onLogout={onLogout} onGoToLogin={() => setScreen('login')} darkMode={darkMode} setDarkMode={setDarkMode} />}
             </motion.div>
           )}
