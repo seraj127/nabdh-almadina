@@ -10,7 +10,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/**', 'src/**/*.d.ts', 'src/app/**'],
+      exclude: ['node_modules/**', '**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', 'vitest.setup.ts'],
     },
   },
   resolve: {

@@ -1,6 +1,43 @@
 # سجل التقدم — نبض المدينة
 
-## جلسة (15 أغسطس 2026): إصلاح المشروع محلياً + استعادة تحميل الـAPK
+## جلسة (15 أغسطس 2026): تأسيس الاختبارات (اختبارات الوحدات + API)
+
+- تم تثبيت: `vitest`, `jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@vitest/coverage-v8`.
+- الإعداد: `vitest.config.mts` (بيئة jsdom، alias `@`) + `vitest.setup.ts`.
+- سكربتات: `npm test`, `npm run test:run`, `npm run test:watch`, `npm run test:coverage`.
+- **17 اختباراً ناجحاً**:
+  - `src/stores/__tests__/language-store.test.ts` (7) — اللغة، الاتجاه، الحارس، الترجمات.
+  - `src/stores/__tests__/favorites-store.test.ts` (4) — تبديل/إضافة/مسح المفضلة.
+  - `src/app/api/favorites/__tests__/route.test.ts` (6) — POST idempotent، 400/404، DELETE، GET (بمحاكاة db والمصادقة — **لا تمس الإنتاج**).
+- مرفوع على GitHub (`7bd0d74`).
+- ملاحظة: `package-lock.json` متجاهل عمداً في هذا المشروع.
+- الخطوة التالية (عند الطلب): اختبارات E2E/UI (Playwright)، CI للاختبارات في GitHub Actions.
+
+---
+
+## جلسة سابقة (15 أغسطس 2026): حل دائم لتحميل الـAPK + مراجعة النسخ
+
+### الحل الدائم لتحميل الـAPK
+- المشكلة: نشر Vercel القادم من git لا يحتوي `public/nabd-al-madina.apk` (متجاهل في git) → تحميل التطبيق 404.
+- الحل: رفع الـAPK إلى **Supabase Storage** (bucket عام `apk`) — يعمل من أي نشر.
+  - الرابط العام: `https://bqcymuoednrbtdywwmwz.supabase.co/storage/v1/object/public/apk/nabd-al-madina.apk` (200، 27,860,253 بايت).
+  - أُضيف الثابت `APK_DOWNLOAD_URL` في `src/lib/api-bridge.ts` ووُجّهت إليه روابط التحميل في: `apk-download-page.tsx`, `mobile-download-page.tsx`, `header.tsx`.
+  - منشور على Vercel (`99g3v8aq2`) + مرفوع على GitHub (`038d8b0`).
+- سكربتات الرفع الاحتياطية: `D:\temp\opencode\upload-apk.js` (كامل) و`upload-apk-tus.js` (مجزأ TUS).
+
+### مراجعة نسخ المشروع (18 نسخة)
+- النسخة الحية (`يافيها يا في البيس\nabdh-almadina-full`) **هي الأكمل** (وحيدة تحمل كل شيء بما فيه الـAPK).
+- النسخ شبه المكتملة (تنقصها الـAPK فقط): النبض المنبوظ، بع بع، NO and NO، التحميلة الاخيرة، النبض 1000000، فيه كل شئ، مضغوط جدا، city-pulse-full.
+- نسخ قديمة/ناقصة: v4.0.0، `D:\nabd-project`، نسخة `التنزيلات 1` (بلا موبايل/Android).
+
+### متبقٍ
+- رفع ملف CI/CD (يحتاج `workflow` scope في توكن GitHub) — الملف جاهز محلياً في `.github/workflows/build-apk.yml`.
+- أمن مفتاح التوقيع (`nabd-release-key.jks` + كلمة المرور في git) — مؤجل (الريبو خاص).
+- اختبار الـAPK الجديد على الجهاز.
+
+---
+
+## جلسة سابقة (15 أغسطس 2026): إصلاح المشروع محلياً + استعادة تحميل الـAPK
 
 ### المشكلة: "التطبيق على الموبايل توقف"
 - **السبب:** تكامل Vercel مع git ينشر تلقائياً مع كل رفع للكود (`git push`). النشر القادم من git **لا يحتوي الـAPK** لأنه متجاهل في git (`*.apk`) → أصبح `/nabd-al-madina.apk` يعيد 404 → توقف تحميل/تحديث التطبيق.
