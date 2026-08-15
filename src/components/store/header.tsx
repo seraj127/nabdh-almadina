@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { APK_DOWNLOAD_URL } from '@/lib/api-bridge';
 import {
   Globe,
   ShoppingCart,
@@ -1005,7 +1006,7 @@ export function Header() {
 
             {/* Download App Section */}
             <a
-              href="/api/download"
+              href={APK_DOWNLOAD_URL}
               download="nabd-al-madina.apk"
               className="w-full flex items-center gap-3 px-3 py-3 text-base font-medium text-white hover:text-white bg-nabdh-primary hover:bg-nabdh-primary/90 rounded-xl transition-all"
             >

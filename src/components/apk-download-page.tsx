@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useLanguageStore } from '@/stores/language-store';
+import { APK_DOWNLOAD_URL } from '@/lib/api-bridge';
 
 export function ApkDownloadPage({ onBack }: { onBack: () => void }) {
   const { language } = useLanguageStore();
@@ -10,7 +11,7 @@ export function ApkDownloadPage({ onBack }: { onBack: () => void }) {
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const apkUrl = '/nabd-al-madina.apk';
+  const apkUrl = APK_DOWNLOAD_URL;
   const apkFileName = 'nabd-al-madina.apk';
   const apkSize = '24 MB';
 

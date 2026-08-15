@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useLanguageStore } from '@/stores/language-store';
+import { APK_DOWNLOAD_URL } from '@/lib/api-bridge';
 import { X, Download, Smartphone, Code, Terminal, ChevronDown, ChevronUp, HardDrive, Cpu, CheckCircle, AlertTriangle, Copy, Check, Eye } from 'lucide-react';
 
 interface MobileDownloadPageProps {
@@ -48,7 +49,7 @@ export function MobileDownloadPage({ isOpen, onClose }: MobileDownloadPageProps)
           </p>
           {/* APK Download - Most prominent */}
           <a
-            href="/nabd-al-madina.apk"
+            href={APK_DOWNLOAD_URL}
             download="nabd-al-madina.apk"
             className="block p-5 rounded-2xl border-2 border-[#F04E3E]/40 dark:border-[#F04E3E]/40 bg-gradient-to-l from-[#004B63]/5 to-[#F04E3E]/5 dark:from-[#004B63]/10 dark:to-[#F04E3E]/10 hover:border-[#F04E3E] hover:shadow-xl transition-all group cursor-pointer"
           >

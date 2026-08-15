@@ -8,6 +8,11 @@
 
 export const LIVE_API_BASE = 'https://nabdh-almadina.vercel.app';
 
+// The APK installer is hosted on Supabase Storage so the download works from
+// every deployment (CLI and git-integration alike) — the public/ copy alone is
+// dropped whenever Vercel builds from git (the file is gitignored).
+export const APK_DOWNLOAD_URL = 'https://bqcymuoednrbtdywwmwz.supabase.co/storage/v1/object/public/apk/nabd-al-madina.apk';
+
 export function isNativeAppRuntime(): boolean {
   if (typeof window === 'undefined') return false;
   return (window as unknown as Record<string, unknown>).Capacitor !== undefined;

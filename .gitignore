@@ -64,6 +64,10 @@ releases/
 *.apk
 *.tar.gz
 
+# The mobile app installer is served from public/ on the live site, so it MUST
+# stay in git — otherwise Vercel's git-integration deployments drop it (404).
+!public/nabd-al-madina.apk
+
 # Screenshots
 screenshot-*.png
 *-screenshot.png
