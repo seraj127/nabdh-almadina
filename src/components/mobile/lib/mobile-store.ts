@@ -117,7 +117,7 @@ export const DEMO_NOTIFICATIONS: AppNotification[] = [
 
 // Convert +218XXX to 0XXX for LOCAL DISPLAY (Libyan format)
 // Internal/DB storage stays as +218, but UI always shows 0-prefix
-const toLocalPhone = (phone: string): string => phone.replace(/^\+218/, '0');
+export const toLocalPhone = (phone: string): string => phone.replace(/^\+218/, '0');
 
 interface FetchProductsOptions {
   page?: number;
@@ -1145,6 +1145,23 @@ export function initMobileStore() {
   // darkMode is always true — no longer loading saved preference
   if (savedAddresses) updates.addresses = savedAddresses;
 
+  // ─── Unified session: adopt the web store's user if the mobile store has none ──
+  // Single source of truth for the session is useUIStore.currentUser. If the web
+  // store is logged in but the mobile store has no (matching) user — e.g. the user
+  // logged in on the web before ever opening the mobile view — adopt it so the
+  // mobile view opens into the app (and server-backed data syncs immediately).
+  try {
+    const webUser = useUIStore.getState().currentUser;
+    const mobileUser = useMobileStore.getState().user;
+    if (webUser && (!mobileUser || mobileUser.id !== webUser.id)) {
+      useMobileStore.setState({
+        user: { id: webUser.id, name: webUser.name, phone: toLocalPhone(webUser.phone), email: webUser.email, avatar: webUser.avatar, role: webUser.role },
+        ...(useMobileStore.getState().screen === 'splash' || useMobileStore.getState().screen === 'login' ? { screen: 'main' as const } : {}),
+      });
+      saveLocal('mobile_user', { id: webUser.id, name: webUser.name, phone: toLocalPhone(webUser.phone), email: webUser.email, avatar: webUser.avatar, role: webUser.role });
+    }
+  } catch { /* ignore */ }
+
   if (Object.keys(updates).length > 0) {
     useMobileStore.setState(updates);
   }
@@ -1166,8 +1183,9 @@ export function initMobileStore() {
   useMobileStore.getState().fetchCategories();
   useMobileStore.getState().fetchDeliveryZones();
 
-  // Fetch user profile if logged in
-  if (savedUser && !savedUser.id.startsWith('local-')) {
+  // Fetch user profile if logged in (effective user — includes a web-adopted one)
+  const initUser = useMobileStore.getState().user;
+  if (initUser && !initUser.id.startsWith('local-')) {
     useMobileStore.getState().fetchUserProfile();
     useMobileStore.getState().fetchAddresses();
     useMobileStore.getState().fetchOrders();

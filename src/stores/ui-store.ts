@@ -201,37 +201,10 @@ export const useUIStore = create<UIState>()((set) => ({
       safeCartOp((s) => { s.getState().fetchFromServer().catch(() => {}); });
       safeFavoritesOp((s) => { s.getState().fetchFavorites().catch(() => {}); });
     }, 200);
-    // ─── Cross-store sync: notify mobile store of login ───
-    import('@/lib/sync-bridge').then(({ syncAllFromServer, dispatchSyncEvent }) => {
+    // ─── Cross-store sync: notify mobile store of login (unified session) ───
+    import('@/lib/sync-bridge').then(({ syncAllFromServer, dispatchSyncEvent, syncWebUserToMobile }) => {
       dispatchSyncEvent('nabdh:auth-changed');
-      // Also sync mobile store user state
-      import('@/components/mobile/lib/mobile-store').then(({ useMobileStore }) => {
-        const mobileUser = useMobileStore.getState().user;
-        // If mobile store doesn't have this user, update it
-        if (!mobileUser || mobileUser.id !== user.id) {
-          useMobileStore.setState({
-            user: {
-              id: user.id,
-              name: user.name,
-              phone: user.phone,
-              email: user.email,
-              avatar: user.avatar,
-              role: user.role,
-            },
-          });
-          // Try saving to localStorage
-          try {
-            localStorage.setItem('mobile_user', JSON.stringify({
-              id: user.id,
-              name: user.name,
-              phone: user.phone,
-              email: user.email,
-              avatar: user.avatar,
-              role: user.role,
-            }));
-          } catch { /* ignore */ }
-        }
-      }).catch(() => {});
+      syncWebUserToMobile(user).catch(() => {});
     }).catch(() => {});
   },
 
@@ -343,6 +316,10 @@ export const useUIStore = create<UIState>()((set) => ({
                   const update = { currentUser: updatedUser };
                   set(update);
                   saveUIState({ ...useUIStore.getState(), ...update } as Partial<UIState>);
+                  // Unify the mobile session with the validated web session
+                  import('@/lib/sync-bridge').then(({ syncWebUserToMobile }) => {
+                    syncWebUserToMobile(updatedUser).catch(() => {});
+                  }).catch(() => {});
                   // Apply server-side language + notification preferences
                   if (data.user.language === 'ar' || data.user.language === 'en') {
                     import('@/stores/language-store').then(({ useLanguageStore }) => {

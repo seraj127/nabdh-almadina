@@ -27,10 +27,45 @@ export function dispatchSyncEvent(type: string, detail?: unknown) {
   }
 }
 
+// ─── Auth Sync (unified session) ───────────────────────────────────────
+// Single source of truth for the session = useUIStore.currentUser. Whenever a
+// web user logs in, is re-validated, or the mobile view initializes, the mobile
+// store adopts that user so the mobile view never shows a guest while a web
+// session exists (and vice versa the mobile login already calls useUIStore.login).
+
+export type WebUserLike = {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  avatar?: string;
+  role: string;
+};
+
+/** Copy the web store's logged-in user into the mobile store (unified session). */
+export async function syncWebUserToMobile(user: WebUserLike): Promise<void> {
+  try {
+    const { useMobileStore, toLocalPhone } = await import('@/components/mobile/lib/mobile-store');
+    const current = useMobileStore.getState().user;
+    if (current && current.id === user.id) return;
+    const s = useMobileStore.getState();
+    const authScreens = ['splash', 'login', 'register', 'forgot-password'];
+    const adopted = { id: user.id, name: user.name, phone: toLocalPhone(user.phone), email: user.email, avatar: user.avatar, role: user.role };
+    useMobileStore.setState({
+      user: adopted,
+      ...(authScreens.includes(s.screen) ? { screen: 'main' as const } : {}),
+    });
+    try {
+      localStorage.setItem('mobile_user', JSON.stringify(adopted));
+    } catch { /* ignore */ }
+  } catch {
+    // Silent fail — might be circular import
+  }
+}
+
 // ─── Favorites Sync ─────────────────────────────────────────────────
 
-/** Sync favorites from mobile store → web favorites store */
-export async function syncMobileToFavoritesStore(favoriteIds: string[]) {
+/** Sync favorites from mobile store → web favorites store */export async function syncMobileToFavoritesStore(favoriteIds: string[]) {
   try {
     const { useFavoritesStore } = await import('@/stores/favorites-store');
     const currentWebIds = useFavoritesStore.getState().favoriteIds;
