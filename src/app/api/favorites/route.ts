@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/auth-utils';
+import { listFavorites, addFavorite, replaceFavorites, removeFavorite, FavoriteError } from '@/lib/favorites.service';
 
 export const dynamic = "force-dynamic";
 
@@ -14,23 +14,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl;
     const includeProducts = searchParams.get('includeProducts') === 'true';
 
-    const userId = authUserId;
-
-    const includeObj = includeProducts ? {
-      product: {
-        include: {
-          category: {
-            select: { id: true, nameAr: true, nameEn: true, slug: true, icon: true },
-          },
-        },
-      },
-    } : undefined;
-
-    const favorites = await db.favoriteItem.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      include: includeObj,
-    });
+    const favorites = await listFavorites(authUserId, includeProducts);
 
     return NextResponse.json({
       favorites: favorites.map((f: any) => {
@@ -71,7 +55,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: Add product to favorites
+// POST: Add product to favorites (idempotent — explicit intent, never a toggle)
 export async function POST(request: NextRequest) {
   try {
     const authResult = await requireAuth(request);
@@ -80,7 +64,6 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { productId } = body;
-    const userId = authUserId;
 
     if (!productId) {
       return NextResponse.json(
@@ -89,30 +72,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify product exists
-    const product = await db.product.findUnique({
-      where: { id: productId },
-    });
-
-    if (!product) {
-      return NextResponse.json(
-        { error: 'المنتج غير موجود' },
-        { status: 404 }
-      );
-    }
-
-    // Idempotent add — the client now sends an explicit ADD intent (never a
-    // state-agnostic toggle), so a repeat request must be a success, not a 409.
-    await db.favoriteItem.createMany({
-      data: [{ userId, productId }],
-      skipDuplicates: true,
-    });
-
-    return NextResponse.json({
-      isFavorite: true,
-      productId,
-    });
+    const result = await addFavorite(authUserId, productId);
+    return NextResponse.json(result);
   } catch (error) {
+    if (error instanceof FavoriteError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Error adding to favorites:', error);
     return NextResponse.json(
       { error: 'فشل في إضافة المنتج إلى المفضلة' },
@@ -122,8 +87,6 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT: Replace the user's favorites with the given list (full sync).
-// The client's list is the source of truth — items not present are removed,
-// items present are added. This lets removals propagate across devices.
 export async function PUT(request: NextRequest) {
   try {
     const authResult = await requireAuth(request);
@@ -132,46 +95,9 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json();
     const { productIds } = body as { productIds?: string[] };
-    const userId = authUserId;
 
-    const incoming = Array.isArray(productIds)
-      ? Array.from(new Set(productIds.filter((id): id is string => typeof id === 'string' && id.length > 0)))
-      : [];
-
-    // Fetch current favorites and current products in one pass
-    const [existing, products] = await Promise.all([
-      db.favoriteItem.findMany({ where: { userId }, select: { id: true, productId: true } }),
-      incoming.length > 0
-        ? db.product.findMany({ where: { id: { in: incoming }, isActive: true }, select: { id: true } })
-        : Promise.resolve([]),
-    ]);
-
-    const validIds = new Set(products.map((p) => p.id));
-    const effectiveIds = incoming.filter((id) => validIds.has(id));
-    const effectiveSet = new Set(effectiveIds);
-
-    const toRemove = existing.filter((e) => !effectiveSet.has(e.productId));
-    if (toRemove.length > 0) {
-      await db.favoriteItem.deleteMany({
-        where: { userId, productId: { in: toRemove.map((e) => e.productId) } },
-      });
-    }
-
-    const existingIds = new Set(existing.map((e) => e.productId));
-    const toAdd = effectiveIds.filter((id) => !existingIds.has(id));
-    if (toAdd.length > 0) {
-      await db.favoriteItem.createMany({
-        data: toAdd.map((productId) => ({ userId, productId })),
-      });
-    }
-
-    const favorites = await db.favoriteItem.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      select: { productId: true },
-    });
-
-    return NextResponse.json({ favorites: favorites.map((f) => f.productId) });
+    const favorites = await replaceFavorites(authUserId, productIds ?? []);
+    return NextResponse.json({ favorites });
   } catch (error) {
     console.error('Error replacing favorites:', error);
     return NextResponse.json(
@@ -181,47 +107,34 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// DELETE: Remove product from favorites
-export async function DELETE(request: NextRequest) {  try {
+// DELETE: Remove product from favorites (idempotent)
+export async function DELETE(request: NextRequest) {
+  try {
     const authResult = await requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
     const { userId: authUserId } = authResult;
 
     const { searchParams } = request.nextUrl;
-    const userId = authUserId;
-    const productId = searchParams.get('productId');
+    let productId = searchParams.get('productId');
 
     if (!productId) {
-      // Try to get from body as fallback
-      let bodyProductId: string | null = null;
       try {
         const body = await request.json();
-        bodyProductId = body.productId;
+        productId = body.productId;
       } catch {
         // Body may be empty
       }
-
-      const effectiveProductId = productId || bodyProductId;
-
-      if (!effectiveProductId) {
-        return NextResponse.json(
-          { error: 'معرف المنتج مطلوب' },
-          { status: 400 }
-        );
-      }
-
-      const deleted = await db.favoriteItem.deleteMany({
-        where: { userId, productId: effectiveProductId },
-      });
-
-      return NextResponse.json({ deleted: deleted.count });
     }
 
-    const deleted = await db.favoriteItem.deleteMany({
-      where: { userId, productId },
-    });
+    if (!productId) {
+      return NextResponse.json(
+        { error: 'معرف المنتج مطلوب' },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ deleted: deleted.count });
+    const result = await removeFavorite(authUserId, productId);
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Error removing from favorites:', error);
     return NextResponse.json(
