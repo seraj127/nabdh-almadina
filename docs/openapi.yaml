@@ -1,0 +1,388 @@
+openapi: 3.0.3
+info:
+  title: نبض المدينة — Nabd Al-Madina API
+  description: |
+    متجر نبض المدينة الإلكتروني. الواجهة الرسمية للعميل (ويب + موبايل).
+    المصادقة عبر جلسة cookie (httpOnly): `session_token` للويب/الموبايل، `admin_session` للوحة الأدمن.
+    انظر docs/adr/ADR-001-nextjs-supabase-single-codebase.md.
+  version: "1.0.0"
+servers:
+  - url: https://nabdh-almadina.vercel.app
+    description: Production
+  - url: http://localhost:3000
+    description: Local development
+tags:
+  - name: auth
+    description: المصادقة والملف الشخصي
+  - name: favorites
+    description: المفضلة (مزامنة عبر الخادم)
+  - name: catalog
+    description: المنتجات والتصنيفات
+  - name: cart
+    description: سلة التسوق
+  - name: orders
+    description: الطلبات
+
+paths:
+  /api/auth/login:
+    post:
+      tags: [auth]
+      summary: تسجيل الدخول
+      description: يتحقق من الهاتف وكلمة المرور، ويسجّل audit، ويضع cookie جلسة. مقيد بـ rate-limit (5 محاولات/دقيقة/IP).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: نجاح — تُعيّن cookie جلسة
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LoginResponse" }
+        "400":
+          description: هاتف/كلمة مرور مفقودان
+        "401":
+          description: بيانات غير صحيحة (يُسجَّل login_failed في audit)
+        "403":
+          description: الحساب معطّل
+        "429":
+          description: تجاوز حد المحاولات
+
+  /api/auth/profile:
+    get:
+      tags: [auth]
+      summary: الملف الشخصي
+      security: [{ sessionCookie: [] }]
+      description: يعيد بيانات المستخدم + اللغة + تفضيلات الإشعارات (`preferences`).
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProfileResponse" }
+        "401":
+          description: غير مصادق
+    patch:
+      tags: [auth]
+      summary: تحديث الملف الشخصي
+      security: [{ sessionCookie: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProfilePatch" }
+      responses:
+        "200":
+          description: تم التحديث
+        "401":
+          description: غير مصادق
+
+  /api/favorites:
+    get:
+      tags: [favorites]
+      summary: قائمة المفضلة
+      security: [{ sessionCookie: [] }]
+      parameters:
+        - name: includeProducts
+          in: query
+          schema: { type: boolean }
+          description: إرجاع تفاصيل المنتج الكاملة مع كل مفضلة
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FavoritesList" }
+        "401":
+          description: غير مصادق
+    post:
+      tags: [favorites]
+      summary: إضافة منتج للمفضلة (idempotent)
+      security: [{ sessionCookie: [] }]
+      description: "إضافة صريحة عبر `createMany skipDuplicates` — تكرار الطلب لا يحذف ولا يعيد 409."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId]
+              properties:
+                productId: { type: string, format: uuid }
+      responses:
+        "200":
+          description: "إضافة ناجحة (isFavorite: true)"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FavoriteToggleResult" }
+        "400":
+          description: productId مفقود
+        "404":
+          description: المنتج غير موجود
+        "401":
+          description: غير مصادق
+    put:
+      tags: [favorites]
+      summary: استبدال قائمة المفضلة بالكامل (sync)
+      security: [{ sessionCookie: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productIds: { type: array, items: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: المزامنة ناجحة — يعيد قائمة المنتجات النشطة
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favorites: { type: array, items: { type: string, format: uuid } }
+    delete:
+      tags: [favorites]
+      summary: إزالة منتج من المفضلة (idempotent)
+      security: [{ sessionCookie: [] }]
+      parameters:
+        - name: productId
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: الحذف ناجح — يعيد عدد الصفوف المحذوفة
+        "400":
+          description: productId مفقود
+
+  /api/products:
+    get:
+      tags: [catalog]
+      summary: قائمة المنتجات (مقسمة)
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20, maximum: 100 }
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0 }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string, description: category slug }
+        - name: categoryId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: subcategory
+          in: query
+          schema: { type: string }
+        - name: sort
+          in: query
+          schema: { type: string, enum: [newest, price-asc, price-desc, popular] }
+        - name: isActive
+          in: query
+          schema: { type: boolean }
+      responses:
+        "200":
+          description: قائمة المنتجات
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductList" }
+
+  /api/products/{id}:
+    get:
+      tags: [catalog]
+      summary: تفاصيل منتج واحد (عام — يُستخدم لصفحة المفضلة للضيوف)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: المنتج
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Product" }
+        "404":
+          description: غير موجود أو غير نشط
+
+  /api/categories:
+    get:
+      tags: [catalog]
+      summary: التصنيفات
+      parameters:
+        - name: slug
+          in: query
+          schema: { type: string }
+        - name: parentId
+          in: query
+          schema: { type: string }
+        - name: includeChildren
+          in: query
+          schema: { type: boolean, default: true }
+        - name: includeSubcategories
+          in: query
+          schema: { type: boolean, default: false }
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CategoryList" }
+
+  /api/orders:
+    get:
+      tags: [orders]
+      summary: قائمة الطلبات أو تتبع طلب
+      security: [{ sessionCookie: [] }]
+      parameters:
+        - name: userId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: orderNumber
+          in: query
+          schema: { type: string }
+        - name: countOnly
+          in: query
+          schema: { type: boolean }
+      responses:
+        "200":
+          description: الطلبات (أو العدد إن countOnly)
+        "400":
+          description: يلزم userId أو orderNumber
+        "401":
+          description: غير مصادق
+        "403":
+          description: لا تملك طلبات هذا المستخدم
+
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: session_token
+      description: جلسة httpOnly يحددها POST /api/auth/login (للوحة الأدمن: admin_session)
+  schemas:
+    LoginRequest:
+      type: object
+      required: [phone, password]
+      properties:
+        phone: { type: string, example: "0910000001" }
+        password: { type: string, format: password }
+        platform:
+          type: string
+          enum: [web, mobile, admin]
+          default: web
+        deviceInfo: { type: string }
+    LoginResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        user: { $ref: "#/components/schemas/User" }
+        isReturningUser: { type: boolean }
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        phone: { type: string }
+        name: { type: string }
+        email: { type: string, nullable: true }
+        role: { type: string }
+        language: { type: string, enum: [ar, en] }
+        avatar: { type: string, nullable: true }
+        loyaltyTier: { type: string }
+        loyaltyPoints: { type: integer }
+        walletBalance: { type: number }
+        lastLoginAt: { type: string, format: date-time, nullable: true }
+        loginCount: { type: integer }
+    ProfileResponse:
+      type: object
+      properties:
+        user:
+          allOf:
+            - $ref: "#/components/schemas/User"
+            - type: object
+              properties:
+                preferences:
+                  type: object
+                  nullable: true
+                  description: تفضيلات الإشعارات المحفوظة على الخادم
+    ProfilePatch:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string }
+        language: { type: string, enum: [ar, en] }
+        avatar: { type: string }
+        preferences:
+          type: object
+          properties:
+            notifications:
+              type: object
+              properties:
+                orders: { type: boolean }
+                offers: { type: boolean }
+                points: { type: boolean }
+                news: { type: boolean }
+    FavoriteToggleResult:
+      type: object
+      properties:
+        isFavorite: { type: boolean }
+        productId: { type: string, format: uuid }
+    FavoriteItem:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        productId: { type: string, format: uuid }
+        createdAt: { type: string, format: date-time }
+        product: { $ref: "#/components/schemas/Product" }
+    FavoritesList:
+      type: object
+      properties:
+        favorites: { type: array, items: { $ref: "#/components/schemas/FavoriteItem" } }
+    Product:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        nameAr: { type: string }
+        nameEn: { type: string }
+        price: { type: number }
+        comparePrice: { type: number, nullable: true }
+        mainImage: { type: string, nullable: true }
+        images: { type: array, items: { type: string } }
+        categoryId: { type: string, format: uuid }
+        category:
+          type: object
+          properties:
+            id: { type: string, format: uuid }
+            nameAr: { type: string }
+            nameEn: { type: string }
+            slug: { type: string }
+        stock: { type: integer }
+        rating: { type: number }
+        inStock: { type: boolean }
+        isActive: { type: boolean }
+    ProductList:
+      type: object
+      properties:
+        products: { type: array, items: { $ref: "#/components/schemas/Product" } }
+        total: { type: integer }
+        limit: { type: integer }
+        offset: { type: integer }
+    CategoryList:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: uuid }
+              nameAr: { type: string }
+              nameEn: { type: string }
+              slug: { type: string }
+              productCount: { type: integer }
+              children: { type: array, items: { type: object } }

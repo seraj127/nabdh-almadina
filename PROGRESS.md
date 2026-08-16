@@ -1,6 +1,25 @@
 # سجل التقدم — نبض المدينة
 
-## جلسة (15 أغسطس 2026): تأسيس الاختبارات (اختبارات الوحدات + API)
+## جلسة (15 أغسطس 2026): الامتثال للدستور — Phase 0 + API-001
+
+### Phase 0 — التدقيق
+- `docs/COMPLIANCE_MATRIX.md`: مصفوفة 68 قاعدة × الحالة × الدليل — ✅ 12 · ⚠️ 24 · ❌ 26 · 🔧 6.
+- `docs/adr/ADR-001-nextjs-supabase-single-codebase.md`: أول قرار معماري موثق.
+
+### API-001 — عقد OpenAPI (إصلاح جراحي)
+- `docs/openapi.yaml`: مواصفة OpenAPI 3.0.3 لنقاط: auth/login+profile، favorites (GET/POST/PUT/DELETE)، products (+{id})، categories، orders — مع securityScheme للجلسة ومخططات كاملة.
+- الرفعات: `c5e06a9` (Phase 0)، ومواصفة API قادمة.
+
+### الأولويات المتبقية (🔧)
+- DB-001: تحويل تغييرات الـSchema إلى migrations.
+- BE-001: فصل طبقة service للـroutes الحرجة.
+- ORG-002: تقسيم الملفات الضخمة.
+- DOPS-002: نقل كلمة مرور توقيع APK لمتغير بيئة.
+- CICD-001: ربط الاختبارات بـ CI (يحتاج `workflow` scope).
+
+---
+
+## جلسة سابقة (15 أغسطس 2026): تأسيس الاختبارات (اختبارات الوحدات + API)
 
 - تم تثبيت: `vitest`, `jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@vitest/coverage-v8`.
 - الإعداد: `vitest.config.mts` (بيئة jsdom، alias `@`) + `vitest.setup.ts`.
