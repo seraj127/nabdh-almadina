@@ -19,9 +19,12 @@ android {
     signingConfigs {
         release {
             storeFile file('../nabd-release-key.jks')
-            storePassword 'nabd123456'
+            // DO NOT hardcode the keystore password. It is injected at build time
+            // via NABD_KEYSTORE_PASSWORD (local shell / GitHub Actions secret).
+            // Release builds fail fast if it is unset.
+            storePassword System.getenv('NABD_KEYSTORE_PASSWORD')
             keyAlias 'nabd'
-            keyPassword 'nabd123456'
+            keyPassword System.getenv('NABD_KEYSTORE_PASSWORD')
         }
     }
     buildTypes {

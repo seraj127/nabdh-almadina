@@ -1,6 +1,19 @@
 # سجل التقدم — نبض المدينة
 
-## جلسة (15 أغسطس 2026): الامتثال للدستور — Phase 0 + API-001
+## جلسة (15 أغسطس 2026): الامتثال — DOPS-002 + DB-001
+
+### DOPS-002 — أمن مفتاح توقيع الـAPK
+- `android/app/build.gradle`: كلمة مرور المفتاح تُقرأ من متغير البيئة `NABD_KEYSTORE_PASSWORD` (بدل الكشف في الكود)؛ بناء الـrelease يفشل بسرعة إن لم تُضبط.
+- الـworkflow المحلي `.github/workflows/build-apk.yml` يمرّر السر من `secrets.NABD_KEYSTORE_PASSWORD` (لرفعه لاحقاً عند تفعيل `workflow` scope).
+
+### DB-001 — Migrations بدل ALTER اليدوي
+- `prisma/migrations/20260815000000_init/migration.sql`: baseline كامل (37 جدولاً، يتضمن `preferences`).
+- `migration_lock.toml` + `MIGRATION_README.md` بخطوات التبني (`prisma migrate resolve --applied 20260815000000_init` على الإنتاج مرة واحدة).
+- الرفعات القادمة: DOPS-002 + DB-001.
+
+---
+
+## جلسة سابقة (15 أغسطس 2026): الامتثال للدستور — Phase 0 + API-001
 
 ### Phase 0 — التدقيق
 - `docs/COMPLIANCE_MATRIX.md`: مصفوفة 68 قاعدة × الحالة × الدليل — ✅ 12 · ⚠️ 24 · ❌ 26 · 🔧 6.
