@@ -1,0 +1,48 @@
+# Project Quality Profile — نبض المدينة (نابض المدينة)
+# Per AI Engineering Constitution §29. Project-specific values live here;
+# the Constitution supplies the universal framework.
+
+project_quality_profile:
+  performance:
+    api_p95_ms: 300          # budget for critical read APIs (target)
+    web_lcp_ms: 2500         # Lighthouse LCP budget (target)
+    web_inp_ms: 200
+    mobile_startup_ms: null  # to be measured on a mid-tier device
+
+  reliability:
+    availability_slo: 99.9
+    crash_free_target: 99.9
+
+  testing:
+    unit_coverage_floor: 60  # per critical module (stores/services)
+    integration_requirements:
+      - favorites service
+      - auth service
+      - cart sync
+    e2e_requirements:
+      - checkout journey
+      - favorites sync (web -> mobile)
+
+  security:
+    severity_block_policy:
+      critical: block
+      high: block
+      medium: review
+
+  accessibility:
+    standard: "WCAG-2.2-AA"
+
+  recovery:
+    rto: 4h      # target — Supabase managed (restore drill pending)
+    rpo: 15m     # target — depends on Supabase PITR tier
+
+  supported_platforms:
+    - web (mobile-first)
+    - android (Capacitor APK)
+
+  supported_locales:
+    - ar
+    - en
+
+  data_retention:
+    policy: "project-defined — review with legal before launch"
