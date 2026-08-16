@@ -13,6 +13,13 @@
 - ملاحظة: `package-lock.json` متجاهل عمداً في هذا المشروع.
 - الخطوة التالية (عند الطلب): اختبارات E2E/UI (Playwright)، CI للاختبارات في GitHub Actions.
 
+### توسعة الاختبارات — 29 اختباراً ناجحاً (6 ملفات)
+- `src/app/api/auth/login/__tests__/route.test.ts` (6) — **تغطية 92%**: نجاح، 400/401/403/429، سجل التدقيق، الكوكيز.
+- `src/app/api/categories/__tests__/route.test.ts` (3) — قائمة، بالـslug، 404.
+- `src/app/api/products/__tests__/route.test.ts` (3) — قائمة بتحويل الأسعار/الصور، isActive، بحث/حد.
+- تعديل `vitest.config.mts`: التغطية تشمل نقاط API.
+- مرفوع على GitHub: `45843f2`, `7c28abd`.
+
 ---
 
 ## جلسة سابقة (15 أغسطس 2026): حل دائم لتحميل الـAPK + مراجعة النسخ
