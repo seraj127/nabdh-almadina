@@ -353,7 +353,7 @@ export const useCartStore = create<CartStateInternal>()((set, get) => ({
 
   // Computed getters
   getTotalItems: () => {
-    return get().items.reduce((total, item) => total + item.quantity, 0);
+    return get().items.length;
   },
 
   getSubtotal: () => {
