@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { APP_VERSION } from '../lib/constants';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguageStore } from '@/stores/language-store';
 import { useMobileStore } from '../lib/mobile-store';
@@ -13,7 +14,7 @@ import {
   CheckCircle2, AlertCircle, Package, MapPin, Clock
 } from 'lucide-react';
 
-// ─── Brand Design Tokens ────────────────────────────────────────────────
+// â”€â”€â”€ Brand Design Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const COLORS = {
   teal: '#00A8CC',
   primary: '#004B63',
@@ -36,7 +37,7 @@ const COLORS = {
 const GRADIENT_HEADER = 'linear-gradient(135deg, #002F3F 0%, #004B63 25%, #006B8A 55%, #00897B 85%, #00A8CC 100%)';
 const GRADIENT_BUTTON = 'linear-gradient(135deg, #004B63, #00897B)';
 
-// ─── Stagger animation variants ─────────────────────────────────────
+// â”€â”€â”€ Stagger animation variants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -53,7 +54,7 @@ const staggerItem = {
   },
 };
 
-// ─── Shared overlay wrapper ───
+// â”€â”€â”€ Shared overlay wrapper â”€â”€â”€
 function OverlayWrapper({ onClose, title, direction, isRTL, darkMode, children, subtitle }: {
   onClose: () => void;
   title: string;
@@ -103,7 +104,7 @@ function OverlayWrapper({ onClose, title, direction, isRTL, darkMode, children, 
   );
 }
 
-// ─── Card component ───
+// â”€â”€â”€ Card component â”€â”€â”€
 function Card({ children, darkMode, className = '' }: { children: React.ReactNode; darkMode: boolean; className?: string }) {
   return (
     <motion.div
@@ -120,7 +121,7 @@ function Card({ children, darkMode, className = '' }: { children: React.ReactNod
   );
 }
 
-// ─── Input field component ───
+// â”€â”€â”€ Input field component â”€â”€â”€
 function InputField({ label, value, onChange, placeholder, type = 'text', darkMode, isRTL, dir, readonly, icon }: {
   label: string;
   value: string;
@@ -169,9 +170,9 @@ function InputField({ label, value, onChange, placeholder, type = 'text', darkMo
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 1. EDIT PROFILE OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function EditProfileOverlay({ onClose, user, darkMode, isRTL, direction, onSave }: {
   onClose: () => void;
   user: MobileUser | null;
@@ -244,8 +245,8 @@ export function EditProfileOverlay({ onClose, user, darkMode, isRTL, direction, 
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'تعديل الملف الشخصي' : 'Edit Profile'}
-      subtitle={isRTL ? 'تحديث بياناتك الشخصية' : 'Update your personal info'}
+      title={isRTL ? 'طھط¹ط¯ظٹظ„ ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ' : 'Edit Profile'}
+      subtitle={isRTL ? 'طھط­ط¯ظٹط« ط¨ظٹط§ظ†ط§طھظƒ ط§ظ„ط´ط®طµظٹط©' : 'Update your personal info'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -299,7 +300,7 @@ export function EditProfileOverlay({ onClose, user, darkMode, isRTL, direction, 
               </motion.button>
             </div>
             <p className="text-xs mt-3 font-medium" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-              {isRTL ? 'اضغط لتغيير الصورة' : 'Tap to change photo'}
+              {isRTL ? 'ط§ط¶ط؛ط· ظ„طھط؛ظٹظٹط± ط§ظ„طµظˆط±ط©' : 'Tap to change photo'}
             </p>
           </div>
         </Card>
@@ -308,26 +309,26 @@ export function EditProfileOverlay({ onClose, user, darkMode, isRTL, direction, 
         <Card darkMode={darkMode}>
           <div className="p-4 space-y-4">
             <InputField
-              label={isRTL ? 'الاسم بالعربية' : 'Arabic Name'}
+              label={isRTL ? 'ط§ظ„ط§ط³ظ… ط¨ط§ظ„ط¹ط±ط¨ظٹط©' : 'Arabic Name'}
               value={nameAr}
               onChange={setNameAr}
-              placeholder={isRTL ? 'أدخل اسمك بالعربية' : 'Enter your Arabic name'}
+              placeholder={isRTL ? 'ط£ط¯ط®ظ„ ط§ط³ظ…ظƒ ط¨ط§ظ„ط¹ط±ط¨ظٹط©' : 'Enter your Arabic name'}
               darkMode={darkMode}
               isRTL={isRTL}
               dir="rtl"
               icon={<User size={14} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} />}
             />
             <InputField
-              label={isRTL ? 'الاسم بالإنجليزية' : 'English Name'}
+              label={isRTL ? 'ط§ظ„ط§ط³ظ… ط¨ط§ظ„ط¥ظ†ط¬ظ„ظٹط²ظٹط©' : 'English Name'}
               value={nameEn}
               onChange={setNameEn}
-              placeholder={isRTL ? 'أدخل اسمك بالإنجليزية' : 'Enter your English name'}
+              placeholder={isRTL ? 'ط£ط¯ط®ظ„ ط§ط³ظ…ظƒ ط¨ط§ظ„ط¥ظ†ط¬ظ„ظٹط²ظٹط©' : 'Enter your English name'}
               darkMode={darkMode}
               isRTL={isRTL}
               dir="ltr"
             />
             <InputField
-              label={isRTL ? 'البريد الإلكتروني' : 'Email'}
+              label={isRTL ? 'ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ' : 'Email'}
               value={email}
               onChange={setEmail}
               placeholder="email@example.com"
@@ -338,7 +339,7 @@ export function EditProfileOverlay({ onClose, user, darkMode, isRTL, direction, 
               icon={<Mail size={14} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} />}
             />
             <InputField
-              label={isRTL ? 'رقم الهاتف' : 'Phone Number'}
+              label={isRTL ? 'ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپ' : 'Phone Number'}
               value={user?.phone || ''}
               placeholder=""
               darkMode={darkMode}
@@ -359,7 +360,7 @@ export function EditProfileOverlay({ onClose, user, darkMode, isRTL, direction, 
           style={{ background: GRADIENT_BUTTON, boxShadow: '0 4px 16px rgba(0,75,99,0.3)' }}
         >
           <Check size={16} />
-          {isRTL ? 'حفظ التعديلات' : 'Save Changes'}
+          {isRTL ? 'ط­ظپط¸ ط§ظ„طھط¹ط¯ظٹظ„ط§طھ' : 'Save Changes'}
         </motion.button>
 
         {/* Saved indicator */}
@@ -374,7 +375,7 @@ export function EditProfileOverlay({ onClose, user, darkMode, isRTL, direction, 
             >
               <CheckCircle2 size={14} style={{ color: COLORS.tealDark }} />
               <span className="text-xs font-semibold" style={{ color: COLORS.tealDark }}>
-                {isRTL ? 'تم حفظ التعديلات بنجاح' : 'Changes saved successfully'}
+                {isRTL ? 'طھظ… ط­ظپط¸ ط§ظ„طھط¹ط¯ظٹظ„ط§طھ ط¨ظ†ط¬ط§ط­' : 'Changes saved successfully'}
               </span>
             </motion.div>
           )}
@@ -384,7 +385,7 @@ export function EditProfileOverlay({ onClose, user, darkMode, isRTL, direction, 
   );
 }
 
-// ─── Password Input component (module-level to avoid recreation) ───
+// â”€â”€â”€ Password Input component (module-level to avoid recreation) â”€â”€â”€
 function PasswordInputField({ label, value, onChange, show, onToggle, placeholder, darkMode }: {
   label: string; value: string; onChange: (v: string) => void; show: boolean; onToggle: () => void; placeholder: string; darkMode: boolean;
 }) {
@@ -419,9 +420,9 @@ function PasswordInputField({ label, value, onChange, show, onToggle, placeholde
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 2. CHANGE PASSWORD OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function ChangePasswordOverlay({ onClose, user, darkMode, isRTL, direction } : {
   onClose: () => void;
   user: MobileUser | null;
@@ -450,9 +451,9 @@ export function ChangePasswordOverlay({ onClose, user, darkMode, isRTL, directio
   }, [newPassword]);
 
   const strengthLabel = useMemo(() => {
-    if (passwordStrength <= 1) return isRTL ? 'ضعيفة' : 'Weak';
-    if (passwordStrength <= 2) return isRTL ? 'متوسطة' : 'Medium';
-    return isRTL ? 'قوية' : 'Strong';
+    if (passwordStrength <= 1) return isRTL ? 'ط¶ط¹ظٹظپط©' : 'Weak';
+    if (passwordStrength <= 2) return isRTL ? 'ظ…طھظˆط³ط·ط©' : 'Medium';
+    return isRTL ? 'ظ‚ظˆظٹط©' : 'Strong';
   }, [passwordStrength, isRTL]);
 
   const strengthColor = useMemo(() => {
@@ -462,23 +463,23 @@ export function ChangePasswordOverlay({ onClose, user, darkMode, isRTL, directio
   }, [passwordStrength]);
 
   const requirements = [
-    { met: newPassword.length >= 8, label: isRTL ? '8 أحرف على الأقل' : 'At least 8 characters' },
-    { met: /[A-Z]/.test(newPassword), label: isRTL ? 'حرف كبير' : 'Uppercase letter' },
-    { met: /[0-9]/.test(newPassword), label: isRTL ? 'رقم' : 'Number' },
-    { met: /[^A-Za-z0-9]/.test(newPassword), label: isRTL ? 'رمز خاص' : 'Special character' },
+    { met: newPassword.length >= 8, label: isRTL ? '8 ط£ط­ط±ظپ ط¹ظ„ظ‰ ط§ظ„ط£ظ‚ظ„' : 'At least 8 characters' },
+    { met: /[A-Z]/.test(newPassword), label: isRTL ? 'ط­ط±ظپ ظƒط¨ظٹط±' : 'Uppercase letter' },
+    { met: /[0-9]/.test(newPassword), label: isRTL ? 'ط±ظ‚ظ…' : 'Number' },
+    { met: /[^A-Za-z0-9]/.test(newPassword), label: isRTL ? 'ط±ظ…ط² ط®ط§طµ' : 'Special character' },
   ];
 
   const handleSubmit = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setToast({ type: 'error', message: isRTL ? 'يرجى ملء جميع الحقول' : 'Please fill all fields' });
+      setToast({ type: 'error', message: isRTL ? 'ظٹط±ط¬ظ‰ ظ…ظ„ط، ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ„' : 'Please fill all fields' });
       return;
     }
     if (newPassword !== confirmPassword) {
-      setToast({ type: 'error', message: isRTL ? 'كلمتا المرور غير متطابقتين' : 'Passwords do not match' });
+      setToast({ type: 'error', message: isRTL ? 'ظƒظ„ظ…طھط§ ط§ظ„ظ…ط±ظˆط± ط؛ظٹط± ظ…طھط·ط§ط¨ظ‚طھظٹظ†' : 'Passwords do not match' });
       return;
     }
     if (passwordStrength < 2) {
-      setToast({ type: 'error', message: isRTL ? 'كلمة المرور ضعيفة جداً' : 'Password is too weak' });
+      setToast({ type: 'error', message: isRTL ? 'ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط¶ط¹ظٹظپط© ط¬ط¯ط§ظ‹' : 'Password is too weak' });
       return;
     }
 
@@ -494,15 +495,15 @@ export function ChangePasswordOverlay({ onClose, user, darkMode, isRTL, directio
         }),
       });
       if (res.ok) {
-        setToast({ type: 'success', message: isRTL ? 'تم تغيير كلمة المرور بنجاح' : 'Password changed successfully' });
+        setToast({ type: 'success', message: isRTL ? 'طھظ… طھط؛ظٹظٹط± ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط¨ظ†ط¬ط§ط­' : 'Password changed successfully' });
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
       } else {
-        setToast({ type: 'error', message: isRTL ? 'كلمة المرور الحالية غير صحيحة' : 'Current password is incorrect' });
+        setToast({ type: 'error', message: isRTL ? 'ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط­ط§ظ„ظٹط© ط؛ظٹط± طµط­ظٹط­ط©' : 'Current password is incorrect' });
       }
     } catch {
-      setToast({ type: 'error', message: isRTL ? 'حدث خطأ، يرجى المحاولة لاحقاً' : 'An error occurred, please try again' });
+      setToast({ type: 'error', message: isRTL ? 'ط­ط¯ط« ط®ط·ط£طŒ ظٹط±ط¬ظ‰ ط§ظ„ظ…ط­ط§ظˆظ„ط© ظ„ط§ط­ظ‚ط§ظ‹' : 'An error occurred, please try again' });
     }
     setLoading(false);
     setTimeout(() => setToast(null), 3000);
@@ -511,8 +512,8 @@ export function ChangePasswordOverlay({ onClose, user, darkMode, isRTL, directio
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'تغيير كلمة المرور' : 'Change Password'}
-      subtitle={isRTL ? 'تحديث كلمة المرور الخاصة بك' : 'Update your password'}
+      title={isRTL ? 'طھط؛ظٹظٹط± ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±' : 'Change Password'}
+      subtitle={isRTL ? 'طھط­ط¯ظٹط« ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط®ط§طµط© ط¨ظƒ' : 'Update your password'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -527,21 +528,21 @@ export function ChangePasswordOverlay({ onClose, user, darkMode, isRTL, directio
         <Card darkMode={darkMode}>
           <div className="p-4 space-y-4">
             <PasswordInputField
-              label={isRTL ? 'كلمة المرور الحالية' : 'Current Password'}
+              label={isRTL ? 'ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط­ط§ظ„ظٹط©' : 'Current Password'}
               value={currentPassword}
               onChange={setCurrentPassword}
               show={showCurrent}
               onToggle={() => setShowCurrent(!showCurrent)}
-              placeholder={isRTL ? 'أدخل كلمة المرور الحالية' : 'Enter current password'}
+              placeholder={isRTL ? 'ط£ط¯ط®ظ„ ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط­ط§ظ„ظٹط©' : 'Enter current password'}
               darkMode={darkMode}
             />
             <PasswordInputField
-              label={isRTL ? 'كلمة المرور الجديدة' : 'New Password'}
+              label={isRTL ? 'ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط¬ط¯ظٹط¯ط©' : 'New Password'}
               value={newPassword}
               onChange={setNewPassword}
               show={showNew}
               onToggle={() => setShowNew(!showNew)}
-              placeholder={isRTL ? 'أدخل كلمة المرور الجديدة' : 'Enter new password'}
+              placeholder={isRTL ? 'ط£ط¯ط®ظ„ ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط¬ط¯ظٹط¯ط©' : 'Enter new password'}
               darkMode={darkMode}
             />
 
@@ -578,12 +579,12 @@ export function ChangePasswordOverlay({ onClose, user, darkMode, isRTL, directio
             )}
 
             <PasswordInputField
-              label={isRTL ? 'تأكيد كلمة المرور' : 'Confirm Password'}
+              label={isRTL ? 'طھط£ظƒظٹط¯ ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±' : 'Confirm Password'}
               value={confirmPassword}
               onChange={setConfirmPassword}
               show={showConfirm}
               onToggle={() => setShowConfirm(!showConfirm)}
-              placeholder={isRTL ? 'أعد إدخال كلمة المرور الجديدة' : 'Re-enter new password'}
+              placeholder={isRTL ? 'ط£ط¹ط¯ ط¥ط¯ط®ط§ظ„ ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط¬ط¯ظٹط¯ط©' : 'Re-enter new password'}
               darkMode={darkMode}
             />
           </div>
@@ -603,7 +604,7 @@ export function ChangePasswordOverlay({ onClose, user, darkMode, isRTL, directio
           ) : (
             <>
               <Lock size={16} />
-              {isRTL ? 'تغيير كلمة المرور' : 'Change Password'}
+              {isRTL ? 'طھط؛ظٹظٹط± ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±' : 'Change Password'}
             </>
           )}
         </motion.button>
@@ -631,9 +632,9 @@ export function ChangePasswordOverlay({ onClose, user, darkMode, isRTL, directio
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 3. PAYMENT METHOD OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function PaymentMethodOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -645,9 +646,9 @@ export function PaymentMethodOverlay({ onClose, darkMode, isRTL, direction }: {
   const methods = [
     {
       id: 'cod',
-      titleAr: 'الدفع عند الاستلام',
+      titleAr: 'ط§ظ„ط¯ظپط¹ ط¹ظ†ط¯ ط§ظ„ط§ط³طھظ„ط§ظ…',
       titleEn: 'Cash on Delivery',
-      subtitleAr: 'ادفع نقداً عند استلام طلبك',
+      subtitleAr: 'ط§ط¯ظپط¹ ظ†ظ‚ط¯ط§ظ‹ ط¹ظ†ط¯ ط§ط³طھظ„ط§ظ… ط·ظ„ط¨ظƒ',
       subtitleEn: 'Pay cash when you receive your order',
       icon: Package,
       gradient: 'linear-gradient(135deg, rgba(0,168,204,0.12), rgba(0,137,123,0.12))',
@@ -656,9 +657,9 @@ export function PaymentMethodOverlay({ onClose, darkMode, isRTL, direction }: {
     },
     {
       id: 'card',
-      titleAr: 'الدفع بالبطاقة',
+      titleAr: 'ط§ظ„ط¯ظپط¹ ط¨ط§ظ„ط¨ط·ط§ظ‚ط©',
       titleEn: 'Card Payment',
-      subtitleAr: 'فيزا أو ماستركارد',
+      subtitleAr: 'ظپظٹط²ط§ ط£ظˆ ظ…ط§ط³طھط±ظƒط§ط±ط¯',
       subtitleEn: 'Visa or Mastercard',
       icon: CreditCard,
       gradient: 'linear-gradient(135deg, rgba(139,92,246,0.12), rgba(109,40,217,0.12))',
@@ -667,9 +668,9 @@ export function PaymentMethodOverlay({ onClose, darkMode, isRTL, direction }: {
     },
     {
       id: 'wallet',
-      titleAr: 'المحفظة الإلكترونية',
+      titleAr: 'ط§ظ„ظ…ط­ظپط¸ط© ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹط©',
       titleEn: 'E-Wallet',
-      subtitleAr: 'ادفع من رصيد محفظتك',
+      subtitleAr: 'ط§ط¯ظپط¹ ظ…ظ† ط±طµظٹط¯ ظ…ط­ظپط¸طھظƒ',
       subtitleEn: 'Pay from your wallet balance',
       icon: Zap,
       gradient: 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.12))',
@@ -681,8 +682,8 @@ export function PaymentMethodOverlay({ onClose, darkMode, isRTL, direction }: {
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'طريقة الدفع' : 'Payment Method'}
-      subtitle={isRTL ? 'اختر طريقة الدفع المفضلة' : 'Choose your preferred payment method'}
+      title={isRTL ? 'ط·ط±ظٹظ‚ط© ط§ظ„ط¯ظپط¹' : 'Payment Method'}
+      subtitle={isRTL ? 'ط§ط®طھط± ط·ط±ظٹظ‚ط© ط§ظ„ط¯ظپط¹ ط§ظ„ظ…ظپط¶ظ„ط©' : 'Choose your preferred payment method'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -720,7 +721,7 @@ export function PaymentMethodOverlay({ onClose, darkMode, isRTL, direction }: {
                           className="text-[9px] font-bold px-2 py-0.5 rounded-md"
                           style={{ background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}
                         >
-                          {isRTL ? 'قريباً' : 'Soon'}
+                          {isRTL ? 'ظ‚ط±ظٹط¨ط§ظ‹' : 'Soon'}
                         </span>
                       )}
                     </div>
@@ -758,7 +759,7 @@ export function PaymentMethodOverlay({ onClose, darkMode, isRTL, direction }: {
         >
           <Info size={14} style={{ color: COLORS.teal }} />
           <p className="text-xs" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-            {isRTL ? 'طرق الدفع الإضافية ستتوفر قريباً' : 'Additional payment methods coming soon'}
+            {isRTL ? 'ط·ط±ظ‚ ط§ظ„ط¯ظپط¹ ط§ظ„ط¥ط¶ط§ظپظٹط© ط³طھطھظˆظپط± ظ‚ط±ظٹط¨ط§ظ‹' : 'Additional payment methods coming soon'}
           </p>
         </motion.div>
       </motion.div>
@@ -766,9 +767,9 @@ export function PaymentMethodOverlay({ onClose, darkMode, isRTL, direction }: {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 4. REPORT BUG OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -782,11 +783,11 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
   const [loading, setLoading] = useState(false);
 
   const categories = [
-    { id: 'performance', labelAr: 'أداء', labelEn: 'Performance', icon: Zap, color: COLORS.warning },
-    { id: 'ui', labelAr: 'واجهة مستخدم', labelEn: 'UI Issue', icon: Eye, color: COLORS.purple },
-    { id: 'account', labelAr: 'حساب', labelEn: 'Account', icon: User, color: COLORS.teal },
-    { id: 'orders', labelAr: 'طلبات', labelEn: 'Orders', icon: Package, color: COLORS.info },
-    { id: 'other', labelAr: 'أخرى', labelEn: 'Other', icon: HelpCircle, color: '#6B7280' },
+    { id: 'performance', labelAr: 'ط£ط¯ط§ط،', labelEn: 'Performance', icon: Zap, color: COLORS.warning },
+    { id: 'ui', labelAr: 'ظˆط§ط¬ظ‡ط© ظ…ط³طھط®ط¯ظ…', labelEn: 'UI Issue', icon: Eye, color: COLORS.purple },
+    { id: 'account', labelAr: 'ط­ط³ط§ط¨', labelEn: 'Account', icon: User, color: COLORS.teal },
+    { id: 'orders', labelAr: 'ط·ظ„ط¨ط§طھ', labelEn: 'Orders', icon: Package, color: COLORS.info },
+    { id: 'other', labelAr: 'ط£ط®ط±ظ‰', labelEn: 'Other', icon: HelpCircle, color: '#6B7280' },
   ];
 
   const handleSubmit = async () => {
@@ -800,7 +801,7 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
 
   if (submitted) {
     return (
-      <OverlayWrapper onClose={onClose} title={isRTL ? 'الإبلاغ عن مشكلة' : 'Report a Bug'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
+      <OverlayWrapper onClose={onClose} title={isRTL ? 'ط§ظ„ط¥ط¨ظ„ط§ط؛ ط¹ظ† ظ…ط´ظƒظ„ط©' : 'Report a Bug'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -816,10 +817,10 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
             <CheckCircle2 size={40} style={{ color: COLORS.success }} />
           </motion.div>
           <h3 className="text-lg font-bold mb-2" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-            {isRTL ? 'شكراً لك!' : 'Thank you!'}
+            {isRTL ? 'ط´ظƒط±ط§ظ‹ ظ„ظƒ!' : 'Thank you!'}
           </h3>
           <p className="text-sm text-center max-w-xs" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-            {isRTL ? 'تم إرسال بلاغك بنجاح. سنعمل على حل المشكلة في أقرب وقت.' : 'Your report has been sent successfully. We will work on fixing the issue as soon as possible.'}
+            {isRTL ? 'طھظ… ط¥ط±ط³ط§ظ„ ط¨ظ„ط§ط؛ظƒ ط¨ظ†ط¬ط§ط­. ط³ظ†ط¹ظ…ظ„ ط¹ظ„ظ‰ ط­ظ„ ط§ظ„ظ…ط´ظƒظ„ط© ظپظٹ ط£ظ‚ط±ط¨ ظˆظ‚طھ.' : 'Your report has been sent successfully. We will work on fixing the issue as soon as possible.'}
           </p>
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -827,7 +828,7 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
             className="mt-6 px-8 py-3 rounded-2xl text-white font-bold text-sm"
             style={{ background: GRADIENT_BUTTON }}
           >
-            {isRTL ? 'إغلاق' : 'Close'}
+            {isRTL ? 'ط¥ط؛ظ„ط§ظ‚' : 'Close'}
           </motion.button>
         </motion.div>
       </OverlayWrapper>
@@ -837,8 +838,8 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'الإبلاغ عن مشكلة' : 'Report a Bug'}
-      subtitle={isRTL ? 'ساعدنا في تحسين التطبيق' : 'Help us improve the app'}
+      title={isRTL ? 'ط§ظ„ط¥ط¨ظ„ط§ط؛ ط¹ظ† ظ…ط´ظƒظ„ط©' : 'Report a Bug'}
+      subtitle={isRTL ? 'ط³ط§ط¹ط¯ظ†ط§ ظپظٹ طھط­ط³ظٹظ† ط§ظ„طھط·ط¨ظٹظ‚' : 'Help us improve the app'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -853,7 +854,7 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
         <Card darkMode={darkMode}>
           <div className="p-4">
             <label className="text-[10px] font-bold uppercase tracking-widest mb-3 block" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-              {isRTL ? 'نوع المشكلة' : 'Bug Category'}
+              {isRTL ? 'ظ†ظˆط¹ ط§ظ„ظ…ط´ظƒظ„ط©' : 'Bug Category'}
             </label>
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => {
@@ -885,12 +886,12 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
           <div className="p-4 space-y-4">
             <div>
               <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-                {isRTL ? 'وصف المشكلة' : 'Description'}
+                {isRTL ? 'ظˆطµظپ ط§ظ„ظ…ط´ظƒظ„ط©' : 'Description'}
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder={isRTL ? 'اكتب وصفاً تفصيلياً للمشكلة...' : 'Write a detailed description of the issue...'}
+                placeholder={isRTL ? 'ط§ظƒطھط¨ ظˆطµظپط§ظ‹ طھظپطµظٹظ„ظٹط§ظ‹ ظ„ظ„ظ…ط´ظƒظ„ط©...' : 'Write a detailed description of the issue...'}
                 rows={4}
                 className="w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none resize-none"
                 style={{
@@ -902,7 +903,7 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
             </div>
 
             <InputField
-              label={isRTL ? 'البريد الإلكتروني (اختياري)' : 'Email (optional)'}
+              label={isRTL ? 'ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ (ط§ط®طھظٹط§ط±ظٹ)' : 'Email (optional)'}
               value={email}
               onChange={setEmail}
               placeholder="email@example.com"
@@ -929,7 +930,7 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
           ) : (
             <>
               <Bug size={16} />
-              {isRTL ? 'إرسال البلاغ' : 'Submit Report'}
+              {isRTL ? 'ط¥ط±ط³ط§ظ„ ط§ظ„ط¨ظ„ط§ط؛' : 'Submit Report'}
             </>
           )}
         </motion.button>
@@ -938,9 +939,9 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 5. RATE APP OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -963,7 +964,7 @@ export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
 
   if (submitted) {
     return (
-      <OverlayWrapper onClose={onClose} title={isRTL ? 'تقييم التطبيق' : 'Rate the App'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
+      <OverlayWrapper onClose={onClose} title={isRTL ? 'طھظ‚ظٹظٹظ… ط§ظ„طھط·ط¨ظٹظ‚' : 'Rate the App'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -978,10 +979,10 @@ export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
             <Star size={56} fill={COLORS.gold} style={{ color: COLORS.gold }} />
           </motion.div>
           <h3 className="text-lg font-bold mb-2" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-            {isRTL ? 'شكراً لتقييمك!' : 'Thank you for your rating!'}
+            {isRTL ? 'ط´ظƒط±ط§ظ‹ ظ„طھظ‚ظٹظٹظ…ظƒ!' : 'Thank you for your rating!'}
           </h3>
           <p className="text-sm text-center max-w-xs" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-            {isRTL ? 'رأيك يهمنا ويساعدنا في تحسين التطبيق باستمرار.' : 'Your feedback matters and helps us improve the app continuously.'}
+            {isRTL ? 'ط±ط£ظٹظƒ ظٹظ‡ظ…ظ†ط§ ظˆظٹط³ط§ط¹ط¯ظ†ط§ ظپظٹ طھط­ط³ظٹظ† ط§ظ„طھط·ط¨ظٹظ‚ ط¨ط§ط³طھظ…ط±ط§ط±.' : 'Your feedback matters and helps us improve the app continuously.'}
           </p>
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -989,7 +990,7 @@ export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
             className="mt-6 px-8 py-3 rounded-2xl text-white font-bold text-sm"
             style={{ background: GRADIENT_BUTTON }}
           >
-            {isRTL ? 'إغلاق' : 'Close'}
+            {isRTL ? 'ط¥ط؛ظ„ط§ظ‚' : 'Close'}
           </motion.button>
         </motion.div>
       </OverlayWrapper>
@@ -999,8 +1000,8 @@ export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'تقييم التطبيق' : 'Rate the App'}
-      subtitle={isRTL ? 'شاركنا رأيك' : 'Share your feedback'}
+      title={isRTL ? 'طھظ‚ظٹظٹظ… ط§ظ„طھط·ط¨ظٹظ‚' : 'Rate the App'}
+      subtitle={isRTL ? 'ط´ط§ط±ظƒظ†ط§ ط±ط£ظٹظƒ' : 'Share your feedback'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -1015,7 +1016,7 @@ export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
         <Card darkMode={darkMode}>
           <div className="p-6 flex flex-col items-center">
             <p className="text-sm font-bold mb-4" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-              {isRTL ? 'كم تقييمك للتطبيق؟' : 'How would you rate our app?'}
+              {isRTL ? 'ظƒظ… طھظ‚ظٹظٹظ…ظƒ ظ„ظ„طھط·ط¨ظٹظ‚طں' : 'How would you rate our app?'}
             </p>
             <div className="flex items-center gap-3 mb-3">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -1054,11 +1055,11 @@ export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
                 className="text-xs font-medium"
                 style={{ color: COLORS.gold }}
               >
-                {rating === 1 && (isRTL ? 'سيء' : 'Poor')}
-                {rating === 2 && (isRTL ? 'مقبول' : 'Fair')}
-                {rating === 3 && (isRTL ? 'جيد' : 'Good')}
-                {rating === 4 && (isRTL ? 'جيد جداً' : 'Very Good')}
-                {rating === 5 && (isRTL ? 'ممتاز!' : 'Excellent!')}
+                {rating === 1 && (isRTL ? 'ط³ظٹط،' : 'Poor')}
+                {rating === 2 && (isRTL ? 'ظ…ظ‚ط¨ظˆظ„' : 'Fair')}
+                {rating === 3 && (isRTL ? 'ط¬ظٹط¯' : 'Good')}
+                {rating === 4 && (isRTL ? 'ط¬ظٹط¯ ط¬ط¯ط§ظ‹' : 'Very Good')}
+                {rating === 5 && (isRTL ? 'ظ…ظ…طھط§ط²!' : 'Excellent!')}
               </motion.p>
             )}
           </div>
@@ -1068,12 +1069,12 @@ export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
         <Card darkMode={darkMode}>
           <div className="p-4">
             <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-              {isRTL ? 'تعليقك (اختياري)' : 'Your comment (optional)'}
+              {isRTL ? 'طھط¹ظ„ظٹظ‚ظƒ (ط§ط®طھظٹط§ط±ظٹ)' : 'Your comment (optional)'}
             </label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder={isRTL ? 'اكتب تعليقك هنا...' : 'Write your comment here...'}
+              placeholder={isRTL ? 'ط§ظƒطھط¨ طھط¹ظ„ظٹظ‚ظƒ ظ‡ظ†ط§...' : 'Write your comment here...'}
               rows={3}
               className="w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none resize-none"
               style={{
@@ -1099,7 +1100,7 @@ export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
           ) : (
             <>
               <Star size={16} />
-              {isRTL ? 'إرسال التقييم' : 'Submit Rating'}
+              {isRTL ? 'ط¥ط±ط³ط§ظ„ ط§ظ„طھظ‚ظٹظٹظ…' : 'Submit Rating'}
             </>
           )}
         </motion.button>
@@ -1108,9 +1109,9 @@ export function RateAppOverlay({ onClose, darkMode, isRTL, direction }: {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 6. SHARE APP OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function ShareAppOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -1133,34 +1134,34 @@ export function ShareAppOverlay({ onClose, darkMode, isRTL, direction }: {
   const shareOptions = [
     {
       id: 'whatsapp',
-      labelAr: 'واتساب',
+      labelAr: 'ظˆط§طھط³ط§ط¨',
       labelEn: 'WhatsApp',
       icon: MessageCircle,
       color: '#25D366',
       bg: 'rgba(37,211,102,0.1)',
-      action: () => window.open(`https://wa.me/?text=${encodeURIComponent(isRTL ? 'جرب تطبيق نبض المدينة!' : 'Try Nabd Al-Madina app!')} ${shareLink}`, '_blank'),
+      action: () => window.open(`https://wa.me/?text=${encodeURIComponent(isRTL ? 'ط¬ط±ط¨ طھط·ط¨ظٹظ‚ ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©!' : 'Try Nabd Al-Madina app!')} ${shareLink}`, '_blank'),
     },
     {
       id: 'telegram',
-      labelAr: 'تيليجرام',
+      labelAr: 'طھظٹظ„ظٹط¬ط±ط§ظ…',
       labelEn: 'Telegram',
       icon: Send,
       color: '#0088CC',
       bg: 'rgba(0,136,204,0.1)',
-      action: () => window.open(`https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(isRTL ? 'جرب تطبيق نبض المدينة!' : 'Try Nabd Al-Madina app!')}`, '_blank'),
+      action: () => window.open(`https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(isRTL ? 'ط¬ط±ط¨ طھط·ط¨ظٹظ‚ ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©!' : 'Try Nabd Al-Madina app!')}`, '_blank'),
     },
     {
       id: 'twitter',
-      labelAr: 'تويتر',
+      labelAr: 'طھظˆظٹطھط±',
       labelEn: 'Twitter',
       icon: Globe,
       color: '#1DA1F2',
       bg: 'rgba(29,161,242,0.1)',
-      action: () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(isRTL ? 'جرب تطبيق نبض المدينة!' : 'Try Nabd Al-Madina app!')}&url=${encodeURIComponent(shareLink)}`, '_blank'),
+      action: () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(isRTL ? 'ط¬ط±ط¨ طھط·ط¨ظٹظ‚ ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©!' : 'Try Nabd Al-Madina app!')}&url=${encodeURIComponent(shareLink)}`, '_blank'),
     },
     {
       id: 'copy',
-      labelAr: copied ? 'تم النسخ!' : 'نسخ الرابط',
+      labelAr: copied ? 'طھظ… ط§ظ„ظ†ط³ط®!' : 'ظ†ط³ط® ط§ظ„ط±ط§ط¨ط·',
       labelEn: copied ? 'Copied!' : 'Copy Link',
       icon: Copy,
       color: copied ? COLORS.success : COLORS.teal,
@@ -1169,7 +1170,7 @@ export function ShareAppOverlay({ onClose, darkMode, isRTL, direction }: {
     },
     {
       id: 'more',
-      labelAr: 'المزيد',
+      labelAr: 'ط§ظ„ظ…ط²ظٹط¯',
       labelEn: 'More',
       icon: ExternalLink,
       color: '#6B7280',
@@ -1177,8 +1178,8 @@ export function ShareAppOverlay({ onClose, darkMode, isRTL, direction }: {
       action: () => {
         try {
           navigator.share({
-            title: isRTL ? 'نبض المدينة' : 'Nabd Al-Madina',
-            text: isRTL ? 'جرب تطبيق نبض المدينة!' : 'Try Nabd Al-Madina app!',
+            title: isRTL ? 'ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©' : 'Nabd Al-Madina',
+            text: isRTL ? 'ط¬ط±ط¨ طھط·ط¨ظٹظ‚ ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©!' : 'Try Nabd Al-Madina app!',
             url: shareLink,
           });
         } catch { /* ignore */ }
@@ -1189,8 +1190,8 @@ export function ShareAppOverlay({ onClose, darkMode, isRTL, direction }: {
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'مشاركة التطبيق' : 'Share the App'}
-      subtitle={isRTL ? 'ادع أصدقاءك للتسوق' : 'Invite friends to shop'}
+      title={isRTL ? 'ظ…ط´ط§ط±ظƒط© ط§ظ„طھط·ط¨ظٹظ‚' : 'Share the App'}
+      subtitle={isRTL ? 'ط§ط¯ط¹ ط£طµط¯ظ‚ط§ط،ظƒ ظ„ظ„طھط³ظˆظ‚' : 'Invite friends to shop'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -1208,10 +1209,10 @@ export function ShareAppOverlay({ onClose, darkMode, isRTL, direction }: {
               <span className="text-white text-2xl font-black">N</span>
             </div>
             <h3 className="text-base font-bold" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-              {isRTL ? 'نبض المدينة' : 'Nabd Al-Madina'}
+              {isRTL ? 'ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©' : 'Nabd Al-Madina'}
             </h3>
             <p className="text-xs text-center mt-1.5 max-w-xs" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-              {isRTL ? 'أفضل تجربة تسوق إلكترونية في ليبيا - جودة وأمان في كل طلب' : 'Best e-commerce experience in Libya - Quality and security in every order'}
+              {isRTL ? 'ط£ظپط¶ظ„ طھط¬ط±ط¨ط© طھط³ظˆظ‚ ط¥ظ„ظƒطھط±ظˆظ†ظٹط© ظپظٹ ظ„ظٹط¨ظٹط§ - ط¬ظˆط¯ط© ظˆط£ظ…ط§ظ† ظپظٹ ظƒظ„ ط·ظ„ط¨' : 'Best e-commerce experience in Libya - Quality and security in every order'}
             </p>
           </div>
         </Card>
@@ -1220,7 +1221,7 @@ export function ShareAppOverlay({ onClose, darkMode, isRTL, direction }: {
         <Card darkMode={darkMode}>
           <div className="p-4">
             <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-              {isRTL ? 'رابط الإحالة' : 'Referral Link'}
+              {isRTL ? 'ط±ط§ط¨ط· ط§ظ„ط¥ط­ط§ظ„ط©' : 'Referral Link'}
             </label>
             <div className="flex items-center gap-2">
               <div
@@ -1253,7 +1254,7 @@ export function ShareAppOverlay({ onClose, darkMode, isRTL, direction }: {
         <Card darkMode={darkMode}>
           <div className="p-4">
             <label className="text-[10px] font-bold uppercase tracking-widest mb-3 block" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-              {isRTL ? 'مشاركة عبر' : 'Share via'}
+              {isRTL ? 'ظ…ط´ط§ط±ظƒط© ط¹ط¨ط±' : 'Share via'}
             </label>
             <div className="grid grid-cols-5 gap-3">
               {shareOptions.map((option) => {
@@ -1285,9 +1286,9 @@ export function ShareAppOverlay({ onClose, darkMode, isRTL, direction }: {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 7. ABOUT APP OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function AboutAppOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -1296,23 +1297,23 @@ export function AboutAppOverlay({ onClose, darkMode, isRTL, direction }: {
 }) {
   const openWebview = useMobileStore((s) => s.openWebview);
   const stats = [
-    { valueAr: '+1000', valueEn: '+1000', labelAr: 'منتج', labelEn: 'Products', icon: Package, color: COLORS.teal },
-    { valueAr: '+50', valueEn: '+50', labelAr: 'متجر', labelEn: 'Stores', icon: MapPin, color: COLORS.purple },
-    { valueAr: '+5000', valueEn: '+5000', labelAr: 'مستخدم', labelEn: 'Users', icon: User, color: COLORS.success },
+    { valueAr: '+1000', valueEn: '+1000', labelAr: 'ظ…ظ†طھط¬', labelEn: 'Products', icon: Package, color: COLORS.teal },
+    { valueAr: '+50', valueEn: '+50', labelAr: 'ظ…طھط¬ط±', labelEn: 'Stores', icon: MapPin, color: COLORS.purple },
+    { valueAr: '+5000', valueEn: '+5000', labelAr: 'ظ…ط³طھط®ط¯ظ…', labelEn: 'Users', icon: User, color: COLORS.success },
   ];
 
   const socialLinks = [
-    { nameAr: 'فيسبوك', nameEn: 'Facebook', color: '#1877F2', bg: 'rgba(24,119,242,0.1)', href: 'https://facebook.com/nabdalmadina', iconPath: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z' },
-    { nameAr: 'انستغرام', nameEn: 'Instagram', color: '#E4405F', bg: 'rgba(228,64,95,0.1)', href: 'https://instagram.com/nabdalmadina', iconPath: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z' },
-    { nameAr: 'واتساب', nameEn: 'WhatsApp', color: '#25D366', bg: 'rgba(37,211,102,0.1)', href: 'https://wa.me/218911234567', iconPath: 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z' },
-    { nameAr: 'يوتيوب', nameEn: 'YouTube', color: '#FF0000', bg: 'rgba(255,0,0,0.1)', href: 'https://youtube.com/@nabdalmadina', iconPath: 'M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.4 19.6C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 001.94-2A29 29 0 0023 12a29 29 0 00-.46-5.58z' },
+    { nameAr: 'ظپظٹط³ط¨ظˆظƒ', nameEn: 'Facebook', color: '#1877F2', bg: 'rgba(24,119,242,0.1)', href: 'https://facebook.com/nabdalmadina', iconPath: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z' },
+    { nameAr: 'ط§ظ†ط³طھط؛ط±ط§ظ…', nameEn: 'Instagram', color: '#E4405F', bg: 'rgba(228,64,95,0.1)', href: 'https://instagram.com/nabdalmadina', iconPath: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z' },
+    { nameAr: 'ظˆط§طھط³ط§ط¨', nameEn: 'WhatsApp', color: '#25D366', bg: 'rgba(37,211,102,0.1)', href: 'https://wa.me/218911234567', iconPath: 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z' },
+    { nameAr: 'ظٹظˆطھظٹظˆط¨', nameEn: 'YouTube', color: '#FF0000', bg: 'rgba(255,0,0,0.1)', href: 'https://youtube.com/@nabdalmadina', iconPath: 'M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.4 19.6C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 001.94-2A29 29 0 0023 12a29 29 0 00-.46-5.58z' },
   ];
 
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'عن نبض المدينة' : 'About Nabd Al-Madina'}
-      subtitle={isRTL ? 'معلومات التطبيق' : 'App information'}
+      title={isRTL ? 'ط¹ظ† ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©' : 'About Nabd Al-Madina'}
+      subtitle={isRTL ? 'ظ…ط¹ظ„ظˆظ…ط§طھ ط§ظ„طھط·ط¨ظٹظ‚' : 'App information'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -1333,12 +1334,12 @@ export function AboutAppOverlay({ onClose, darkMode, isRTL, direction }: {
               </div>
             </div>
             <h2 className="text-xl font-bold mt-4" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-              {isRTL ? 'نبض المدينة' : 'Nabd Al-Madina'}
+              {isRTL ? 'ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©' : 'Nabd Al-Madina'}
             </h2>
-            <span className="text-xs mt-1.5 px-3 py-1 rounded-lg font-bold" style={{ background: darkMode ? COLORS.darkSubtle : '#F3F4F6', color: darkMode ? '#6B7280' : '#9CA3AF' }}>v1.0.0</span>
+            <span className="text-xs mt-1.5 px-3 py-1 rounded-lg font-bold" style={{ background: darkMode ? COLORS.darkSubtle : '#F3F4F6', color: darkMode ? '#6B7280' : '#9CA3AF' }}>v{APP_VERSION}</span>
             <p className="text-sm text-center mt-3 leading-relaxed max-w-xs" style={{ color: darkMode ? '#9CA3AF' : '#6B7280' }}>
               {isRTL
-                ? 'نبض المدينة هو متجرك الإلكتروني الأول في ليبيا. نوفر لك تجربة تسوق فريدة مع تشكيلة واسعة من المنتجات المميزة وتوصيل سريع وآمن لجميع المناطق.'
+                ? 'ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط© ظ‡ظˆ ظ…طھط¬ط±ظƒ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ط§ظ„ط£ظˆظ„ ظپظٹ ظ„ظٹط¨ظٹط§. ظ†ظˆظپط± ظ„ظƒ طھط¬ط±ط¨ط© طھط³ظˆظ‚ ظپط±ظٹط¯ط© ظ…ط¹ طھط´ظƒظٹظ„ط© ظˆط§ط³ط¹ط© ظ…ظ† ط§ظ„ظ…ظ†طھط¬ط§طھ ط§ظ„ظ…ظ…ظٹط²ط© ظˆطھظˆطµظٹظ„ ط³ط±ظٹط¹ ظˆط¢ظ…ظ† ظ„ط¬ظ…ظٹط¹ ط§ظ„ظ…ظ†ط§ط·ظ‚.'
                 : 'Nabd Al-Madina is your first online store in Libya. We provide a unique shopping experience with a wide range of premium products and fast, secure delivery to all areas.'}
             </p>
           </div>
@@ -1377,7 +1378,7 @@ export function AboutAppOverlay({ onClose, darkMode, isRTL, direction }: {
         <Card darkMode={darkMode}>
           <div className="p-4">
             <label className="text-[10px] font-bold uppercase tracking-widest mb-3 block" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-              {isRTL ? 'تابعنا' : 'Follow Us'}
+              {isRTL ? 'طھط§ط¨ط¹ظ†ط§' : 'Follow Us'}
             </label>
             <div className="flex items-center justify-around">
               {socialLinks.map((social, i) => {
@@ -1405,10 +1406,10 @@ export function AboutAppOverlay({ onClose, darkMode, isRTL, direction }: {
             </div>
             <div className="flex-1">
               <h4 className="text-sm font-bold" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-                {isRTL ? 'تطوير Bits للبرمجيات' : 'Bits Software Development'}
+                {isRTL ? 'طھط·ظˆظٹط± Bits ظ„ظ„ط¨ط±ظ…ط¬ظٹط§طھ' : 'Bits Software Development'}
               </h4>
               <p className="text-[10px] mt-0.5" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                {isRTL ? 'تصميم وتطوير البرمجيات والتطبيقات' : 'Software & App Design & Development'}
+                {isRTL ? 'طھطµظ…ظٹظ… ظˆطھط·ظˆظٹط± ط§ظ„ط¨ط±ظ…ط¬ظٹط§طھ ظˆط§ظ„طھط·ط¨ظٹظ‚ط§طھ' : 'Software & App Design & Development'}
               </p>
             </div>
             <div className="flex items-center gap-1.5">
@@ -1425,13 +1426,13 @@ export function AboutAppOverlay({ onClose, darkMode, isRTL, direction }: {
         {/* Made in Libya */}
         <motion.div variants={staggerItem} className="flex flex-col items-center py-3">
           <p className="text-[10px] font-bold" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-            {isRTL ? 'صُنع بـ ❤️ في ليبيا' : 'Made with ❤️ in Libya'}
+            {isRTL ? 'طµظڈظ†ط¹ ط¨ظ€ â‌¤ï¸ڈ ظپظٹ ظ„ظٹط¨ظٹط§' : 'Made with â‌¤ï¸ڈ in Libya'}
           </p>
           <p className="text-[9px] mt-1" style={{ color: darkMode ? '#374151' : '#D1D5DB' }}>
-            © 2024 {isRTL ? 'نبض المدينة' : 'Nabd Al-Madina'}. {isRTL ? 'جميع الحقوق محفوظة' : 'All rights reserved'}.
+            آ© 2024 {isRTL ? 'ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©' : 'Nabd Al-Madina'}. {isRTL ? 'ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©' : 'All rights reserved'}.
           </p>
           <p className="text-[9px] mt-0.5" style={{ color: darkMode ? '#374151' : '#D1D5DB' }}>
-            {isRTL ? 'تطوير: Bits للبرمجيات' : 'Developed by: Bits Software'}
+            {isRTL ? 'طھط·ظˆظٹط±: Bits ظ„ظ„ط¨ط±ظ…ط¬ظٹط§طھ' : 'Developed by: Bits Software'}
           </p>
         </motion.div>
       </motion.div>
@@ -1439,9 +1440,9 @@ export function AboutAppOverlay({ onClose, darkMode, isRTL, direction }: {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 8. LICENSES OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function LicensesOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -1451,21 +1452,21 @@ export function LicensesOverlay({ onClose, darkMode, isRTL, direction }: {
   const [expandedLib, setExpandedLib] = useState<number | null>(null);
 
   const libraries = [
-    { name: 'React', license: 'MIT', version: '18.x', description: isRTL ? 'مكتبة واجهة المستخدم' : 'UI component library' },
-    { name: 'Next.js', license: 'MIT', version: '16.x', description: isRTL ? 'إطار عمل الويب' : 'Web framework' },
-    { name: 'TypeScript', license: 'Apache-2.0', version: '5.x', description: isRTL ? 'لغة برمجة مكتوبة' : 'Typed programming language' },
-    { name: 'Tailwind CSS', license: 'MIT', version: '4.x', description: isRTL ? 'إطار عمل CSS' : 'CSS framework' },
-    { name: 'Framer Motion', license: 'MIT', version: '11.x', description: isRTL ? 'مكتبة الحركات والانتقالات' : 'Animation library' },
-    { name: 'Zustand', license: 'MIT', version: '4.x', description: isRTL ? 'مكتبة إدارة الحالة' : 'State management' },
-    { name: 'Lucide React', license: 'ISC', version: '0.x', description: isRTL ? 'مكتبة الأيقونات' : 'Icon library' },
-    { name: 'Prisma', license: 'Apache-2.0', version: '5.x', description: isRTL ? 'أداة قاعدة البيانات ORM' : 'Database ORM' },
+    { name: 'React', license: 'MIT', version: '18.x', description: isRTL ? 'ظ…ظƒطھط¨ط© ظˆط§ط¬ظ‡ط© ط§ظ„ظ…ط³طھط®ط¯ظ…' : 'UI component library' },
+    { name: 'Next.js', license: 'MIT', version: '16.x', description: isRTL ? 'ط¥ط·ط§ط± ط¹ظ…ظ„ ط§ظ„ظˆظٹط¨' : 'Web framework' },
+    { name: 'TypeScript', license: 'Apache-2.0', version: '5.x', description: isRTL ? 'ظ„ط؛ط© ط¨ط±ظ…ط¬ط© ظ…ظƒطھظˆط¨ط©' : 'Typed programming language' },
+    { name: 'Tailwind CSS', license: 'MIT', version: '4.x', description: isRTL ? 'ط¥ط·ط§ط± ط¹ظ…ظ„ CSS' : 'CSS framework' },
+    { name: 'Framer Motion', license: 'MIT', version: '11.x', description: isRTL ? 'ظ…ظƒطھط¨ط© ط§ظ„ط­ط±ظƒط§طھ ظˆط§ظ„ط§ظ†طھظ‚ط§ظ„ط§طھ' : 'Animation library' },
+    { name: 'Zustand', license: 'MIT', version: '4.x', description: isRTL ? 'ظ…ظƒطھط¨ط© ط¥ط¯ط§ط±ط© ط§ظ„ط­ط§ظ„ط©' : 'State management' },
+    { name: 'Lucide React', license: 'ISC', version: '0.x', description: isRTL ? 'ظ…ظƒطھط¨ط© ط§ظ„ط£ظٹظ‚ظˆظ†ط§طھ' : 'Icon library' },
+    { name: 'Prisma', license: 'Apache-2.0', version: '5.x', description: isRTL ? 'ط£ط¯ط§ط© ظ‚ط§ط¹ط¯ط© ط§ظ„ط¨ظٹط§ظ†ط§طھ ORM' : 'Database ORM' },
   ];
 
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'تراخيص المصادر المفتوحة' : 'Open Source Licenses'}
-      subtitle={isRTL ? 'المكتبات المستخدمة في التطبيق' : 'Libraries used in the app'}
+      title={isRTL ? 'طھط±ط§ط®ظٹطµ ط§ظ„ظ…طµط§ط¯ط± ط§ظ„ظ…ظپطھظˆط­ط©' : 'Open Source Licenses'}
+      subtitle={isRTL ? 'ط§ظ„ظ…ظƒطھط¨ط§طھ ط§ظ„ظ…ط³طھط®ط¯ظ…ط© ظپظٹ ط§ظ„طھط·ط¨ظٹظ‚' : 'Libraries used in the app'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -1492,7 +1493,7 @@ export function LicensesOverlay({ onClose, darkMode, isRTL, direction }: {
                   <div className="flex-1 min-w-0 text-start">
                     <p className="text-sm font-bold" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>{lib.name}</p>
                     <p className="text-[11px] mt-0.5" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                      v{lib.version} · {lib.license}
+                      v{lib.version} آ· {lib.license}
                     </p>
                   </div>
                   <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }} className="flex-shrink-0">
@@ -1512,11 +1513,11 @@ export function LicensesOverlay({ onClose, darkMode, isRTL, direction }: {
                     <div className="px-4 pb-4 ps-17">
                       <div className="p-3 rounded-xl text-xs leading-relaxed" style={{ background: darkMode ? COLORS.darkSubtle : '#F4F7F9', color: darkMode ? '#9CA3AF' : '#6B7280' }}>
                         <p className="font-semibold mb-1" style={{ color: darkMode ? '#D1D5DB' : '#4B5563' }}>
-                          {isRTL ? 'الوصف:' : 'Description:'} {lib.description}
+                          {isRTL ? 'ط§ظ„ظˆطµظپ:' : 'Description:'} {lib.description}
                         </p>
                         <p>
                           {isRTL
-                            ? `هذه المكتبة مرخصة تحت رخصة ${lib.license}. يرجى الاطلاع على الرخصة الأصلية للتفاصيل الكاملة.`
+                            ? `ظ‡ط°ظ‡ ط§ظ„ظ…ظƒطھط¨ط© ظ…ط±ط®طµط© طھط­طھ ط±ط®طµط© ${lib.license}. ظٹط±ط¬ظ‰ ط§ظ„ط§ط·ظ„ط§ط¹ ط¹ظ„ظ‰ ط§ظ„ط±ط®طµط© ط§ظ„ط£طµظ„ظٹط© ظ„ظ„طھظپط§طµظٹظ„ ط§ظ„ظƒط§ظ…ظ„ط©.`
                             : `This library is licensed under the ${lib.license} license. Please see the original license for full details.`}
                         </p>
                       </div>
@@ -1532,9 +1533,9 @@ export function LicensesOverlay({ onClose, darkMode, isRTL, direction }: {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 9. PRIVACY POLICY OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function PrivacyPolicyOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -1543,39 +1544,39 @@ export function PrivacyPolicyOverlay({ onClose, darkMode, isRTL, direction }: {
 }) {
   const sections = [
     {
-      titleAr: 'جمع البيانات',
+      titleAr: 'ط¬ظ…ط¹ ط§ظ„ط¨ظٹط§ظ†ط§طھ',
       titleEn: 'Data Collection',
-      contentAr: 'نجمع بيانات أساسية لتحسين تجربتك مع التطبيق، بما في ذلك: الاسم، رقم الهاتف، البريد الإلكتروني، عناوين التوصيل، وسجل الطلبات. لا نجمع أي بيانات حساسة بدون موافقتك الصريحة.',
+      contentAr: 'ظ†ط¬ظ…ط¹ ط¨ظٹط§ظ†ط§طھ ط£ط³ط§ط³ظٹط© ظ„طھط­ط³ظٹظ† طھط¬ط±ط¨طھظƒ ظ…ط¹ ط§ظ„طھط·ط¨ظٹظ‚طŒ ط¨ظ…ط§ ظپظٹ ط°ظ„ظƒ: ط§ظ„ط§ط³ظ…طŒ ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپطŒ ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹطŒ ط¹ظ†ط§ظˆظٹظ† ط§ظ„طھظˆطµظٹظ„طŒ ظˆط³ط¬ظ„ ط§ظ„ط·ظ„ط¨ط§طھ. ظ„ط§ ظ†ط¬ظ…ط¹ ط£ظٹ ط¨ظٹط§ظ†ط§طھ ط­ط³ط§ط³ط© ط¨ط¯ظˆظ† ظ…ظˆط§ظپظ‚طھظƒ ط§ظ„طµط±ظٹط­ط©.',
       contentEn: 'We collect basic data to improve your experience with the app, including: name, phone number, email, delivery addresses, and order history. We do not collect any sensitive data without your explicit consent.',
     },
     {
-      titleAr: 'استخدام البيانات',
+      titleAr: 'ط§ط³طھط®ط¯ط§ظ… ط§ظ„ط¨ظٹط§ظ†ط§طھ',
       titleEn: 'Data Usage',
-      contentAr: 'نستخدم بياناتك لمعالجة الطلبات، تحسين خدماتنا، التواصل معك بخصوص طلباتك، وإرسال عروض مخصصة. لن نبيع بياناتك الشخصية لأي طرف ثالث تحت أي ظرف.',
+      contentAr: 'ظ†ط³طھط®ط¯ظ… ط¨ظٹط§ظ†ط§طھظƒ ظ„ظ…ط¹ط§ظ„ط¬ط© ط§ظ„ط·ظ„ط¨ط§طھطŒ طھط­ط³ظٹظ† ط®ط¯ظ…ط§طھظ†ط§طŒ ط§ظ„طھظˆط§طµظ„ ظ…ط¹ظƒ ط¨ط®طµظˆطµ ط·ظ„ط¨ط§طھظƒطŒ ظˆط¥ط±ط³ط§ظ„ ط¹ط±ظˆط¶ ظ…ط®طµطµط©. ظ„ظ† ظ†ط¨ظٹط¹ ط¨ظٹط§ظ†ط§طھظƒ ط§ظ„ط´ط®طµظٹط© ظ„ط£ظٹ ط·ط±ظپ ط«ط§ظ„ط« طھط­طھ ط£ظٹ ط¸ط±ظپ.',
       contentEn: 'We use your data to process orders, improve our services, communicate with you about your orders, and send personalized offers. We will never sell your personal data to any third party under any circumstances.',
     },
     {
-      titleAr: 'حماية البيانات',
+      titleAr: 'ط­ظ…ط§ظٹط© ط§ظ„ط¨ظٹط§ظ†ط§طھ',
       titleEn: 'Data Protection',
-      contentAr: 'نتخذ إجراءات أمنية متقدمة لحماية بياناتك، بما في ذلك التشفير، جدران الحماية، والمراقبة المستمرة. نلتزم بأعلى معايير الأمان لحماية معلوماتك الشخصية والمالية.',
+      contentAr: 'ظ†طھط®ط° ط¥ط¬ط±ط§ط،ط§طھ ط£ظ…ظ†ظٹط© ظ…طھظ‚ط¯ظ…ط© ظ„ط­ظ…ط§ظٹط© ط¨ظٹط§ظ†ط§طھظƒطŒ ط¨ظ…ط§ ظپظٹ ط°ظ„ظƒ ط§ظ„طھط´ظپظٹط±طŒ ط¬ط¯ط±ط§ظ† ط§ظ„ط­ظ…ط§ظٹط©طŒ ظˆط§ظ„ظ…ط±ط§ظ‚ط¨ط© ط§ظ„ظ…ط³طھظ…ط±ط©. ظ†ظ„طھط²ظ… ط¨ط£ط¹ظ„ظ‰ ظ…ط¹ط§ظٹظٹط± ط§ظ„ط£ظ…ط§ظ† ظ„ط­ظ…ط§ظٹط© ظ…ط¹ظ„ظˆظ…ط§طھظƒ ط§ظ„ط´ط®طµظٹط© ظˆط§ظ„ظ…ط§ظ„ظٹط©.',
       contentEn: 'We take advanced security measures to protect your data, including encryption, firewalls, and continuous monitoring. We adhere to the highest security standards to protect your personal and financial information.',
     },
     {
-      titleAr: 'ملفات تعريف الارتباط',
+      titleAr: 'ظ…ظ„ظپط§طھ طھط¹ط±ظٹظپ ط§ظ„ط§ط±طھط¨ط§ط·',
       titleEn: 'Cookies',
-      contentAr: 'نستخدم ملفات تعريف الارتباط (الكوكيز) لتحسين أداء التطبيق وتخصيص تجربتك. يمكنك التحكم في إعدادات الكوكيز من متصفحك. بعض الكوكيز ضرورية لعمل التطبيق بشكل صحيح.',
+      contentAr: 'ظ†ط³طھط®ط¯ظ… ظ…ظ„ظپط§طھ طھط¹ط±ظٹظپ ط§ظ„ط§ط±طھط¨ط§ط· (ط§ظ„ظƒظˆظƒظٹط²) ظ„طھط­ط³ظٹظ† ط£ط¯ط§ط، ط§ظ„طھط·ط¨ظٹظ‚ ظˆطھط®طµظٹطµ طھط¬ط±ط¨طھظƒ. ظٹظ…ظƒظ†ظƒ ط§ظ„طھط­ظƒظ… ظپظٹ ط¥ط¹ط¯ط§ط¯ط§طھ ط§ظ„ظƒظˆظƒظٹط² ظ…ظ† ظ…طھطµظپط­ظƒ. ط¨ط¹ط¶ ط§ظ„ظƒظˆظƒظٹط² ط¶ط±ظˆط±ظٹط© ظ„ط¹ظ…ظ„ ط§ظ„طھط·ط¨ظٹظ‚ ط¨ط´ظƒظ„ طµط­ظٹط­.',
       contentEn: 'We use cookies to improve app performance and personalize your experience. You can control cookie settings from your browser. Some cookies are essential for the app to function properly.',
     },
     {
-      titleAr: 'حقوق المستخدم',
+      titleAr: 'ط­ظ‚ظˆظ‚ ط§ظ„ظ…ط³طھط®ط¯ظ…',
       titleEn: 'User Rights',
-      contentAr: 'لديك الحق في الوصول إلى بياناتك، طلب تعديلها أو حذفها، والاعتراض على معالجتها. يمكنك أيضاً سحب موافقتك في أي وقت. لتطبيق أي من هذه الحقوق، يرجى التواصل معنا.',
+      contentAr: 'ظ„ط¯ظٹظƒ ط§ظ„ط­ظ‚ ظپظٹ ط§ظ„ظˆطµظˆظ„ ط¥ظ„ظ‰ ط¨ظٹط§ظ†ط§طھظƒطŒ ط·ظ„ط¨ طھط¹ط¯ظٹظ„ظ‡ط§ ط£ظˆ ط­ط°ظپظ‡ط§طŒ ظˆط§ظ„ط§ط¹طھط±ط§ط¶ ط¹ظ„ظ‰ ظ…ط¹ط§ظ„ط¬طھظ‡ط§. ظٹظ…ظƒظ†ظƒ ط£ظٹط¶ط§ظ‹ ط³ط­ط¨ ظ…ظˆط§ظپظ‚طھظƒ ظپظٹ ط£ظٹ ظˆظ‚طھ. ظ„طھط·ط¨ظٹظ‚ ط£ظٹ ظ…ظ† ظ‡ط°ظ‡ ط§ظ„ط­ظ‚ظˆظ‚طŒ ظٹط±ط¬ظ‰ ط§ظ„طھظˆط§طµظ„ ظ…ط¹ظ†ط§.',
       contentEn: 'You have the right to access your data, request modification or deletion, and object to its processing. You can also withdraw your consent at any time. To exercise any of these rights, please contact us.',
     },
     {
-      titleAr: 'الاتصال بنا',
+      titleAr: 'ط§ظ„ط§طھطµط§ظ„ ط¨ظ†ط§',
       titleEn: 'Contact Us',
-      contentAr: 'إذا كان لديك أي أسئلة حول سياسة الخصوصية أو كيفية تعاملنا مع بياناتك، يمكنك التواصل معنا عبر: البريد الإلكتروني: support@nabd.ly أو الهاتف: +218 91 000 0000',
+      contentAr: 'ط¥ط°ط§ ظƒط§ظ† ظ„ط¯ظٹظƒ ط£ظٹ ط£ط³ط¦ظ„ط© ط­ظˆظ„ ط³ظٹط§ط³ط© ط§ظ„ط®طµظˆطµظٹط© ط£ظˆ ظƒظٹظپظٹط© طھط¹ط§ظ…ظ„ظ†ط§ ظ…ط¹ ط¨ظٹط§ظ†ط§طھظƒطŒ ظٹظ…ظƒظ†ظƒ ط§ظ„طھظˆط§طµظ„ ظ…ط¹ظ†ط§ ط¹ط¨ط±: ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ: support@nabd.ly ط£ظˆ ط§ظ„ظ‡ط§طھظپ: +218 91 000 0000',
       contentEn: 'If you have any questions about our privacy policy or how we handle your data, you can contact us via: Email: support@nabd.ly or Phone: +218 91 000 0000',
     },
   ];
@@ -1583,8 +1584,8 @@ export function PrivacyPolicyOverlay({ onClose, darkMode, isRTL, direction }: {
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'سياسة الخصوصية' : 'Privacy Policy'}
-      subtitle={isRTL ? 'كيف نحمي بياناتك' : 'How we protect your data'}
+      title={isRTL ? 'ط³ظٹط§ط³ط© ط§ظ„ط®طµظˆطµظٹط©' : 'Privacy Policy'}
+      subtitle={isRTL ? 'ظƒظٹظپ ظ†ط­ظ…ظٹ ط¨ظٹط§ظ†ط§طھظƒ' : 'How we protect your data'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -1599,7 +1600,7 @@ export function PrivacyPolicyOverlay({ onClose, darkMode, isRTL, direction }: {
         <motion.div variants={staggerItem} className="flex items-center gap-2 px-1 mb-1">
           <Clock size={12} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} />
           <span className="text-[10px]" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-            {isRTL ? 'آخر تحديث: يناير 2024' : 'Last updated: January 2024'}
+            {isRTL ? 'ط¢ط®ط± طھط­ط¯ظٹط«: ظٹظ†ط§ظٹط± 2024' : 'Last updated: January 2024'}
           </span>
         </motion.div>
 
@@ -1625,9 +1626,9 @@ export function PrivacyPolicyOverlay({ onClose, darkMode, isRTL, direction }: {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 10. TERMS OF SERVICE OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function TermsOfServiceOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -1636,39 +1637,39 @@ export function TermsOfServiceOverlay({ onClose, darkMode, isRTL, direction }: {
 }) {
   const sections = [
     {
-      titleAr: 'القبول',
+      titleAr: 'ط§ظ„ظ‚ط¨ظˆظ„',
       titleEn: 'Acceptance',
-      contentAr: 'باستخدام تطبيق نبض المدينة، فإنك توافق على هذه الشروط والأحكام. إذا كنت لا توافق على أي جزء من هذه الشروط، يرجى عدم استخدام التطبيق. استمرارك في استخدام التطبيق يعني قبولك لأي تعديلات على هذه الشروط.',
+      contentAr: 'ط¨ط§ط³طھط®ط¯ط§ظ… طھط·ط¨ظٹظ‚ ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©طŒ ظپط¥ظ†ظƒ طھظˆط§ظپظ‚ ط¹ظ„ظ‰ ظ‡ط°ظ‡ ط§ظ„ط´ط±ظˆط· ظˆط§ظ„ط£ط­ظƒط§ظ…. ط¥ط°ط§ ظƒظ†طھ ظ„ط§ طھظˆط§ظپظ‚ ط¹ظ„ظ‰ ط£ظٹ ط¬ط²ط، ظ…ظ† ظ‡ط°ظ‡ ط§ظ„ط´ط±ظˆط·طŒ ظٹط±ط¬ظ‰ ط¹ط¯ظ… ط§ط³طھط®ط¯ط§ظ… ط§ظ„طھط·ط¨ظٹظ‚. ط§ط³طھظ…ط±ط§ط±ظƒ ظپظٹ ط§ط³طھط®ط¯ط§ظ… ط§ظ„طھط·ط¨ظٹظ‚ ظٹط¹ظ†ظٹ ظ‚ط¨ظˆظ„ظƒ ظ„ط£ظٹ طھط¹ط¯ظٹظ„ط§طھ ط¹ظ„ظ‰ ظ‡ط°ظ‡ ط§ظ„ط´ط±ظˆط·.',
       contentEn: 'By using the Nabd Al-Madina app, you agree to these terms and conditions. If you do not agree with any part of these terms, please do not use the app. Your continued use of the app means you accept any changes to these terms.',
     },
     {
-      titleAr: 'الاستخدام المسموح',
+      titleAr: 'ط§ظ„ط§ط³طھط®ط¯ط§ظ… ط§ظ„ظ…ط³ظ…ظˆط­',
       titleEn: 'Permitted Use',
-      contentAr: 'يُسمح لك باستخدام التطبيق لأغراض التسوق الشرعية فقط. يُحظر استخدام التطبيق لأي أغراض غير قانونية أو احتيالية أو ضارة. يجب عليك الالتزام بجميع القوانين واللوائح المعمول بها عند استخدام التطبيق.',
+      contentAr: 'ظٹظڈط³ظ…ط­ ظ„ظƒ ط¨ط§ط³طھط®ط¯ط§ظ… ط§ظ„طھط·ط¨ظٹظ‚ ظ„ط£ط؛ط±ط§ط¶ ط§ظ„طھط³ظˆظ‚ ط§ظ„ط´ط±ط¹ظٹط© ظپظ‚ط·. ظٹظڈط­ط¸ط± ط§ط³طھط®ط¯ط§ظ… ط§ظ„طھط·ط¨ظٹظ‚ ظ„ط£ظٹ ط£ط؛ط±ط§ط¶ ط؛ظٹط± ظ‚ط§ظ†ظˆظ†ظٹط© ط£ظˆ ط§ط­طھظٹط§ظ„ظٹط© ط£ظˆ ط¶ط§ط±ط©. ظٹط¬ط¨ ط¹ظ„ظٹظƒ ط§ظ„ط§ظ„طھط²ط§ظ… ط¨ط¬ظ…ظٹط¹ ط§ظ„ظ‚ظˆط§ظ†ظٹظ† ظˆط§ظ„ظ„ظˆط§ط¦ط­ ط§ظ„ظ…ط¹ظ…ظˆظ„ ط¨ظ‡ط§ ط¹ظ†ط¯ ط§ط³طھط®ط¯ط§ظ… ط§ظ„طھط·ط¨ظٹظ‚.',
       contentEn: 'You are allowed to use the app for legitimate shopping purposes only. It is prohibited to use the app for any illegal, fraudulent, or harmful purposes. You must comply with all applicable laws and regulations when using the app.',
     },
     {
-      titleAr: 'الحسابات',
+      titleAr: 'ط§ظ„ط­ط³ط§ط¨ط§طھ',
       titleEn: 'Accounts',
-      contentAr: 'أنت مسؤول عن الحفاظ على سرية معلومات حسابك وكلمة المرور الخاصة بك. يجب عليك إبلاغنا فوراً عن أي استخدام غير مصرح لحسابك. لسنا مسؤولين عن أي خسائر ناتجة عن إساءة استخدام حسابك.',
+      contentAr: 'ط£ظ†طھ ظ…ط³ط¤ظˆظ„ ط¹ظ† ط§ظ„ط­ظپط§ط¸ ط¹ظ„ظ‰ ط³ط±ظٹط© ظ…ط¹ظ„ظˆظ…ط§طھ ط­ط³ط§ط¨ظƒ ظˆظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط®ط§طµط© ط¨ظƒ. ظٹط¬ط¨ ط¹ظ„ظٹظƒ ط¥ط¨ظ„ط§ط؛ظ†ط§ ظپظˆط±ط§ظ‹ ط¹ظ† ط£ظٹ ط§ط³طھط®ط¯ط§ظ… ط؛ظٹط± ظ…طµط±ط­ ظ„ط­ط³ط§ط¨ظƒ. ظ„ط³ظ†ط§ ظ…ط³ط¤ظˆظ„ظٹظ† ط¹ظ† ط£ظٹ ط®ط³ط§ط¦ط± ظ†ط§طھط¬ط© ط¹ظ† ط¥ط³ط§ط،ط© ط§ط³طھط®ط¯ط§ظ… ط­ط³ط§ط¨ظƒ.',
       contentEn: 'You are responsible for maintaining the confidentiality of your account information and password. You must notify us immediately of any unauthorized use of your account. We are not responsible for any losses resulting from misuse of your account.',
     },
     {
-      titleAr: 'الملكية الفكرية',
+      titleAr: 'ط§ظ„ظ…ظ„ظƒظٹط© ط§ظ„ظپظƒط±ظٹط©',
       titleEn: 'Intellectual Property',
-      contentAr: 'جميع المحتوى في التطبيق، بما في ذلك النصوص والصور والشعارات والتصميم، هو ملك لنبض المدينة أو مرخص له. لا يجوز لك نسخ أو تعديل أو توزيع أي محتوى من التطبيق بدون إذن كتابي مسبق.',
+      contentAr: 'ط¬ظ…ظٹط¹ ط§ظ„ظ…ط­طھظˆظ‰ ظپظٹ ط§ظ„طھط·ط¨ظٹظ‚طŒ ط¨ظ…ط§ ظپظٹ ط°ظ„ظƒ ط§ظ„ظ†طµظˆطµ ظˆط§ظ„طµظˆط± ظˆط§ظ„ط´ط¹ط§ط±ط§طھ ظˆط§ظ„طھطµظ…ظٹظ…طŒ ظ‡ظˆ ظ…ظ„ظƒ ظ„ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط© ط£ظˆ ظ…ط±ط®طµ ظ„ظ‡. ظ„ط§ ظٹط¬ظˆط² ظ„ظƒ ظ†ط³ط® ط£ظˆ طھط¹ط¯ظٹظ„ ط£ظˆ طھظˆط²ظٹط¹ ط£ظٹ ظ…ط­طھظˆظ‰ ظ…ظ† ط§ظ„طھط·ط¨ظٹظ‚ ط¨ط¯ظˆظ† ط¥ط°ظ† ظƒطھط§ط¨ظٹ ظ…ط³ط¨ظ‚.',
       contentEn: 'All content in the app, including text, images, logos, and design, is owned by or licensed to Nabd Al-Madina. You may not copy, modify, or distribute any content from the app without prior written permission.',
     },
     {
-      titleAr: 'إخلاء المسؤولية',
+      titleAr: 'ط¥ط®ظ„ط§ط، ط§ظ„ظ…ط³ط¤ظˆظ„ظٹط©',
       titleEn: 'Disclaimer',
-      contentAr: 'نبذل قصارى جهدنا لضمان دقة المعلومات في التطبيق، لكننا لا نضمن دقة أو اكتمال أو موثوقية أي محتوى. نحن لا نكون مسؤولين عن أي أضرار مباشرة أو غير مباشرة ناتجة عن استخدام التطبيق.',
+      contentAr: 'ظ†ط¨ط°ظ„ ظ‚طµط§ط±ظ‰ ط¬ظ‡ط¯ظ†ط§ ظ„ط¶ظ…ط§ظ† ط¯ظ‚ط© ط§ظ„ظ…ط¹ظ„ظˆظ…ط§طھ ظپظٹ ط§ظ„طھط·ط¨ظٹظ‚طŒ ظ„ظƒظ†ظ†ط§ ظ„ط§ ظ†ط¶ظ…ظ† ط¯ظ‚ط© ط£ظˆ ط§ظƒطھظ…ط§ظ„ ط£ظˆ ظ…ظˆط«ظˆظ‚ظٹط© ط£ظٹ ظ…ط­طھظˆظ‰. ظ†ط­ظ† ظ„ط§ ظ†ظƒظˆظ† ظ…ط³ط¤ظˆظ„ظٹظ† ط¹ظ† ط£ظٹ ط£ط¶ط±ط§ط± ظ…ط¨ط§ط´ط±ط© ط£ظˆ ط؛ظٹط± ظ…ط¨ط§ط´ط±ط© ظ†ط§طھط¬ط© ط¹ظ† ط§ط³طھط®ط¯ط§ظ… ط§ظ„طھط·ط¨ظٹظ‚.',
       contentEn: 'We make our best effort to ensure the accuracy of information in the app, but we do not guarantee the accuracy, completeness, or reliability of any content. We are not liable for any direct or indirect damages resulting from the use of the app.',
     },
     {
-      titleAr: 'التعديلات',
+      titleAr: 'ط§ظ„طھط¹ط¯ظٹظ„ط§طھ',
       titleEn: 'Modifications',
-      contentAr: 'نحتفظ بالحق في تعديل هذه الشروط والأحكام في أي وقت. سيتم إخطارك بأي تغييرات جوهرية. استمرارك في استخدام التطبيق بعد التعديلات يعني قبولك للشروط المعدلة.',
+      contentAr: 'ظ†ط­طھظپط¸ ط¨ط§ظ„ط­ظ‚ ظپظٹ طھط¹ط¯ظٹظ„ ظ‡ط°ظ‡ ط§ظ„ط´ط±ظˆط· ظˆط§ظ„ط£ط­ظƒط§ظ… ظپظٹ ط£ظٹ ظˆظ‚طھ. ط³ظٹطھظ… ط¥ط®ط·ط§ط±ظƒ ط¨ط£ظٹ طھط؛ظٹظٹط±ط§طھ ط¬ظˆظ‡ط±ظٹط©. ط§ط³طھظ…ط±ط§ط±ظƒ ظپظٹ ط§ط³طھط®ط¯ط§ظ… ط§ظ„طھط·ط¨ظٹظ‚ ط¨ط¹ط¯ ط§ظ„طھط¹ط¯ظٹظ„ط§طھ ظٹط¹ظ†ظٹ ظ‚ط¨ظˆظ„ظƒ ظ„ظ„ط´ط±ظˆط· ط§ظ„ظ…ط¹ط¯ظ„ط©.',
       contentEn: 'We reserve the right to modify these terms and conditions at any time. You will be notified of any material changes. Your continued use of the app after modifications means you accept the revised terms.',
     },
   ];
@@ -1676,8 +1677,8 @@ export function TermsOfServiceOverlay({ onClose, darkMode, isRTL, direction }: {
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'الشروط والأحكام' : 'Terms of Service'}
-      subtitle={isRTL ? 'شروط استخدام التطبيق' : 'App usage terms'}
+      title={isRTL ? 'ط§ظ„ط´ط±ظˆط· ظˆط§ظ„ط£ط­ظƒط§ظ…' : 'Terms of Service'}
+      subtitle={isRTL ? 'ط´ط±ظˆط· ط§ط³طھط®ط¯ط§ظ… ط§ظ„طھط·ط¨ظٹظ‚' : 'App usage terms'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -1692,7 +1693,7 @@ export function TermsOfServiceOverlay({ onClose, darkMode, isRTL, direction }: {
         <motion.div variants={staggerItem} className="flex items-center gap-2 px-1 mb-1">
           <Clock size={12} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} />
           <span className="text-[10px]" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-            {isRTL ? 'آخر تحديث: يناير 2024' : 'Last updated: January 2024'}
+            {isRTL ? 'ط¢ط®ط± طھط­ط¯ظٹط«: ظٹظ†ط§ظٹط± 2024' : 'Last updated: January 2024'}
           </span>
         </motion.div>
 
@@ -1722,9 +1723,9 @@ export function TermsOfServiceOverlay({ onClose, darkMode, isRTL, direction }: {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 11. HELP CENTER OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function HelpCenterOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -1736,33 +1737,33 @@ export function HelpCenterOverlay({ onClose, darkMode, isRTL, direction }: {
 
   const faqs = [
     {
-      qAr: 'كيفية الطلب؟',
+      qAr: 'ظƒظٹظپظٹط© ط§ظ„ط·ظ„ط¨طں',
       qEn: 'How to place an order?',
-      aAr: 'لتقديم طلب، تصفح المنتجات وأضف ما تريد إلى سلة التسوق. ثم انتقل إلى السلة وراجع طلبك واضغط على "إتمام الشراء". أدخل عنوان التوصيل واختر طريقة الدفع ثم أكد الطلب. سنتواصل معك لتأكيد الطلب.',
+      aAr: 'ظ„طھظ‚ط¯ظٹظ… ط·ظ„ط¨طŒ طھطµظپط­ ط§ظ„ظ…ظ†طھط¬ط§طھ ظˆط£ط¶ظپ ظ…ط§ طھط±ظٹط¯ ط¥ظ„ظ‰ ط³ظ„ط© ط§ظ„طھط³ظˆظ‚. ط«ظ… ط§ظ†طھظ‚ظ„ ط¥ظ„ظ‰ ط§ظ„ط³ظ„ط© ظˆط±ط§ط¬ط¹ ط·ظ„ط¨ظƒ ظˆط§ط¶ط؛ط· ط¹ظ„ظ‰ "ط¥طھظ…ط§ظ… ط§ظ„ط´ط±ط§ط،". ط£ط¯ط®ظ„ ط¹ظ†ظˆط§ظ† ط§ظ„طھظˆطµظٹظ„ ظˆط§ط®طھط± ط·ط±ظٹظ‚ط© ط§ظ„ط¯ظپط¹ ط«ظ… ط£ظƒط¯ ط§ظ„ط·ظ„ط¨. ط³ظ†طھظˆط§طµظ„ ظ…ط¹ظƒ ظ„طھط£ظƒظٹط¯ ط§ظ„ط·ظ„ط¨.',
       aEn: 'To place an order, browse products and add what you want to the shopping cart. Then go to the cart, review your order, and tap "Checkout". Enter the delivery address, choose a payment method, and confirm the order. We will contact you to confirm the order.',
     },
     {
-      qAr: 'كيفية التتبع؟',
+      qAr: 'ظƒظٹظپظٹط© ط§ظ„طھطھط¨ط¹طں',
       qEn: 'How to track my order?',
-      aAr: 'يمكنك تتبع طلبك من قسم "طلباتي" في حسابك. ستجد هناك حالة الطلب الحالية وتفاصيل التتبع. كما ستصلك إشعارات عبر التطبيق والرسائل النصية عند تحديث حالة طلبك.',
+      aAr: 'ظٹظ…ظƒظ†ظƒ طھطھط¨ط¹ ط·ظ„ط¨ظƒ ظ…ظ† ظ‚ط³ظ… "ط·ظ„ط¨ط§طھظٹ" ظپظٹ ط­ط³ط§ط¨ظƒ. ط³طھط¬ط¯ ظ‡ظ†ط§ظƒ ط­ط§ظ„ط© ط§ظ„ط·ظ„ط¨ ط§ظ„ط­ط§ظ„ظٹط© ظˆطھظپط§طµظٹظ„ ط§ظ„طھطھط¨ط¹. ظƒظ…ط§ ط³طھطµظ„ظƒ ط¥ط´ط¹ط§ط±ط§طھ ط¹ط¨ط± ط§ظ„طھط·ط¨ظٹظ‚ ظˆط§ظ„ط±ط³ط§ط¦ظ„ ط§ظ„ظ†طµظٹط© ط¹ظ†ط¯ طھط­ط¯ظٹط« ط­ط§ظ„ط© ط·ظ„ط¨ظƒ.',
       aEn: 'You can track your order from the "My Orders" section in your account. You will find the current order status and tracking details there. You will also receive notifications via the app and SMS when your order status is updated.',
     },
     {
-      qAr: 'سياسة الاسترجاع؟',
+      qAr: 'ط³ظٹط§ط³ط© ط§ظ„ط§ط³طھط±ط¬ط§ط¹طں',
       qEn: 'What is the return policy?',
-      aAr: 'يمكنك إرجاع المنتجات خلال 7 أيام من الاستلام إذا كانت في حالتها الأصلية ولم يتم استخدامها. المنتجات المخصصة والغذائية غير قابلة للإرجاع. تواصل معنا عبر الدعم الفني لبدء عملية الإرجاع.',
+      aAr: 'ظٹظ…ظƒظ†ظƒ ط¥ط±ط¬ط§ط¹ ط§ظ„ظ…ظ†طھط¬ط§طھ ط®ظ„ط§ظ„ 7 ط£ظٹط§ظ… ظ…ظ† ط§ظ„ط§ط³طھظ„ط§ظ… ط¥ط°ط§ ظƒط§ظ†طھ ظپظٹ ط­ط§ظ„طھظ‡ط§ ط§ظ„ط£طµظ„ظٹط© ظˆظ„ظ… ظٹطھظ… ط§ط³طھط®ط¯ط§ظ…ظ‡ط§. ط§ظ„ظ…ظ†طھط¬ط§طھ ط§ظ„ظ…ط®طµطµط© ظˆط§ظ„ط؛ط°ط§ط¦ظٹط© ط؛ظٹط± ظ‚ط§ط¨ظ„ط© ظ„ظ„ط¥ط±ط¬ط§ط¹. طھظˆط§طµظ„ ظ…ط¹ظ†ط§ ط¹ط¨ط± ط§ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ ظ„ط¨ط¯ط، ط¹ظ…ظ„ظٹط© ط§ظ„ط¥ط±ط¬ط§ط¹.',
       aEn: 'You can return products within 7 days of delivery if they are in their original condition and have not been used. Customized and food products are non-returnable. Contact us via support to start the return process.',
     },
     {
-      qAr: 'طرق الدفع؟',
+      qAr: 'ط·ط±ظ‚ ط§ظ„ط¯ظپط¹طں',
       qEn: 'What payment methods are available?',
-      aAr: 'حالياً نوفر الدفع عند الاستلام كطريقة دفع أساسية. نعمل على إضافة طرق دفع إلكترونية مثل البطاقات البنكية والمحفظة الإلكترونية قريباً. تابع التحديثات!',
+      aAr: 'ط­ط§ظ„ظٹط§ظ‹ ظ†ظˆظپط± ط§ظ„ط¯ظپط¹ ط¹ظ†ط¯ ط§ظ„ط§ط³طھظ„ط§ظ… ظƒط·ط±ظٹظ‚ط© ط¯ظپط¹ ط£ط³ط§ط³ظٹط©. ظ†ط¹ظ…ظ„ ط¹ظ„ظ‰ ط¥ط¶ط§ظپط© ط·ط±ظ‚ ط¯ظپط¹ ط¥ظ„ظƒطھط±ظˆظ†ظٹط© ظ…ط«ظ„ ط§ظ„ط¨ط·ط§ظ‚ط§طھ ط§ظ„ط¨ظ†ظƒظٹط© ظˆط§ظ„ظ…ط­ظپط¸ط© ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹط© ظ‚ط±ظٹط¨ط§ظ‹. طھط§ط¨ط¹ ط§ظ„طھط­ط¯ظٹط«ط§طھ!',
       aEn: 'Currently, we offer Cash on Delivery as the primary payment method. We are working on adding electronic payment methods like bank cards and e-wallets soon. Stay tuned for updates!',
     },
     {
-      qAr: 'التوصيل؟',
+      qAr: 'ط§ظ„طھظˆطµظٹظ„طں',
       qEn: 'How does delivery work?',
-      aAr: 'نوفر التوصيل لجميع مناطق ليبيا. مدة التوصيل تتراوح بين 1-5 أيام عمل حسب المنطقة. رسوم التوصيل تعتمد على المنطقة المختارة. يمكنك اختيار عنوان التوصيل عند إتمام الشراء.',
+      aAr: 'ظ†ظˆظپط± ط§ظ„طھظˆطµظٹظ„ ظ„ط¬ظ…ظٹط¹ ظ…ظ†ط§ط·ظ‚ ظ„ظٹط¨ظٹط§. ظ…ط¯ط© ط§ظ„طھظˆطµظٹظ„ طھطھط±ط§ظˆط­ ط¨ظٹظ† 1-5 ط£ظٹط§ظ… ط¹ظ…ظ„ ط­ط³ط¨ ط§ظ„ظ…ظ†ط·ظ‚ط©. ط±ط³ظˆظ… ط§ظ„طھظˆطµظٹظ„ طھط¹طھظ…ط¯ ط¹ظ„ظ‰ ط§ظ„ظ…ظ†ط·ظ‚ط© ط§ظ„ظ…ط®طھط§ط±ط©. ظٹظ…ظƒظ†ظƒ ط§ط®طھظٹط§ط± ط¹ظ†ظˆط§ظ† ط§ظ„طھظˆطµظٹظ„ ط¹ظ†ط¯ ط¥طھظ…ط§ظ… ط§ظ„ط´ط±ط§ط،.',
       aEn: 'We provide delivery to all areas in Libya. Delivery time ranges from 1-5 business days depending on the area. Delivery fee depends on the selected zone. You can choose the delivery address at checkout.',
     },
   ];
@@ -1776,8 +1777,8 @@ export function HelpCenterOverlay({ onClose, darkMode, isRTL, direction }: {
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'مركز المساعدة' : 'Help Center'}
-      subtitle={isRTL ? 'أسئلة شائعة ومساعدة' : 'FAQs & support'}
+      title={isRTL ? 'ظ…ط±ظƒط² ط§ظ„ظ…ط³ط§ط¹ط¯ط©' : 'Help Center'}
+      subtitle={isRTL ? 'ط£ط³ط¦ظ„ط© ط´ط§ط¦ط¹ط© ظˆظ…ط³ط§ط¹ط¯ط©' : 'FAQs & support'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -1796,7 +1797,7 @@ export function HelpCenterOverlay({ onClose, darkMode, isRTL, direction }: {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isRTL ? 'ابحث في الأسئلة الشائعة...' : 'Search FAQs...'}
+              placeholder={isRTL ? 'ط§ط¨ط­ط« ظپظٹ ط§ظ„ط£ط³ط¦ظ„ط© ط§ظ„ط´ط§ط¦ط¹ط©...' : 'Search FAQs...'}
               className="w-full ps-10 pe-3.5 py-3 rounded-2xl text-sm focus:outline-none"
               style={{
                 background: darkMode ? COLORS.darkCard : '#fff',
@@ -1857,7 +1858,7 @@ export function HelpCenterOverlay({ onClose, darkMode, isRTL, direction }: {
           <motion.div variants={staggerItem} className="flex flex-col items-center py-8">
             <HelpCircle size={40} style={{ color: darkMode ? COLORS.darkBorder : '#D1D5DB' }} />
             <p className="text-sm mt-2" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-              {isRTL ? 'لا توجد نتائج' : 'No results found'}
+              {isRTL ? 'ظ„ط§ طھظˆط¬ط¯ ظ†طھط§ط¦ط¬' : 'No results found'}
             </p>
           </motion.div>
         )}
@@ -1866,17 +1867,17 @@ export function HelpCenterOverlay({ onClose, darkMode, isRTL, direction }: {
         <Card darkMode={darkMode}>
           <div className="p-4">
             <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-              {isRTL ? 'لا تزال بحاجة لمساعدة؟' : 'Still need help?'}
+              {isRTL ? 'ظ„ط§ طھط²ط§ظ„ ط¨ط­ط§ط¬ط© ظ„ظ…ط³ط§ط¹ط¯ط©طں' : 'Still need help?'}
             </p>
             <div className="flex items-center gap-2">
               <a href="tel:+218910000000" className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-semibold" style={{ background: 'rgba(0,168,204,0.08)', color: COLORS.teal }}>
-                <Phone size={14} /> {isRTL ? 'اتصل' : 'Call'}
+                <Phone size={14} /> {isRTL ? 'ط§طھطµظ„' : 'Call'}
               </a>
               <a href="https://wa.me/218910000000" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-semibold" style={{ background: 'rgba(34,197,94,0.08)', color: '#16A34A' }}>
                 <MessageCircle size={14} /> WhatsApp
               </a>
               <a href="mailto:support@nabd.ly" className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-semibold" style={{ background: 'rgba(59,130,246,0.08)', color: COLORS.info }}>
-                <Mail size={14} /> {isRTL ? 'بريد' : 'Email'}
+                <Mail size={14} /> {isRTL ? 'ط¨ط±ظٹط¯' : 'Email'}
               </a>
             </div>
           </div>
@@ -1886,9 +1887,9 @@ export function HelpCenterOverlay({ onClose, darkMode, isRTL, direction }: {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // 12. CONTACT US OVERLAY
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
   onClose: () => void;
   darkMode: boolean;
@@ -1906,7 +1907,7 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
       icon: Phone,
       gradient: 'linear-gradient(135deg, rgba(0,168,204,0.12), rgba(0,137,123,0.12))',
       iconColor: COLORS.teal,
-      titleAr: 'هاتف',
+      titleAr: 'ظ‡ط§طھظپ',
       titleEn: 'Phone',
       value: '+218 91 000 0000',
       href: 'tel:+218910000000',
@@ -1915,7 +1916,7 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
       icon: MessageCircle,
       gradient: 'linear-gradient(135deg, rgba(34,197,94,0.12), rgba(22,163,74,0.12))',
       iconColor: '#16A34A',
-      titleAr: 'واتساب',
+      titleAr: 'ظˆط§طھط³ط§ط¨',
       titleEn: 'WhatsApp',
       value: '+218 91 000 0000',
       href: 'https://wa.me/218910000000',
@@ -1924,7 +1925,7 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
       icon: Mail,
       gradient: 'linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.12))',
       iconColor: COLORS.info,
-      titleAr: 'بريد إلكتروني',
+      titleAr: 'ط¨ط±ظٹط¯ ط¥ظ„ظƒطھط±ظˆظ†ظٹ',
       titleEn: 'Email',
       value: 'support@nabd.ly',
       href: 'mailto:support@nabd.ly',
@@ -1933,7 +1934,7 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
       icon: Globe,
       gradient: 'linear-gradient(135deg, rgba(139,92,246,0.12), rgba(109,40,217,0.12))',
       iconColor: COLORS.purple,
-      titleAr: 'موقع إلكتروني',
+      titleAr: 'ظ…ظˆظ‚ط¹ ط¥ظ„ظƒطھط±ظˆظ†ظٹ',
       titleEn: 'Website',
       value: 'www.nabd.ly',
       href: 'https://nabd.ly',
@@ -1951,8 +1952,8 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
   return (
     <OverlayWrapper
       onClose={onClose}
-      title={isRTL ? 'تواصل معنا' : 'Contact Us'}
-      subtitle={isRTL ? 'نحن هنا لمساعدتك' : 'We are here to help'}
+      title={isRTL ? 'طھظˆط§طµظ„ ظ…ط¹ظ†ط§' : 'Contact Us'}
+      subtitle={isRTL ? 'ظ†ط­ظ† ظ‡ظ†ط§ ظ„ظ…ط³ط§ط¹ط¯طھظƒ' : 'We are here to help'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -2000,19 +2001,19 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
           <Card darkMode={darkMode}>
             <div className="p-4 space-y-4">
               <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-                {isRTL ? 'أرسل لنا رسالة' : 'Send us a message'}
+                {isRTL ? 'ط£ط±ط³ظ„ ظ„ظ†ط§ ط±ط³ط§ظ„ط©' : 'Send us a message'}
               </p>
               <InputField
-                label={isRTL ? 'الاسم' : 'Name'}
+                label={isRTL ? 'ط§ظ„ط§ط³ظ…' : 'Name'}
                 value={name}
                 onChange={setName}
-                placeholder={isRTL ? 'أدخل اسمك' : 'Enter your name'}
+                placeholder={isRTL ? 'ط£ط¯ط®ظ„ ط§ط³ظ…ظƒ' : 'Enter your name'}
                 darkMode={darkMode}
                 isRTL={isRTL}
                 icon={<User size={14} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} />}
               />
               <InputField
-                label={isRTL ? 'البريد الإلكتروني' : 'Email'}
+                label={isRTL ? 'ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ' : 'Email'}
                 value={email}
                 onChange={setEmail}
                 placeholder="email@example.com"
@@ -2024,12 +2025,12 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
               />
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-                  {isRTL ? 'الرسالة' : 'Message'}
+                  {isRTL ? 'ط§ظ„ط±ط³ط§ظ„ط©' : 'Message'}
                 </label>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder={isRTL ? 'اكتب رسالتك هنا...' : 'Write your message here...'}
+                  placeholder={isRTL ? 'ط§ظƒطھط¨ ط±ط³ط§ظ„طھظƒ ظ‡ظ†ط§...' : 'Write your message here...'}
                   rows={4}
                   className="w-full px-3.5 py-2.5 rounded-xl text-sm focus:outline-none resize-none"
                   style={{
@@ -2052,7 +2053,7 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
                 ) : (
                   <>
                     <Send size={16} />
-                    {isRTL ? 'إرسال الرسالة' : 'Send Message'}
+                    {isRTL ? 'ط¥ط±ط³ط§ظ„ ط§ظ„ط±ط³ط§ظ„ط©' : 'Send Message'}
                   </>
                 )}
               </motion.button>
@@ -2075,10 +2076,10 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
                 <CheckCircle2 size={32} style={{ color: COLORS.success }} />
               </motion.div>
               <h3 className="text-base font-bold mb-1.5" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-                {isRTL ? 'تم إرسال رسالتك!' : 'Message sent!'}
+                {isRTL ? 'طھظ… ط¥ط±ط³ط§ظ„ ط±ط³ط§ظ„طھظƒ!' : 'Message sent!'}
               </h3>
               <p className="text-xs text-center max-w-xs" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                {isRTL ? 'سنتواصل معك في أقرب وقت ممكن. شكراً لتواصلك معنا!' : 'We will get back to you as soon as possible. Thank you for reaching out!'}
+                {isRTL ? 'ط³ظ†طھظˆط§طµظ„ ظ…ط¹ظƒ ظپظٹ ط£ظ‚ط±ط¨ ظˆظ‚طھ ظ…ظ…ظƒظ†. ط´ظƒط±ط§ظ‹ ظ„طھظˆط§طµظ„ظƒ ظ…ط¹ظ†ط§!' : 'We will get back to you as soon as possible. Thank you for reaching out!'}
               </p>
               <motion.button
                 whileTap={{ scale: 0.95 }}
@@ -2086,7 +2087,7 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
                 className="mt-4 px-6 py-2 rounded-xl text-xs font-bold"
                 style={{ background: darkMode ? COLORS.darkSubtle : '#F3F4F6', color: darkMode ? '#9CA3AF' : '#6B7280' }}
               >
-                {isRTL ? 'إرسال رسالة أخرى' : 'Send another message'}
+                {isRTL ? 'ط¥ط±ط³ط§ظ„ ط±ط³ط§ظ„ط© ط£ط®ط±ظ‰' : 'Send another message'}
               </motion.button>
             </motion.div>
           </Card>
@@ -2095,3 +2096,4 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
     </OverlayWrapper>
   );
 }
+

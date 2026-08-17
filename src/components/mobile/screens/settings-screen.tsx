@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { APP_VERSION } from '../lib/constants';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguageStore } from '@/stores/language-store';
 import { useMobileStore } from '../lib/mobile-store';
@@ -23,7 +24,7 @@ import {
   TermsOfServiceOverlay, HelpCenterOverlay, ContactUsOverlay
 } from './settings-overlays';
 
-// ─── Brand Design Tokens ────────────────────────────────────────────────
+// â”€â”€â”€ Brand Design Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const COLORS = {
   teal: '#00A8CC',
   tealDark: '#00897B',
@@ -43,7 +44,7 @@ const COLORS = {
   darkSubtle: '#1A2540',
 };
 
-// ─── Stagger animation variants ─────────────────────────────────────
+// â”€â”€â”€ Stagger animation variants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -65,7 +66,7 @@ const sectionTitle = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
 };
 
-// ─── Animated Toggle Switch ──────────────────────────────────────────
+// â”€â”€â”€ Animated Toggle Switch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function AnimatedToggle({ value, onToggle, isRTL, activeColor }: {
   value: boolean;
   onToggle: () => void;
@@ -95,7 +96,7 @@ function AnimatedToggle({ value, onToggle, isRTL, activeColor }: {
   );
 }
 
-// ─── Setting Item Component ──────────────────────────────────────────
+// â”€â”€â”€ Setting Item Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SettingItem({ icon, iconBg, iconColor, title, subtitle, isRTL, darkMode, onClick, toggle, toggleValue, onToggle, value, badge, chevron = true, danger }: {
   icon: React.ReactNode;
   iconBg: string;
@@ -183,7 +184,7 @@ function SettingItem({ icon, iconBg, iconColor, title, subtitle, isRTL, darkMode
   );
 }
 
-// ─── Section Header ──────────────────────────────────────────────────
+// â”€â”€â”€ Section Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SectionHeader({ icon, title, isRTL, darkMode }: {
   icon: React.ReactNode;
   title: string;
@@ -203,7 +204,7 @@ function SectionHeader({ icon, title, isRTL, darkMode }: {
   );
 }
 
-// ─── Settings Card Wrapper ───────────────────────────────────────────
+// â”€â”€â”€ Settings Card Wrapper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SettingsCard({ children, darkMode }: {
   children: React.ReactNode;
   darkMode: boolean;
@@ -223,19 +224,19 @@ function SettingsCard({ children, darkMode }: {
   );
 }
 
-// ─── Divider ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Divider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function Divider({ darkMode }: { darkMode: boolean }) {
   return (
     <div style={{ borderBottom: `1px solid ${darkMode ? COLORS.darkBorder : 'rgba(0,0,0,0.04)'}` }} />
   );
 }
 
-// ─── Sub-Screen Type ──────────────────────────────────────────────────
+// â”€â”€â”€ Sub-Screen Type â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type SubScreen = 'edit-profile' | 'change-password' | 'payment-method' | 'privacy-policy' | 'terms' | 'help-center' | 'contact-us' | 'report-bug' | 'rate-app' | 'share-app' | 'about' | 'licenses' | null;
 
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 // MAIN SETTINGS SCREEN COMPONENT
-// ═══════════════════════════════════════════════════════════════════════
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode, onLogout, onGoToFavorites, onGoToOrders, onGoToAddresses }: {
   onClose: () => void;
   user: MobileUser | null;
@@ -325,9 +326,9 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
   }, []);
 
   const fontSizeLabels = {
-    small: isRTL ? 'صغير' : 'Small',
-    medium: isRTL ? 'متوسط' : 'Medium',
-    large: isRTL ? 'كبير' : 'Large',
+    small: isRTL ? 'طµط؛ظٹط±' : 'Small',
+    medium: isRTL ? 'ظ…طھظˆط³ط·' : 'Medium',
+    large: isRTL ? 'ظƒط¨ظٹط±' : 'Large',
   };
 
   // Clear all data handler
@@ -354,7 +355,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
 
   return (
     <div className="h-full overflow-y-auto pb-24" dir={direction} style={{ background: darkMode ? '#0B1120' : '#F4F7F9' }}>
-      {/* ═══ Gradient Header ═══ */}
+      {/* â•گâ•گâ•گ Gradient Header â•گâ•گâ•گ */}
       <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #002F3F 0%, #004B63 25%, #006B8A 55%, #00897B 85%, #00A8CC 100%)' }}>
         {/* Decorative circles */}
         <div className="absolute top-0 right-0 w-44 h-44 rounded-full bg-white/5 -translate-y-1/2 translate-x-1/4" />
@@ -380,7 +381,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
             </motion.button>
             <div className="flex-1">
               <h2 className="text-white text-lg font-bold">{t('mobile.profile.settings')}</h2>
-              <p className="text-white/60 text-xs mt-0.5">{isRTL ? 'إدارة حسابك وتخصيص التطبيق' : 'Manage your account & customize the app'}</p>
+              <p className="text-white/60 text-xs mt-0.5">{isRTL ? 'ط¥ط¯ط§ط±ط© ط­ط³ط§ط¨ظƒ ظˆطھط®طµظٹطµ ط§ظ„طھط·ط¨ظٹظ‚' : 'Manage your account & customize the app'}</p>
             </div>
             {/* Decorative gear icon */}
             <motion.div
@@ -394,7 +395,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
         </div>
       </div>
 
-      {/* ═══ Content ═══ */}
+      {/* â•گâ•گâ•گ Content â•گâ•گâ•گ */}
       <div className="px-4 -mt-4 relative z-10">
         <motion.div
           className="space-y-5"
@@ -402,7 +403,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
           initial="hidden"
           animate="visible"
         >
-          {/* ─── Profile Card ─── */}
+          {/* â”€â”€â”€ Profile Card â”€â”€â”€ */}
           <SettingsCard darkMode={darkMode}>
             <div className="p-4">
               <div className="flex items-center gap-3.5">
@@ -447,12 +448,12 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-[15px] truncate" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-                    {displayName || (isRTL ? 'مستخدم' : 'User')}
+                    {displayName || (isRTL ? 'ظ…ط³طھط®ط¯ظ…' : 'User')}
                   </p>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <Phone size={10} style={{ color: darkMode ? '#A8B8CC' : '#9CA3AF' }} />
                     <p className="text-[11px]" style={{ color: darkMode ? '#A8B8CC' : '#9CA3AF' }} dir="ltr">
-                      {user?.phone?.replace(/^\+218/, '0') || (isRTL ? 'غير محدد' : 'Not set')}
+                      {user?.phone?.replace(/^\+218/, '0') || (isRTL ? 'ط؛ظٹط± ظ…ط­ط¯ط¯' : 'Not set')}
                     </p>
                   </div>
                 </div>
@@ -462,16 +463,16 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                   className="px-3.5 py-2 rounded-xl text-[11px] font-bold flex-shrink-0"
                   style={{ background: 'rgba(0,168,204,0.1)', color: COLORS.teal, border: '1px solid rgba(0,168,204,0.15)' }}
                 >
-                  {isRTL ? 'تعديل' : 'Edit'}
+                  {isRTL ? 'طھط¹ط¯ظٹظ„' : 'Edit'}
                 </motion.button>
               </div>
             </div>
           </SettingsCard>
 
-          {/* ─── Quick Settings ─── */}
+          {/* â”€â”€â”€ Quick Settings â”€â”€â”€ */}
           <SectionHeader
             icon={<Sparkles size={11} style={{ color: COLORS.teal }} />}
-            title={isRTL ? 'الإعدادات السريعة' : 'Quick Settings'}
+            title={isRTL ? 'ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ ط§ظ„ط³ط±ظٹط¹ط©' : 'Quick Settings'}
             isRTL={isRTL}
             darkMode={darkMode}
           />
@@ -481,21 +482,21 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Globe size={18} />}
               iconBg="linear-gradient(135deg, rgba(234,179,8,0.12), rgba(245,158,11,0.12))"
               iconColor="#F59E0B"
-              title={t('mobile.language') || (isRTL ? 'اللغة' : 'Language')}
-              subtitle={isRTL ? 'العربية - اللغة الحالية' : 'English - Current'}
+              title={t('mobile.language') || (isRTL ? 'ط§ظ„ظ„ط؛ط©' : 'Language')}
+              subtitle={isRTL ? 'ط§ظ„ط¹ط±ط¨ظٹط© - ط§ظ„ظ„ط؛ط© ط§ظ„ط­ط§ظ„ظٹط©' : 'English - Current'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
-              value={language === 'ar' ? 'العربية' : 'English'}
+              value={language === 'ar' ? 'ط§ظ„ط¹ط±ط¨ظٹط©' : 'English'}
             />
             <Divider darkMode={darkMode} />
-            {/* Dark Mode — Always On */}
+            {/* Dark Mode â€” Always On */}
             <SettingItem
               icon={<Moon size={18} />}
               iconBg="linear-gradient(135deg, rgba(0,168,204,0.12), rgba(0,137,123,0.12))"
               iconColor={COLORS.teal}
-              title={isRTL ? 'الوضع الداكن' : 'Dark Mode'}
-              subtitle={isRTL ? 'مفعّل دائماً' : 'Always on'}
+              title={isRTL ? 'ط§ظ„ظˆط¶ط¹ ط§ظ„ط¯ط§ظƒظ†' : 'Dark Mode'}
+              subtitle={isRTL ? 'ظ…ظپط¹ظ‘ظ„ ط¯ط§ط¦ظ…ط§ظ‹' : 'Always on'}
               isRTL={isRTL}
               darkMode={darkMode}
               toggle
@@ -508,8 +509,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Bell size={18} />}
               iconBg="linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.12))"
               iconColor="#EF4444"
-              title={isRTL ? 'الإشعارات' : 'Notifications'}
-              subtitle={isRTL ? 'إدارة التنبيهات والإشعارات' : 'Manage alerts & notifications'}
+              title={isRTL ? 'ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ' : 'Notifications'}
+              subtitle={isRTL ? 'ط¥ط¯ط§ط±ط© ط§ظ„طھظ†ط¨ظٹظ‡ط§طھ ظˆط§ظ„ط¥ط´ط¹ط§ط±ط§طھ' : 'Manage alerts & notifications'}
               isRTL={isRTL}
               darkMode={darkMode}
               toggle
@@ -518,10 +519,10 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
             />
           </SettingsCard>
 
-          {/* ─── Account ─── */}
+          {/* â”€â”€â”€ Account â”€â”€â”€ */}
           <SectionHeader
             icon={<User size={11} style={{ color: COLORS.purple }} />}
-            title={isRTL ? 'الحساب' : 'Account'}
+            title={isRTL ? 'ط§ظ„ط­ط³ط§ط¨' : 'Account'}
             isRTL={isRTL}
             darkMode={darkMode}
           />
@@ -530,8 +531,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<User size={18} />}
               iconBg="linear-gradient(135deg, rgba(139,92,246,0.12), rgba(109,40,217,0.12))"
               iconColor="#8B5CF6"
-              title={isRTL ? 'تعديل الملف الشخصي' : 'Edit Profile'}
-              subtitle={isRTL ? 'الاسم، الصورة، البيانات الشخصية' : 'Name, photo, personal info'}
+              title={isRTL ? 'طھط¹ط¯ظٹظ„ ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ' : 'Edit Profile'}
+              subtitle={isRTL ? 'ط§ظ„ط§ط³ظ…طŒ ط§ظ„طµظˆط±ط©طŒ ط§ظ„ط¨ظٹط§ظ†ط§طھ ط§ظ„ط´ط®طµظٹط©' : 'Name, photo, personal info'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('edit-profile')}
@@ -541,8 +542,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Lock size={18} />}
               iconBg="linear-gradient(135deg, rgba(0,168,204,0.12), rgba(0,137,123,0.12))"
               iconColor={COLORS.teal}
-              title={isRTL ? 'تغيير كلمة المرور' : 'Change Password'}
-              subtitle={isRTL ? 'تحديث كلمة المرور الخاصة بك' : 'Update your password'}
+              title={isRTL ? 'طھط؛ظٹظٹط± ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±' : 'Change Password'}
+              subtitle={isRTL ? 'طھط­ط¯ظٹط« ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط®ط§طµط© ط¨ظƒ' : 'Update your password'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('change-password')}
@@ -552,30 +553,30 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<ShieldCheck size={18} />}
               iconBg="linear-gradient(135deg, rgba(34,197,94,0.12), rgba(22,163,74,0.12))"
               iconColor="#16A34A"
-              title={isRTL ? 'المصادقة الثنائية' : 'Two-Factor Auth'}
-              subtitle={isRTL ? 'حماية إضافية لحسابك' : 'Extra protection for your account'}
+              title={isRTL ? 'ط§ظ„ظ…طµط§ط¯ظ‚ط© ط§ظ„ط«ظ†ط§ط¦ظٹط©' : 'Two-Factor Auth'}
+              subtitle={isRTL ? 'ط­ظ…ط§ظٹط© ط¥ط¶ط§ظپظٹط© ظ„ط­ط³ط§ط¨ظƒ' : 'Extra protection for your account'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => {}}
-              badge={isRTL ? 'قريباً' : 'Soon'}
+              badge={isRTL ? 'ظ‚ط±ظٹط¨ط§ظ‹' : 'Soon'}
             />
             <Divider darkMode={darkMode} />
             <SettingItem
               icon={<MapPin size={18} />}
               iconBg="linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.12))"
               iconColor="#EF4444"
-              title={isRTL ? 'العناوين المحفوظة' : 'Saved Addresses'}
-              subtitle={isRTL ? 'إدارة عناوين التوصيل' : 'Manage delivery addresses'}
+              title={isRTL ? 'ط§ظ„ط¹ظ†ط§ظˆظٹظ† ط§ظ„ظ…ط­ظپظˆط¸ط©' : 'Saved Addresses'}
+              subtitle={isRTL ? 'ط¥ط¯ط§ط±ط© ط¹ظ†ط§ظˆظٹظ† ط§ظ„طھظˆطµظٹظ„' : 'Manage delivery addresses'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => onGoToAddresses?.() || setSubScreen(null)}
             />
           </SettingsCard>
 
-          {/* ─── Shopping ─── */}
+          {/* â”€â”€â”€ Shopping â”€â”€â”€ */}
           <SectionHeader
             icon={<Package size={11} style={{ color: COLORS.success }} />}
-            title={isRTL ? 'التسوق' : 'Shopping'}
+            title={isRTL ? 'ط§ظ„طھط³ظˆظ‚' : 'Shopping'}
             isRTL={isRTL}
             darkMode={darkMode}
           />
@@ -584,20 +585,20 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<CreditCard size={18} />}
               iconBg="linear-gradient(135deg, rgba(0,75,99,0.12), rgba(0,137,123,0.12))"
               iconColor={COLORS.primary}
-              title={isRTL ? 'طريقة الدفع الافتراضية' : 'Default Payment'}
-              subtitle={isRTL ? 'الدفع عند الاستلام' : 'Cash on Delivery'}
+              title={isRTL ? 'ط·ط±ظٹظ‚ط© ط§ظ„ط¯ظپط¹ ط§ظ„ط§ظپطھط±ط§ط¶ظٹط©' : 'Default Payment'}
+              subtitle={isRTL ? 'ط§ظ„ط¯ظپط¹ ط¹ظ†ط¯ ط§ظ„ط§ط³طھظ„ط§ظ…' : 'Cash on Delivery'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('payment-method')}
-              value={isRTL ? 'عند الاستلام' : 'COD'}
+              value={isRTL ? 'ط¹ظ†ط¯ ط§ظ„ط§ط³طھظ„ط§ظ…' : 'COD'}
             />
             <Divider darkMode={darkMode} />
             <SettingItem
               icon={<Heart size={18} />}
               iconBg="linear-gradient(135deg, rgba(255,111,97,0.12), rgba(232,93,80,0.12))"
               iconColor="#FF6F61"
-              title={isRTL ? 'المفضلة' : 'Favorites'}
-              subtitle={isRTL ? 'المنتجات المفضلة لديك' : 'Your favorite products'}
+              title={isRTL ? 'ط§ظ„ظ…ظپط¶ظ„ط©' : 'Favorites'}
+              subtitle={isRTL ? 'ط§ظ„ظ…ظ†طھط¬ط§طھ ط§ظ„ظ…ظپط¶ظ„ط© ظ„ط¯ظٹظƒ' : 'Your favorite products'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => onGoToFavorites?.()}
@@ -607,8 +608,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Package size={18} />}
               iconBg="linear-gradient(135deg, rgba(34,197,94,0.12), rgba(22,163,74,0.12))"
               iconColor="#16A34A"
-              title={isRTL ? 'طلباتي' : 'My Orders'}
-              subtitle={isRTL ? 'متابعة وإدارة الطلبات' : 'Track & manage orders'}
+              title={isRTL ? 'ط·ظ„ط¨ط§طھظٹ' : 'My Orders'}
+              subtitle={isRTL ? 'ظ…طھط§ط¨ط¹ط© ظˆط¥ط¯ط§ط±ط© ط§ظ„ط·ظ„ط¨ط§طھ' : 'Track & manage orders'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => onGoToOrders?.()}
@@ -618,8 +619,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Clock size={18} />}
               iconBg="linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.12))"
               iconColor="#F59E0B"
-              title={isRTL ? 'تحديثات الطلبات' : 'Order Updates'}
-              subtitle={isRTL ? 'إشعارات حالة الطلب' : 'Order status notifications'}
+              title={isRTL ? 'طھط­ط¯ظٹط«ط§طھ ط§ظ„ط·ظ„ط¨ط§طھ' : 'Order Updates'}
+              subtitle={isRTL ? 'ط¥ط´ط¹ط§ط±ط§طھ ط­ط§ظ„ط© ط§ظ„ط·ظ„ط¨' : 'Order status notifications'}
               isRTL={isRTL}
               darkMode={darkMode}
               toggle
@@ -628,10 +629,10 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
             />
           </SettingsCard>
 
-          {/* ─── Appearance ─── */}
+          {/* â”€â”€â”€ Appearance â”€â”€â”€ */}
           <SectionHeader
             icon={<Palette size={11} style={{ color: '#F59E0B' }} />}
-            title={isRTL ? 'المظهر' : 'Appearance'}
+            title={isRTL ? 'ط§ظ„ظ…ط¸ظ‡ط±' : 'Appearance'}
             isRTL={isRTL}
             darkMode={darkMode}
           />
@@ -652,7 +653,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[13px] font-bold" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-                      {isRTL ? 'حجم الخط' : 'Font Size'}
+                      {isRTL ? 'ط­ط¬ظ… ط§ظ„ط®ط·' : 'Font Size'}
                     </p>
                     <p className="text-[11px] mt-0.5" style={{ color: darkMode ? '#A8B8CC' : '#9CA3AF' }}>
                       {fontSizeLabels[fontSize]}
@@ -705,8 +706,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Smartphone size={18} />}
               iconBg="linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.12))"
               iconColor="#3B82F6"
-              title={isRTL ? 'الوضع المضغوط' : 'Compact Mode'}
-              subtitle={isRTL ? 'عرض المزيد من المحتوى في الشاشة' : 'Show more content on screen'}
+              title={isRTL ? 'ط§ظ„ظˆط¶ط¹ ط§ظ„ظ…ط¶ط؛ظˆط·' : 'Compact Mode'}
+              subtitle={isRTL ? 'ط¹ط±ط¶ ط§ظ„ظ…ط²ظٹط¯ ظ…ظ† ط§ظ„ظ…ط­طھظˆظ‰ ظپظٹ ط§ظ„ط´ط§ط´ط©' : 'Show more content on screen'}
               isRTL={isRTL}
               darkMode={darkMode}
               toggle
@@ -719,8 +720,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<RotateCcw size={18} />}
               iconBg="linear-gradient(135deg, rgba(107,114,128,0.12), rgba(75,85,99,0.12))"
               iconColor="#6B7280"
-              title={isRTL ? 'تقليل الحركات' : 'Reduce Animations'}
-              subtitle={isRTL ? 'للأشخاص الذين يفضلون واجهة أكثر ثباتاً' : 'For those who prefer a calmer interface'}
+              title={isRTL ? 'طھظ‚ظ„ظٹظ„ ط§ظ„ط­ط±ظƒط§طھ' : 'Reduce Animations'}
+              subtitle={isRTL ? 'ظ„ظ„ط£ط´ط®ط§طµ ط§ظ„ط°ظٹظ† ظٹظپط¶ظ„ظˆظ† ظˆط§ط¬ظ‡ط© ط£ظƒط«ط± ط«ط¨ط§طھط§ظ‹' : 'For those who prefer a calmer interface'}
               isRTL={isRTL}
               darkMode={darkMode}
               toggle
@@ -729,10 +730,10 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
             />
           </SettingsCard>
 
-          {/* ─── Notification Preferences ─── */}
+          {/* â”€â”€â”€ Notification Preferences â”€â”€â”€ */}
           <SectionHeader
             icon={<Bell size={11} style={{ color: COLORS.danger }} />}
-            title={isRTL ? 'تفضيلات الإشعارات' : 'Notification Preferences'}
+            title={isRTL ? 'طھظپط¶ظٹظ„ط§طھ ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ' : 'Notification Preferences'}
             isRTL={isRTL}
             darkMode={darkMode}
           />
@@ -741,8 +742,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Bell size={18} />}
               iconBg="linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.12))"
               iconColor="#EF4444"
-              title={isRTL ? 'العروض والتخفيضات' : 'Promotions & Deals'}
-              subtitle={isRTL ? 'إشعارات العروض الجديدة' : 'New deals notifications'}
+              title={isRTL ? 'ط§ظ„ط¹ط±ظˆط¶ ظˆط§ظ„طھط®ظپظٹط¶ط§طھ' : 'Promotions & Deals'}
+              subtitle={isRTL ? 'ط¥ط´ط¹ط§ط±ط§طھ ط§ظ„ط¹ط±ظˆط¶ ط§ظ„ط¬ط¯ظٹط¯ط©' : 'New deals notifications'}
               isRTL={isRTL}
               darkMode={darkMode}
               toggle
@@ -754,8 +755,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
               iconBg={soundEnabled ? 'linear-gradient(135deg, rgba(0,168,204,0.12), rgba(0,137,123,0.12))' : 'linear-gradient(135deg, rgba(107,114,128,0.12), rgba(75,85,99,0.12))'}
               iconColor={soundEnabled ? COLORS.teal : '#6B7280'}
-              title={isRTL ? 'الأصوات' : 'Sounds'}
-              subtitle={isRTL ? 'تشغيل صوت الإشعارات' : 'Play notification sounds'}
+              title={isRTL ? 'ط§ظ„ط£طµظˆط§طھ' : 'Sounds'}
+              subtitle={isRTL ? 'طھط´ط؛ظٹظ„ طµظˆطھ ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ' : 'Play notification sounds'}
               isRTL={isRTL}
               darkMode={darkMode}
               toggle
@@ -767,8 +768,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Vibrate size={18} />}
               iconBg="linear-gradient(135deg, rgba(139,92,246,0.12), rgba(109,40,217,0.12))"
               iconColor="#8B5CF6"
-              title={isRTL ? 'الاهتزاز' : 'Vibration'}
-              subtitle={isRTL ? 'اهتزاز الجهاز عند الإشعارات' : 'Vibrate on notifications'}
+              title={isRTL ? 'ط§ظ„ط§ظ‡طھط²ط§ط²' : 'Vibration'}
+              subtitle={isRTL ? 'ط§ظ‡طھط²ط§ط² ط§ظ„ط¬ظ‡ط§ط² ط¹ظ†ط¯ ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ' : 'Vibrate on notifications'}
               isRTL={isRTL}
               darkMode={darkMode}
               toggle
@@ -777,10 +778,10 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
             />
           </SettingsCard>
 
-          {/* ─── Privacy & Security ─── */}
+          {/* â”€â”€â”€ Privacy & Security â”€â”€â”€ */}
           <SectionHeader
             icon={<Shield size={11} style={{ color: COLORS.success }} />}
-            title={isRTL ? 'الخصوصية والأمان' : 'Privacy & Security'}
+            title={isRTL ? 'ط§ظ„ط®طµظˆطµظٹط© ظˆط§ظ„ط£ظ…ط§ظ†' : 'Privacy & Security'}
             isRTL={isRTL}
             darkMode={darkMode}
           />
@@ -789,8 +790,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Eye size={18} />}
               iconBg="linear-gradient(135deg, rgba(0,168,204,0.12), rgba(0,137,123,0.12))"
               iconColor={COLORS.teal}
-              title={isRTL ? 'سياسة الخصوصية' : 'Privacy Policy'}
-              subtitle={isRTL ? 'كيف نحمي بياناتك' : 'How we protect your data'}
+              title={isRTL ? 'ط³ظٹط§ط³ط© ط§ظ„ط®طµظˆطµظٹط©' : 'Privacy Policy'}
+              subtitle={isRTL ? 'ظƒظٹظپ ظ†ط­ظ…ظٹ ط¨ظٹط§ظ†ط§طھظƒ' : 'How we protect your data'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('privacy-policy')}
@@ -800,8 +801,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<FileText size={18} />}
               iconBg="linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.12))"
               iconColor="#F59E0B"
-              title={isRTL ? 'الشروط والأحكام' : 'Terms of Service'}
-              subtitle={isRTL ? 'شروط استخدام التطبيق' : 'App usage terms'}
+              title={isRTL ? 'ط§ظ„ط´ط±ظˆط· ظˆط§ظ„ط£ط­ظƒط§ظ…' : 'Terms of Service'}
+              subtitle={isRTL ? 'ط´ط±ظˆط· ط§ط³طھط®ط¯ط§ظ… ط§ظ„طھط·ط¨ظٹظ‚' : 'App usage terms'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('terms')}
@@ -811,15 +812,15 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Database size={18} />}
               iconBg="linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.12))"
               iconColor="#3B82F6"
-              title={isRTL ? 'إدارة البيانات' : 'Data Management'}
-              subtitle={isRTL ? 'تخزين وحذف بياناتك' : 'Store & delete your data'}
+              title={isRTL ? 'ط¥ط¯ط§ط±ط© ط§ظ„ط¨ظٹط§ظ†ط§طھ' : 'Data Management'}
+              subtitle={isRTL ? 'طھط®ط²ظٹظ† ظˆط­ط°ظپ ط¨ظٹط§ظ†ط§طھظƒ' : 'Store & delete your data'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setShowStorageInfo(!showStorageInfo)}
             />
           </SettingsCard>
 
-          {/* ─── Storage Info Card (expandable) ─── */}
+          {/* â”€â”€â”€ Storage Info Card (expandable) â”€â”€â”€ */}
           <AnimatePresence>
             {showStorageInfo && (
               <motion.div
@@ -837,7 +838,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                       </div>
                       <div className="flex-1">
                         <p className="text-[12px] font-bold" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-                          {isRTL ? 'التخزين المستخدم' : 'Storage Used'}
+                          {isRTL ? 'ط§ظ„طھط®ط²ظٹظ† ط§ظ„ظ…ط³طھط®ط¯ظ…' : 'Storage Used'}
                         </p>
                         <p className="text-[11px]" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>{storageUsed}</p>
                       </div>
@@ -872,7 +873,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                         }}
                       >
                         <Trash2 size={12} />
-                        {isRTL ? 'مسح الكاش' : 'Clear Cache'}
+                        {isRTL ? 'ظ…ط³ط­ ط§ظ„ظƒط§ط´' : 'Clear Cache'}
                       </motion.button>
                       <motion.button
                         whileTap={{ scale: 0.95 }}
@@ -880,7 +881,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                         style={{ background: darkMode ? COLORS.darkSubtle : '#F3F4F6', color: darkMode ? '#9CA3AF' : '#6B7280' }}
                       >
                         <Download size={12} />
-                        {isRTL ? 'تصدير البيانات' : 'Export Data'}
+                        {isRTL ? 'طھطµط¯ظٹط± ط§ظ„ط¨ظٹط§ظ†ط§طھ' : 'Export Data'}
                       </motion.button>
                     </div>
                   </div>
@@ -889,10 +890,10 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
             )}
           </AnimatePresence>
 
-          {/* ─── Support ─── */}
+          {/* â”€â”€â”€ Support â”€â”€â”€ */}
           <SectionHeader
             icon={<HelpCircle size={11} style={{ color: COLORS.info }} />}
-            title={isRTL ? 'الدعم والمساعدة' : 'Support & Help'}
+            title={isRTL ? 'ط§ظ„ط¯ط¹ظ… ظˆط§ظ„ظ…ط³ط§ط¹ط¯ط©' : 'Support & Help'}
             isRTL={isRTL}
             darkMode={darkMode}
           />
@@ -901,8 +902,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<HelpCircle size={18} />}
               iconBg="linear-gradient(135deg, rgba(59,130,246,0.12), rgba(37,99,235,0.12))"
               iconColor="#3B82F6"
-              title={isRTL ? 'مركز المساعدة' : 'Help Center'}
-              subtitle={isRTL ? 'الأسئلة الشائعة والدليل' : 'FAQs & guides'}
+              title={isRTL ? 'ظ…ط±ظƒط² ط§ظ„ظ…ط³ط§ط¹ط¯ط©' : 'Help Center'}
+              subtitle={isRTL ? 'ط§ظ„ط£ط³ط¦ظ„ط© ط§ظ„ط´ط§ط¦ط¹ط© ظˆط§ظ„ط¯ظ„ظٹظ„' : 'FAQs & guides'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('help-center')}
@@ -912,8 +913,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<MessageCircle size={18} />}
               iconBg="linear-gradient(135deg, rgba(34,197,94,0.12), rgba(22,163,74,0.12))"
               iconColor="#16A34A"
-              title={isRTL ? 'تواصل معنا' : 'Contact Us'}
-              subtitle={isRTL ? 'هاتف، واتساب، بريد إلكتروني' : 'Phone, WhatsApp, email'}
+              title={isRTL ? 'طھظˆط§طµظ„ ظ…ط¹ظ†ط§' : 'Contact Us'}
+              subtitle={isRTL ? 'ظ‡ط§طھظپطŒ ظˆط§طھط³ط§ط¨طŒ ط¨ط±ظٹط¯ ط¥ظ„ظƒطھط±ظˆظ†ظٹ' : 'Phone, WhatsApp, email'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('contact-us')}
@@ -923,8 +924,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Zap size={18} />}
               iconBg="linear-gradient(135deg, rgba(245,158,11,0.12), rgba(217,119,6,0.12))"
               iconColor="#F59E0B"
-              title={isRTL ? 'الإبلاغ عن مشكلة' : 'Report a Bug'}
-              subtitle={isRTL ? 'ساعدنا في تحسين التطبيق' : 'Help us improve the app'}
+              title={isRTL ? 'ط§ظ„ط¥ط¨ظ„ط§ط؛ ط¹ظ† ظ…ط´ظƒظ„ط©' : 'Report a Bug'}
+              subtitle={isRTL ? 'ط³ط§ط¹ط¯ظ†ط§ ظپظٹ طھط­ط³ظٹظ† ط§ظ„طھط·ط¨ظٹظ‚' : 'Help us improve the app'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('report-bug')}
@@ -934,8 +935,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Star size={18} />}
               iconBg="linear-gradient(135deg, rgba(212,168,67,0.12), rgba(180,130,50,0.12))"
               iconColor={COLORS.gold}
-              title={isRTL ? 'تقييم التطبيق' : 'Rate the App'}
-              subtitle={isRTL ? 'شاركنا رأيك' : 'Share your feedback'}
+              title={isRTL ? 'طھظ‚ظٹظٹظ… ط§ظ„طھط·ط¨ظٹظ‚' : 'Rate the App'}
+              subtitle={isRTL ? 'ط´ط§ط±ظƒظ†ط§ ط±ط£ظٹظƒ' : 'Share your feedback'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('rate-app')}
@@ -945,18 +946,18 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Share2 size={18} />}
               iconBg="linear-gradient(135deg, rgba(0,168,204,0.12), rgba(0,137,123,0.12))"
               iconColor={COLORS.teal}
-              title={isRTL ? 'مشاركة التطبيق' : 'Share the App'}
-              subtitle={isRTL ? 'ادع أصدقاءك للتسوق' : 'Invite friends to shop'}
+              title={isRTL ? 'ظ…ط´ط§ط±ظƒط© ط§ظ„طھط·ط¨ظٹظ‚' : 'Share the App'}
+              subtitle={isRTL ? 'ط§ط¯ط¹ ط£طµط¯ظ‚ط§ط،ظƒ ظ„ظ„طھط³ظˆظ‚' : 'Invite friends to shop'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('share-app')}
             />
           </SettingsCard>
 
-          {/* ─── About ─── */}
+          {/* â”€â”€â”€ About â”€â”€â”€ */}
           <SectionHeader
             icon={<Info size={11} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} />}
-            title={isRTL ? 'حول التطبيق' : 'About'}
+            title={isRTL ? 'ط­ظˆظ„ ط§ظ„طھط·ط¨ظٹظ‚' : 'About'}
             isRTL={isRTL}
             darkMode={darkMode}
           />
@@ -965,8 +966,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<Info size={18} />}
               iconBg="linear-gradient(135deg, rgba(107,114,128,0.12), rgba(75,85,99,0.12))"
               iconColor="#6B7280"
-              title={isRTL ? 'عن نبض المدينة' : 'About Nabd Al-Madina'}
-              subtitle="v1.0.0"
+              title={isRTL ? 'ط¹ظ† ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©' : 'About Nabd Al-Madina'}
+              subtitle={`v${APP_VERSION}`}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('about')}
@@ -976,20 +977,20 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               icon={<FileText size={18} />}
               iconBg="linear-gradient(135deg, rgba(0,75,99,0.12), rgba(0,137,123,0.12))"
               iconColor={COLORS.primary}
-              title={isRTL ? 'تراخيص المصادر المفتوحة' : 'Open Source Licenses'}
-              subtitle={isRTL ? 'المكتبات المستخدمة' : 'Libraries used'}
+              title={isRTL ? 'طھط±ط§ط®ظٹطµ ط§ظ„ظ…طµط§ط¯ط± ط§ظ„ظ…ظپطھظˆط­ط©' : 'Open Source Licenses'}
+              subtitle={isRTL ? 'ط§ظ„ظ…ظƒطھط¨ط§طھ ط§ظ„ظ…ط³طھط®ط¯ظ…ط©' : 'Libraries used'}
               isRTL={isRTL}
               darkMode={darkMode}
               onClick={() => setSubScreen('licenses')}
             />
           </SettingsCard>
 
-          {/* ─── Danger Zone ─── */}
+          {/* â”€â”€â”€ Danger Zone â”€â”€â”€ */}
           {user && (
             <>
               <SectionHeader
                 icon={<Trash2 size={11} style={{ color: COLORS.danger }} />}
-                title={isRTL ? 'المنطقة الخطرة' : 'Danger Zone'}
+                title={isRTL ? 'ط§ظ„ظ…ظ†ط·ظ‚ط© ط§ظ„ط®ط·ط±ط©' : 'Danger Zone'}
                 isRTL={isRTL}
                 darkMode={darkMode}
               />
@@ -998,8 +999,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                   icon={<Trash2 size={18} />}
                   iconBg="linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.12))"
                   iconColor="#EF4444"
-                  title={isRTL ? 'مسح جميع البيانات' : 'Clear All Data'}
-                  subtitle={isRTL ? 'حذف جميع الإعدادات والبيانات المحلية' : 'Delete all settings & local data'}
+                  title={isRTL ? 'ظ…ط³ط­ ط¬ظ…ظٹط¹ ط§ظ„ط¨ظٹط§ظ†ط§طھ' : 'Clear All Data'}
+                  subtitle={isRTL ? 'ط­ط°ظپ ط¬ظ…ظٹط¹ ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ ظˆط§ظ„ط¨ظٹط§ظ†ط§طھ ط§ظ„ظ…ط­ظ„ظٹط©' : 'Delete all settings & local data'}
                   isRTL={isRTL}
                   darkMode={darkMode}
                   onClick={() => setShowClearDataModal(true)}
@@ -1010,8 +1011,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                   icon={<LogOut size={18} />}
                   iconBg="linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.12))"
                   iconColor="#EF4444"
-                  title={t('mobile.profile.signOut') || (isRTL ? 'تسجيل الخروج' : 'Sign Out')}
-                  subtitle={isRTL ? 'تسجيل الخروج من حسابك' : 'Sign out of your account'}
+                  title={t('mobile.profile.signOut') || (isRTL ? 'طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬' : 'Sign Out')}
+                  subtitle={isRTL ? 'طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬ ظ…ظ† ط­ط³ط§ط¨ظƒ' : 'Sign out of your account'}
                   isRTL={isRTL}
                   darkMode={darkMode}
                   onClick={onLogout || (() => {})}
@@ -1021,7 +1022,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
             </>
           )}
 
-          {/* ─── App Version Footer ─── */}
+          {/* â”€â”€â”€ App Version Footer â”€â”€â”€ */}
           <motion.div variants={staggerItem} className="text-center pt-2 pb-6">
             <div className="flex items-center justify-center gap-2 mb-2">
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #004B63, #00897B)' }}>
@@ -1029,19 +1030,19 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               </div>
             </div>
             <p className="text-[11px] font-semibold" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-              {t('hero.title')} v1.0.0
+              {t('hero.title')} v{APP_VERSION}
             </p>
             <p className="text-[10px] mt-1" style={{ color: darkMode ? '#374151' : '#B0B8C4' }}>
-              🇱🇾 {isRTL ? 'صُنع بحب في ليبيا' : 'Made with love in Libya'}
+              ًں‡±ًں‡¾ {isRTL ? 'طµظڈظ†ط¹ ط¨ط­ط¨ ظپظٹ ظ„ظٹط¨ظٹط§' : 'Made with love in Libya'}
             </p>
             <p className="text-[9px] mt-0.5" style={{ color: darkMode ? '#374151' : '#C5CBD3' }}>
-              © 2024 {t('hero.title')}. {isRTL ? 'جميع الحقوق محفوظة' : 'All Rights Reserved'}.
+              آ© 2024 {t('hero.title')}. {isRTL ? 'ط¬ظ…ظٹط¹ ط§ظ„ط­ظ‚ظˆظ‚ ظ…ط­ظپظˆط¸ط©' : 'All Rights Reserved'}.
             </p>
           </motion.div>
         </motion.div>
       </div>
 
-      {/* ═══ Clear All Data Modal ═══ */}
+      {/* â•گâ•گâ•گ Clear All Data Modal â•گâ•گâ•گ */}
       <AnimatePresence>
         {showClearDataModal && (
           <motion.div
@@ -1074,13 +1075,13 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
 
                 {/* Title */}
                 <h3 className="text-lg font-bold text-center mb-2" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-                  {isRTL ? 'مسح جميع البيانات' : 'Clear All Data'}
+                  {isRTL ? 'ظ…ط³ط­ ط¬ظ…ظٹط¹ ط§ظ„ط¨ظٹط§ظ†ط§طھ' : 'Clear All Data'}
                 </h3>
 
                 {/* Description */}
                 <p className="text-xs text-center leading-relaxed mb-6" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
                   {isRTL
-                    ? 'سيتم حذف جميع الإعدادات والبيانات المحلية نهائياً. هذا الإجراء لا يمكن التراجع عنه.'
+                    ? 'ط³ظٹطھظ… ط­ط°ظپ ط¬ظ…ظٹط¹ ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ ظˆط§ظ„ط¨ظٹط§ظ†ط§طھ ط§ظ„ظ…ط­ظ„ظٹط© ظ†ظ‡ط§ط¦ظٹط§ظ‹. ظ‡ط°ط§ ط§ظ„ط¥ط¬ط±ط§ط، ظ„ط§ ظٹظ…ظƒظ† ط§ظ„طھط±ط§ط¬ط¹ ط¹ظ†ظ‡.'
                     : 'All settings and local data will be permanently deleted. This action cannot be undone.'}
                 </p>
 
@@ -1103,7 +1104,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                         <Check size={12} className="text-white" />
                       </motion.div>
                       <span className="text-xs font-semibold" style={{ color: COLORS.success }}>
-                        {isRTL ? 'تم مسح البيانات بنجاح' : 'Data cleared successfully'}
+                        {isRTL ? 'طھظ… ظ…ط³ط­ ط§ظ„ط¨ظٹط§ظ†ط§طھ ط¨ظ†ط¬ط§ط­' : 'Data cleared successfully'}
                       </span>
                     </motion.div>
                   )}
@@ -1121,7 +1122,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                       color: darkMode ? '#9CA3AF' : '#6B7280',
                     }}
                   >
-                    {isRTL ? 'إلغاء' : 'Cancel'}
+                    {isRTL ? 'ط¥ظ„ط؛ط§ط،' : 'Cancel'}
                   </motion.button>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
@@ -1134,8 +1135,8 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
                     }}
                   >
                     {clearDataSuccess
-                      ? (isRTL ? 'تم' : 'Done')
-                      : (isRTL ? 'مسح البيانات' : 'Clear Data')}
+                      ? (isRTL ? 'طھظ…' : 'Done')
+                      : (isRTL ? 'ظ…ط³ط­ ط§ظ„ط¨ظٹط§ظ†ط§طھ' : 'Clear Data')}
                   </motion.button>
                 </div>
               </div>
@@ -1144,7 +1145,7 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
         )}
       </AnimatePresence>
 
-      {/* ═══ Sub-Screen Overlays ═══ */}
+      {/* â•گâ•گâ•گ Sub-Screen Overlays â•گâ•گâ•گ */}
       <AnimatePresence mode="wait">
         {subScreen && (
           <motion.div
@@ -1174,3 +1175,4 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
     </div>
   );
 }
+

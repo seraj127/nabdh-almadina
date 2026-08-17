@@ -737,8 +737,8 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     }
   },
 
-  // Dark mode toggle (persisted in localStorage)
-  darkMode: loadLocal<boolean>('mobile_dark') ?? true,
+  // Dark mode toggle (persisted in localStorage, default: light)
+  darkMode: loadLocal<boolean>('mobile_dark') ?? false,
   setDarkMode: (darkMode: boolean) => {
     set({ darkMode });
     saveLocal('mobile_dark', darkMode);

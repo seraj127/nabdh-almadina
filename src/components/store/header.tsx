@@ -867,7 +867,7 @@ export function Header() {
                   <Badge
                     className="absolute -top-1 -end-1 size-5 p-0 flex items-center justify-center bg-nabdh-secondary text-white text-[10px] font-bold border-0"
                   >
-                    {cartCount > 99 ? '99+' : cartCount}
+                    {cartCount}
                   </Badge>
                 )}
               </Button>

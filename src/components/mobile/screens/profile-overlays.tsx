@@ -1,11 +1,12 @@
-'use client';
+﻿'use client';
 import React, { useState, useEffect } from 'react';
+import { APP_VERSION } from '../lib/constants';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Settings, Globe, ShieldCheck, Lock, FileText, ChevronLeft, HelpCircle, Info, Phone, Mail, ArrowLeft, ArrowRight, Edit3, Check, MessageCircle, MapPin, Clock, RotateCcw, Moon, Sun, Bell, User, Sparkles } from 'lucide-react';
 import { useMobileStore } from '../lib/mobile-store';
 import type { MobileUser } from '../lib/types';
 
-// ─── Brand Design Tokens ────────────────────────────────────────────────
+// â”€â”€â”€ Brand Design Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const COLORS = {
   teal: '#00A8CC',
   tealDark: '#00897B',
@@ -20,7 +21,7 @@ const COLORS = {
   darkSubtle: '#1A2540',
 };
 
-// ─── Stagger animation variants ─────────────────────────────────────
+// â”€â”€â”€ Stagger animation variants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -37,7 +38,7 @@ const staggerItem = {
   },
 };
 
-// ─── Shared overlay wrapper ───
+// â”€â”€â”€ Shared overlay wrapper â”€â”€â”€
 function OverlayWrapper({ onClose, title, direction, isRTL, darkMode, children, subtitle }: {
   onClose: () => void;
   title: string;
@@ -88,7 +89,7 @@ function OverlayWrapper({ onClose, title, direction, isRTL, darkMode, children, 
   );
 }
 
-// ─── Settings Overlay ───
+// â”€â”€â”€ Settings Overlay â”€â”€â”€
 export function SettingsOverlay({ onClose, user, darkMode, handleDarkMode, language, setLanguage, direction, isRTL, t, onNameUpdate }: {
   onClose: () => void;
   user: MobileUser | null;
@@ -152,7 +153,7 @@ export function SettingsOverlay({ onClose, user, darkMode, handleDarkMode, langu
     <OverlayWrapper
       onClose={onClose}
       title={t('mobile.profile.settings')}
-      subtitle={isRTL ? 'إدارة حسابك وتفضيلاتك' : 'Manage your account & preferences'}
+      subtitle={isRTL ? 'ط¥ط¯ط§ط±ط© ط­ط³ط§ط¨ظƒ ظˆطھظپط¶ظٹظ„ط§طھظƒ' : 'Manage your account & preferences'}
       direction={direction}
       isRTL={isRTL}
       darkMode={darkMode}
@@ -224,10 +225,10 @@ export function SettingsOverlay({ onClose, user, darkMode, handleDarkMode, langu
                 </motion.div>
               </div>
               <div className="pb-1 flex-1 min-w-0">
-                <p className="font-bold text-base truncate" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>{displayName || (isRTL ? 'مستخدم' : 'User')}</p>
+                <p className="font-bold text-base truncate" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>{displayName || (isRTL ? 'ظ…ط³طھط®ط¯ظ…' : 'User')}</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <Phone size={10} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} />
-                  <p className="text-xs" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} dir="ltr">{user?.phone?.replace(/^\+218/, '0') || (isRTL ? 'غير محدد' : 'Not set')}</p>
+                  <p className="text-xs" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} dir="ltr">{user?.phone?.replace(/^\+218/, '0') || (isRTL ? 'ط؛ظٹط± ظ…ط­ط¯ط¯' : 'Not set')}</p>
                 </div>
               </div>
             </div>
@@ -382,7 +383,7 @@ export function SettingsOverlay({ onClose, user, darkMode, handleDarkMode, langu
           <div className="flex items-center gap-2 px-1 mb-2">
             <Sparkles size={12} style={{ color: COLORS.teal }} />
             <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-              {isRTL ? 'الإعدادات السريعة' : 'Quick Settings'}
+              {isRTL ? 'ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ ط§ظ„ط³ط±ظٹط¹ط©' : 'Quick Settings'}
             </p>
           </div>
         </motion.div>
@@ -411,16 +412,16 @@ export function SettingsOverlay({ onClose, user, darkMode, handleDarkMode, langu
                 {t('mobile.language')}
               </span>
               <span className="block text-xs mt-0.5" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                {language === 'ar' ? (isRTL ? 'العربية - اللغة الحالية' : 'Arabic - Current') : (isRTL ? 'الإنجليزية - الحالية' : 'English - Current')}
+                {language === 'ar' ? (isRTL ? 'ط§ظ„ط¹ط±ط¨ظٹط© - ط§ظ„ظ„ط؛ط© ط§ظ„ط­ط§ظ„ظٹط©' : 'Arabic - Current') : (isRTL ? 'ط§ظ„ط¥ظ†ط¬ظ„ظٹط²ظٹط© - ط§ظ„ط­ط§ظ„ظٹط©' : 'English - Current')}
               </span>
             </div>
             <span className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg" style={{ background: darkMode ? COLORS.darkSubtle : '#F3F4F6', color: darkMode ? '#9CA3AF' : '#6B7280' }}>
-              {language === 'ar' ? 'العربية' : 'English'}
+              {language === 'ar' ? 'ط§ظ„ط¹ط±ط¨ظٹط©' : 'English'}
             </span>
             <ChevronLeft size={16} className={isRTL ? '' : 'rotate-180'} style={{ color: darkMode ? '#4B5563' : '#D1D5DB' }} />
           </motion.button>
 
-          {/* Dark Mode — Always On */}
+          {/* Dark Mode â€” Always On */}
           <div className="flex items-center gap-3 p-4" style={{ borderBottom: `1px solid ${darkMode ? COLORS.darkBorder : 'rgba(0,0,0,0.04)'}` }}>
             <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(0,168,204,0.12)' }}>
               <Moon size={20} style={{ color: COLORS.teal }} />
@@ -430,11 +431,11 @@ export function SettingsOverlay({ onClose, user, darkMode, handleDarkMode, langu
                 {t('mobile.profile.darkMode')}
               </span>
               <span className="block text-xs mt-0.5" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                {isRTL ? 'مفعّل دائماً' : 'Always on'}
+                {isRTL ? 'ظ…ظپط¹ظ‘ظ„ ط¯ط§ط¦ظ…ط§ظ‹' : 'Always on'}
               </span>
             </div>
             <span className="text-[10px] font-bold text-[#00C4E8]/70 bg-[#00C4E8]/10 px-2.5 py-1 rounded-full">
-              {isRTL ? 'دائم' : 'ON'}
+              {isRTL ? 'ط¯ط§ط¦ظ…' : 'ON'}
             </span>
           </div>
 
@@ -448,7 +449,7 @@ export function SettingsOverlay({ onClose, user, darkMode, handleDarkMode, langu
                 {t('mobile.profile.notificationSettings')}
               </span>
               <span className="block text-xs mt-0.5" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                {isRTL ? 'إدارة التنبيهات والإشعارات' : 'Manage alerts & notifications'}
+                {isRTL ? 'ط¥ط¯ط§ط±ط© ط§ظ„طھظ†ط¨ظٹظ‡ط§طھ ظˆط§ظ„ط¥ط´ط¹ط§ط±ط§طھ' : 'Manage alerts & notifications'}
               </span>
             </div>
             <ChevronLeft size={16} className={isRTL ? '' : 'rotate-180'} style={{ color: darkMode ? '#4B5563' : '#D1D5DB' }} />
@@ -466,7 +467,7 @@ export function SettingsOverlay({ onClose, user, darkMode, handleDarkMode, langu
         >
           <Info size={14} style={{ color: COLORS.teal }} />
           <p className="text-xs" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-            {isRTL ? 'الإعدادات محفوظة تلقائياً على جهازك' : 'Settings are automatically saved to your device'}
+            {isRTL ? 'ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ ظ…ط­ظپظˆط¸ط© طھظ„ظ‚ط§ط¦ظٹط§ظ‹ ط¹ظ„ظ‰ ط¬ظ‡ط§ط²ظƒ' : 'Settings are automatically saved to your device'}
           </p>
         </motion.div>
       </motion.div>
@@ -474,7 +475,7 @@ export function SettingsOverlay({ onClose, user, darkMode, handleDarkMode, langu
   );
 }
 
-// ─── Privacy & Security Overlay ───
+// â”€â”€â”€ Privacy & Security Overlay â”€â”€â”€
 export function PrivacyOverlay({ onClose, language, direction, isRTL, t, darkMode }: {
   onClose: () => void; language: string; direction: string; isRTL: boolean; t: (key: string) => string; darkMode: boolean;
 }) {
@@ -514,7 +515,7 @@ export function PrivacyOverlay({ onClose, language, direction, isRTL, t, darkMod
   ];
 
   return (
-    <OverlayWrapper onClose={onClose} title={t('mobile.profile.privacySecurity')} subtitle={isRTL ? 'حماية خصوصيتك وأمانك' : 'Protect your privacy & security'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
+    <OverlayWrapper onClose={onClose} title={t('mobile.profile.privacySecurity')} subtitle={isRTL ? 'ط­ظ…ط§ظٹط© ط®طµظˆطµظٹطھظƒ ظˆط£ظ…ط§ظ†ظƒ' : 'Protect your privacy & security'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
       <motion.div
         className="rounded-2xl overflow-hidden"
         style={{
@@ -572,7 +573,7 @@ export function PrivacyOverlay({ onClose, language, direction, isRTL, t, darkMod
   );
 }
 
-// ─── Help Center Overlay ───
+// â”€â”€â”€ Help Center Overlay â”€â”€â”€
 export function HelpOverlay({ onClose, language, direction, isRTL, t, darkMode }: {
   onClose: () => void; language: string; direction: string; isRTL: boolean; t: (key: string) => string; darkMode: boolean;
 }) {
@@ -588,7 +589,7 @@ export function HelpOverlay({ onClose, language, direction, isRTL, t, darkMode }
   ];
 
   return (
-    <OverlayWrapper onClose={onClose} title={t('mobile.profile.helpCenter')} subtitle={isRTL ? 'أسئلة شائعة ومساعدة' : 'FAQs & support'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
+    <OverlayWrapper onClose={onClose} title={t('mobile.profile.helpCenter')} subtitle={isRTL ? 'ط£ط³ط¦ظ„ط© ط´ط§ط¦ط¹ط© ظˆظ…ط³ط§ط¹ط¯ط©' : 'FAQs & support'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
       <motion.div
         className="space-y-2.5 mt-2"
         variants={staggerContainer}
@@ -674,13 +675,13 @@ export function HelpOverlay({ onClose, language, direction, isRTL, t, darkMode }
   );
 }
 
-// ─── About App Overlay ───
+// â”€â”€â”€ About App Overlay â”€â”€â”€
 export function AboutOverlay({ onClose, language, direction, isRTL, t, darkMode }: {
   onClose: () => void; language: string; direction: string; isRTL: boolean; t: (key: string) => string; darkMode: boolean;
 }) {
   const openWebview = useMobileStore((s) => s.openWebview);
   return (
-    <OverlayWrapper onClose={onClose} title={t('mobile.profile.aboutApp')} subtitle={isRTL ? 'معلومات التطبيق' : 'App information'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
+    <OverlayWrapper onClose={onClose} title={t('mobile.profile.aboutApp')} subtitle={isRTL ? 'ظ…ط¹ظ„ظˆظ…ط§طھ ط§ظ„طھط·ط¨ظٹظ‚' : 'App information'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
       <motion.div
         className="space-y-4"
         variants={staggerContainer}
@@ -696,7 +697,7 @@ export function AboutOverlay({ onClose, language, direction, isRTL, t, darkMode 
             </div>
           </div>
           <h2 className="text-xl font-bold mt-4" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>{t('mobile.profile.appName')}</h2>
-          <p className="text-xs mt-1 px-3 py-1 rounded-lg" style={{ background: darkMode ? COLORS.darkSubtle : '#F3F4F6', color: darkMode ? '#6B7280' : '#9CA3AF' }}>v1.0.0</p>
+           <p className="text-xs mt-1 px-3 py-1 rounded-lg" style={{ background: darkMode ? COLORS.darkSubtle : '#F3F4F6', color: darkMode ? '#6B7280' : '#9CA3AF' }}>v{APP_VERSION}</p>
           <p className="text-sm text-center mt-3 leading-relaxed max-w-xs" style={{ color: darkMode ? '#9CA3AF' : '#6B7280' }}>
             {t('mobile.profile.aboutDescFull')}
           </p>
@@ -752,14 +753,14 @@ export function AboutOverlay({ onClose, language, direction, isRTL, t, darkMode 
 
         {/* Copyright */}
         <motion.p variants={staggerItem} className="text-center text-[10px] mt-2" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>
-          © 2024 {t('mobile.profile.appName')}. {t('mobile.profile.allRightsReserved')}.
+          آ© 2024 {t('mobile.profile.appName')}. {t('mobile.profile.allRightsReserved')}.
         </motion.p>
       </motion.div>
     </OverlayWrapper>
   );
 }
 
-// ─── Contact Us Overlay ───
+// â”€â”€â”€ Contact Us Overlay â”€â”€â”€
 export function ContactUsOverlay({ onClose, language, direction, isRTL, t, darkMode }: {
   onClose: () => void; language: string; direction: string; isRTL: boolean; t: (key: string) => string; darkMode: boolean;
 }) {
@@ -827,7 +828,7 @@ export function ContactUsOverlay({ onClose, language, direction, isRTL, t, darkM
   ];
 
   return (
-    <OverlayWrapper onClose={onClose} title={t('nav.contact')} subtitle={isRTL ? 'نسعد بتواصلك معنا' : 'We\'d love to hear from you'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
+    <OverlayWrapper onClose={onClose} title={t('nav.contact')} subtitle={isRTL ? 'ظ†ط³ط¹ط¯ ط¨طھظˆط§طµظ„ظƒ ظ…ط¹ظ†ط§' : 'We\'d love to hear from you'} direction={direction} isRTL={isRTL} darkMode={darkMode}>
       <motion.div
         className="space-y-4"
         variants={staggerContainer}
@@ -982,3 +983,4 @@ export function ContactUsOverlay({ onClose, language, direction, isRTL, t, darkM
     </OverlayWrapper>
   );
 }
+
