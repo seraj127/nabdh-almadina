@@ -207,7 +207,7 @@ export function Nav3DCartIcon({ active, darkMode, itemCount }: Nav3DIconProps & 
             fontWeight="bold"
             fontFamily="system-ui"
           >
-            {itemCount! > 99 ? '99' : itemCount}
+            {itemCount}
           </text>
         </>
       )}
@@ -286,7 +286,7 @@ export function Nav3DHeartIcon({ active, darkMode, itemCount }: Nav3DIconProps &
             fontWeight="bold"
             fontFamily="system-ui"
           >
-            {itemCount! > 99 ? '99' : itemCount}
+            {itemCount}
           </text>
         </>
       )}

@@ -30,7 +30,7 @@ export function NavCartIcon({ active }: { active: boolean }) {
           <span
             className={`absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-gradient-to-br from-[#FF6F61] to-[#ff4757] text-white text-[9px] font-bold flex items-center justify-center shadow-sm shadow-[#FF6F61]/30 ${badgeAnimating ? 'badge-bounce' : ''}`}
           >
-            {totalItems > 99 ? '99+' : totalItems}
+            {totalItems}
           </span>
         </>
       )}

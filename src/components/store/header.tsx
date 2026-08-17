@@ -352,7 +352,7 @@ export function Header() {
                             <Heart className="size-3.5 text-pink-500" />
                             {favCount > 0 && (
                               <span className="absolute -top-1 -end-1 min-w-3.5 h-3.5 flex items-center justify-center bg-pink-500 text-white text-[8px] font-bold rounded-full leading-none px-0.5">
-                                {favCount > 99 ? '99+' : favCount}
+                                {favCount}
                               </span>
                             )}
                           </div>
@@ -885,7 +885,7 @@ export function Header() {
                   <Badge
                     className="absolute -top-1 -end-1 min-w-5 h-5 p-0 flex items-center justify-center bg-pink-500 text-white text-[10px] font-bold border-0"
                   >
-                    {favCount > 99 ? '99+' : favCount}
+                    {favCount}
                   </Badge>
                 )}
               </Button>
@@ -1231,7 +1231,7 @@ export function Header() {
                     <Heart className="size-4.5" />
                     {favCount > 0 && (
                       <span className="absolute -top-1 -end-1 min-w-4 h-4 flex items-center justify-center bg-pink-500 text-white text-[8px] font-bold rounded-full leading-none px-0.5">
-                        {favCount > 99 ? '99+' : favCount}
+                        {favCount}
                       </span>
                     )}
                   </div>

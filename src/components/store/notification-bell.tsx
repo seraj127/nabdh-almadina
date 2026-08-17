@@ -136,7 +136,7 @@ export function NotificationBell({ isAr, isRTL, userId }: { isAr: boolean; isRTL
         <Bell className="size-5" />
         {unreadCount > 0 && (
           <span className="absolute top-1 end-1 min-size-[16px] px-1 rounded-full bg-nabdh-accent text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-background animate-pulse">
-            {unreadCount > 9 ? '9+' : unreadCount}
+              {unreadCount}
           </span>
         )}
       </DropdownMenuTrigger>
