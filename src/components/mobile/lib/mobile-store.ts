@@ -12,6 +12,7 @@ export { normalizePhone } from '@/lib/phone-utils';
 
 // Refresh interval management — prevents stacking and pauses when backgrounded
 let _refreshIntervalId: ReturnType<typeof setInterval> | null = null;
+let _fastSyncIntervalId: ReturnType<typeof setInterval> | null = null;
 let _visibilityListenerAdded = false;
 
 // ─── Favorites sync bookkeeping ──────────────────────────────────────
@@ -1217,15 +1218,31 @@ export function initMobileStore() {
       }
     }, 5 * 60 * 1000);
 
+    // ─── Fast sync: favorites + cart every 60s (lightweight, near-real-time) ───
+    if (_fastSyncIntervalId !== null) {
+      clearInterval(_fastSyncIntervalId);
+    }
+    _fastSyncIntervalId = setInterval(() => {
+      const fu = useMobileStore.getState().user;
+      if (fu && !fu.id.startsWith('local-')) {
+        useMobileStore.getState().fetchFavoritesFromServer();
+        import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
+      }
+    }, 60 * 1000);
+
     // Pause interval when app is backgrounded, resume when foregrounded
     if (!_visibilityListenerAdded) {
       _visibilityListenerAdded = true;
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-          // App is backgrounded — clear the interval to save battery/CPU
+          // App is backgrounded — clear the intervals to save battery/CPU
           if (_refreshIntervalId !== null) {
             clearInterval(_refreshIntervalId);
             _refreshIntervalId = null;
+          }
+          if (_fastSyncIntervalId !== null) {
+            clearInterval(_fastSyncIntervalId);
+            _fastSyncIntervalId = null;
           }
         } else {
           // App is foregrounded — resume refresh and do an immediate refresh
@@ -1251,6 +1268,18 @@ export function initMobileStore() {
               import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
             }
           }, 5 * 60 * 1000);
+
+          // ─── Fast sync: favorites + cart every 60s (lightweight, near-real-time) ───
+          // The full refresh above reloads product lists (disruptive) so it stays at
+          // 5 minutes; favorites/cart are cheap server-truth pulls that make the app
+          // reflect changes made on the web almost immediately.
+          _fastSyncIntervalId = setInterval(() => {
+            const fu = useMobileStore.getState().user;
+            if (fu && !fu.id.startsWith('local-')) {
+              useMobileStore.getState().fetchFavoritesFromServer();
+              import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
+            }
+          }, 60 * 1000);
         }
       });
     }
@@ -1263,5 +1292,9 @@ export function cleanupMobileRefresh() {
   if (_refreshIntervalId !== null) {
     clearInterval(_refreshIntervalId);
     _refreshIntervalId = null;
+  }
+  if (_fastSyncIntervalId !== null) {
+    clearInterval(_fastSyncIntervalId);
+    _fastSyncIntervalId = null;
   }
 }
