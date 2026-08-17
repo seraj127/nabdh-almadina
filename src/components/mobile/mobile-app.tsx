@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { patchFetchForNative } from '@/lib/api-bridge';
 patchFetchForNative();
@@ -46,9 +46,9 @@ import {
   ArrowRight, ArrowLeft, KeyRound, Mail, Zap, Flame, Timer, Loader2,
 } from 'lucide-react';
 
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
-// MAIN MOBILE APP COMPONENT â€” OPTIMIZED FOR INSTANT SPLASH
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
+// MAIN MOBILE APP COMPONENT — OPTIMIZED FOR INSTANT SPLASH
+// ═══════════════════════════════════════════════════════════════════════
 export function MobileApp() {
   const { language } = useLanguageStore();
   const direction = language === 'ar' ? 'rtl' : 'ltr';
@@ -97,7 +97,7 @@ export function MobileApp() {
           {/* Offline Banner */}
           <OfflineBanner />
 
-          {/* No initialized gate â€” splash screen renders INSTANTLY */}
+          {/* No initialized gate — splash screen renders INSTANTLY */}
           <div className="flex-1 min-h-0 relative">
             {screen === 'splash' && <SplashScreen />}
 
@@ -132,7 +132,7 @@ export function MobileApp() {
               <button
                 onClick={() => useMobileStore.getState().setScreen('main')}
                 className="absolute top-2 start-2 z-50 w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center"
-                aria-label="ط±ط¬ظˆط¹"
+                aria-label="رجوع"
               >
                 {direction === 'rtl' ? <ArrowRight size={18} className={darkMode ? 'text-[#A8B8CC]' : 'text-white'} /> : <ArrowLeft size={18} className={darkMode ? 'text-[#A8B8CC]' : 'text-white'} />}
               </button>
@@ -153,9 +153,9 @@ export function MobileApp() {
   );
 }
 
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
-// SPLASH SCREEN â€” CINEMATIC DARK + ORBITING GOLDEN DOT
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
+// SPLASH SCREEN — CINEMATIC DARK + ORBITING GOLDEN DOT
+// ═══════════════════════════════════════════════════════════════════════
 
 function SplashScreen() {
   const { t, language, setLanguage } = useLanguageStore();
@@ -169,14 +169,14 @@ function SplashScreen() {
   const [orbitAngle, setOrbitAngle] = useState(0);
 
   // Logo circle dimensions
-  const logoCircleSize = 120; // px â€” the prominent circle containing the logo
+  const logoCircleSize = 120; // px — the prominent circle containing the logo
   const logoCircleHalf = logoCircleSize / 2;
 
-  // Orbit radius â€” clearly OUTSIDE the circle (circle radius=60, orbit=75)
+  // Orbit radius — clearly OUTSIDE the circle (circle radius=60, orbit=75)
   const orbitRadius = 75;
   const orbitMinorRatio = 1.0; // circular orbit (not elliptical)
 
-  // Shooting stars â€” improved with longer trails
+  // Shooting stars — improved with longer trails
   const shootingStars = useMemo(() => [
     { id: 0, startX: 10, startY: 6, angle: 35, delay: 1.5, dur: 2.2 },
     { id: 1, startX: 75, startY: 4, angle: 42, delay: 5, dur: 1.8 },
@@ -185,7 +185,7 @@ function SplashScreen() {
     { id: 4, startX: 20, startY: 14, angle: 32, delay: 14, dur: 2.5 },
   ], []);
 
-  // Background stars â€” X-pattern movement
+  // Background stars — X-pattern movement
   // Stars move along two diagonal lines forming an X shape
   // Using seeded PRNG to avoid hydration mismatch (Math.random() produces different values on server vs client)
   const xStars = useMemo(() => {
@@ -253,7 +253,7 @@ function SplashScreen() {
     return stars;
   }, []);
 
-  // Orbiting golden dot â€” throttled animation (~30fps to save CPU/battery)
+  // Orbiting golden dot — throttled animation (~30fps to save CPU/battery)
   useEffect(() => {
     let raf: number;
     let lastTime = 0;
@@ -268,7 +268,7 @@ function SplashScreen() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  // Loading progress â€” FAST: ~1.5s total
+  // Loading progress — FAST: ~1.5s total
   useEffect(() => {
     const steps = [20, 45, 65, 80, 92, 100];
     let stepIndex = 0;
@@ -292,7 +292,7 @@ function SplashScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  // Text reveal animation â€” smooth clip reveal (preserves Arabic letter connections)
+  // Text reveal animation — smooth clip reveal (preserves Arabic letter connections)
   useEffect(() => {
     const timer = setTimeout(() => {
       const steps = 15;
@@ -313,7 +313,7 @@ function SplashScreen() {
     <div className="absolute inset-0 flex flex-col overflow-hidden" dir={direction}
       style={{ background: 'linear-gradient(160deg, #060B14 0%, #0A1628 25%, #0D1B2A 50%, #112240 75%, #0A1628 100%)' }}>
 
-      {/* â•گâ•گâ•گ Background: X-Pattern Stars â•گâ•گâ•گ */}
+      {/* ═══ Background: X-Pattern Stars ═══ */}
       {xStars.map((s) => (
         <motion.div
           key={s.id}
@@ -380,13 +380,13 @@ function SplashScreen() {
         </motion.div>
       ))}
 
-      {/* â•گâ•گâ•گ X-Shape Guide Lines (subtle) â•گâ•گâ•گ */}
+      {/* ═══ X-Shape Guide Lines (subtle) ═══ */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.04 }}>
         <line x1="10%" y1="5%" x2="90%" y2="55%" stroke="white" strokeWidth="1" strokeDasharray="4 8" />
         <line x1="90%" y1="5%" x2="10%" y2="55%" stroke="white" strokeWidth="1" strokeDasharray="4 8" />
       </svg>
 
-      {/* â•گâ•گâ•گ Shooting Stars â•گâ•گâ•گ */}
+      {/* ═══ Shooting Stars ═══ */}
       {shootingStars.map((star) => (
         <motion.div
           key={star.id}
@@ -406,7 +406,7 @@ function SplashScreen() {
           }}
         >
           <div className="relative">
-            {/* Head â€” bright core */}
+            {/* Head — bright core */}
             <div className="w-1.5 h-1.5 rounded-full bg-white"
               style={{ boxShadow: '0 0 6px 2px rgba(255,255,255,0.9), 0 0 12px 4px rgba(0,168,204,0.4)' }} />
             {/* Trail */}
@@ -419,7 +419,7 @@ function SplashScreen() {
         </motion.div>
       ))}
 
-      {/* â•گâ•گâ•گ Nebula / Ambient Glow â•گâ•گâ•گ */}
+      {/* ═══ Nebula / Ambient Glow ═══ */}
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
@@ -440,10 +440,10 @@ function SplashScreen() {
         }}
       />
 
-      {/* â•گâ•گâ•گ Main Content Area â•گâ•گâ•گ */}
+      {/* ═══ Main Content Area ═══ */}
       <div className="flex-1 flex flex-col items-center justify-center px-8 relative z-10">
 
-        {/* â•گâ•گâ•گ Logo Circle + Orbiting Golden Dot â•گâ•گâ•گ */}
+        {/* ═══ Logo Circle + Orbiting Golden Dot ═══ */}
         <motion.div
           className="relative"
           style={{ width: logoCircleSize, height: logoCircleSize }}
@@ -451,7 +451,7 @@ function SplashScreen() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring' as const, stiffness: 120, damping: 14, delay: 0.05 }}
         >
-          {/* â”€â”€â”€ Pulsing outer glow ring (around circle) â”€â”€â”€ */}
+          {/* ─── Pulsing outer glow ring (around circle) ─── */}
           <motion.div
             className="absolute rounded-full pointer-events-none"
             style={{
@@ -470,7 +470,7 @@ function SplashScreen() {
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' as const }}
           />
 
-          {/* â”€â”€â”€ Slowly rotating dashed ring â”€â”€â”€ */}
+          {/* ─── Slowly rotating dashed ring ─── */}
           <motion.div
             className="absolute rounded-full pointer-events-none"
             style={{
@@ -484,7 +484,7 @@ function SplashScreen() {
             transition={{ duration: 40, repeat: Infinity, ease: 'linear' as const }}
           />
 
-          {/* â”€â”€â”€ Orbit path â€” dashed red-orange circle OUTSIDE the circle â”€â”€â”€ */}
+          {/* ─── Orbit path — dashed red-orange circle OUTSIDE the circle ─── */}
           <div
             className="absolute rounded-full pointer-events-none"
             style={{
@@ -496,7 +496,7 @@ function SplashScreen() {
             }}
           />
 
-          {/* â”€â”€â”€ Orbiting red-orange ball OUTSIDE the circle â”€â”€â”€ */}
+          {/* ─── Orbiting red-orange ball OUTSIDE the circle ─── */}
           <motion.div
             className="absolute pointer-events-none"
             style={{
@@ -526,7 +526,7 @@ function SplashScreen() {
             />
           </motion.div>
 
-          {/* â”€â”€â”€ Logo fills the circle entirely â”€â”€â”€ */}
+          {/* ─── Logo fills the circle entirely ─── */}
           <motion.div
             className="relative w-full h-full rounded-full overflow-hidden flex items-center justify-center"
             style={{
@@ -540,12 +540,12 @@ function SplashScreen() {
           >
             <img
               src="/logo-circle.png?v=3"
-              alt="ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©"
+              alt="نبض المدينة"
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           </motion.div>
 
-          {/* â”€â”€â”€ Continuous soft glow behind the circle â”€â”€â”€ */}
+          {/* ─── Continuous soft glow behind the circle ─── */}
           <motion.div
             className="absolute rounded-full pointer-events-none"
             style={{
@@ -560,7 +560,7 @@ function SplashScreen() {
           />
         </motion.div>
 
-        {/* â•گâ•گâ•گ App Name â€” Smooth Reveal with Gradient â•گâ•گâ•گ */}
+        {/* ═══ App Name — Smooth Reveal with Gradient ═══ */}
         <motion.div
           className="min-h-[50px] flex items-center justify-center mt-8"
           initial={{ opacity: 0 }}
@@ -617,7 +617,7 @@ function SplashScreen() {
         </motion.p>
       </div>
 
-      {/* â•گâ•گâ•گ Gradient Progress Bar with Shimmer â•گâ•گâ•گ */}
+      {/* ═══ Gradient Progress Bar with Shimmer ═══ */}
       <motion.div
         className="px-8 mb-3"
         initial={{ opacity: 0 }}
@@ -665,17 +665,17 @@ function SplashScreen() {
         </div>
       </motion.div>
 
-      {/* â•گâ•گâ•گ Version Info â•گâ•گâ•گ */}
+      {/* ═══ Version Info ═══ */}
       <motion.div
         className="text-center mb-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
       >
-        <p className="text-white/20 text-[10px] tracking-widest">v{APP_VERSION} آ· {language === 'ar' ? 'ظ„ظٹط¨ظٹط§' : 'Libya'}</p>
+        <p className="text-white/20 text-[10px] tracking-widest">v{APP_VERSION} · {language === 'ar' ? 'ليبيا' : 'Libya'}</p>
       </motion.div>
 
-      {/* â•گâ•گâ•گ Buttons â€” Appear After Loading â•گâ•گâ•گ */}
+      {/* ═══ Buttons — Appear After Loading ═══ */}
       <AnimatePresence>
         {showButtons && (
           <motion.div
@@ -726,9 +726,9 @@ function SplashScreen() {
   );
 }
 
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 // LOGIN SCREEN
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 function LoginScreen() {
   const { t, language } = useLanguageStore();
   const login = useMobileStore((s) => s.login);
@@ -770,7 +770,7 @@ function LoginScreen() {
 
   return (
     <div className="absolute inset-0 flex flex-col bg-[#F4F7F9] dark:bg-[#0B1120]" dir={direction}>
-      {/* â”€â”€ Gradient Header â”€â”€ */}
+      {/* ── Gradient Header ── */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -778,7 +778,7 @@ function LoginScreen() {
         className="pt-12 pb-16 px-6 relative overflow-hidden flex-shrink-0"
         style={{ background: 'linear-gradient(135deg, #002F3F 0%, #004B63 25%, #006B8A 55%, #00897B 85%, #00A8CC 100%)' }}
       >
-        {/* Back button with glassmorphism â†’ splash */}
+        {/* Back button with glassmorphism → splash */}
         <motion.button
           onClick={() => setScreen('splash')}
           className={`absolute top-4 ${direction === 'rtl' ? 'right-4' : 'left-4'} w-10 h-10 rounded-xl flex items-center justify-center z-10`}
@@ -840,11 +840,11 @@ function LoginScreen() {
               transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' as const }}
             />
             <div className="w-full h-full rounded-full overflow-hidden relative z-10" style={{ background: '#FFFFFF' }}>
-              <img src="/logo-circle.png?v=3" alt={language === 'ar' ? 'ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©' : 'Nabd Al-Madina'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <img src="/logo-circle.png?v=3" alt={language === 'ar' ? 'نبض المدينة' : 'Nabd Al-Madina'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
           </motion.div>
 
-          {/* Title: ظ…ط±ط­ط¨ط§ظ‹ ط¨ط¹ظˆط¯طھظƒ (NO emoji) */}
+          {/* Title: مرحباً بعودتك (NO emoji) */}
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -869,7 +869,7 @@ function LoginScreen() {
         </svg>
       </motion.div>
 
-      {/* â”€â”€ Success overlay with animated checkmark â”€â”€ */}
+      {/* ── Success overlay with animated checkmark ── */}
       <AnimatePresence>
         {loginSuccess && (
           <motion.div
@@ -893,14 +893,14 @@ function LoginScreen() {
               >
                 <Check size={44} className="text-white" />
               </motion.div>
-              <p className="text-lg font-bold text-[#238636]">{language === 'ar' ? 'طھظ… طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¨ظ†ط¬ط§ط­' : 'Login Successful'}</p>
+              <p className="text-lg font-bold text-[#238636]">{language === 'ar' ? 'تم تسجيل الدخول بنجاح' : 'Login Successful'}</p>
               <div className="w-16 h-1 rounded-full mt-3" style={{ background: 'linear-gradient(90deg, transparent, #238636, transparent)' }} />
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* â”€â”€ Form card with gradient border wrapper + glassmorphism inner â”€â”€ */}
+      {/* ── Form card with gradient border wrapper + glassmorphism inner ── */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -990,7 +990,7 @@ function LoginScreen() {
                   onChange={(e) => { setPassword(e.target.value); if (error) setError(''); }}
                   onFocus={() => setFocusedField('password')}
                   onBlur={() => setFocusedField(null)}
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢"
+                  placeholder="••••••"
                   className={`w-full py-3 rounded-2xl border-2 border-[#CBD5E1] dark:border-[#1E2A42] dark:bg-[#0B1120]/80 dark:text-gray-100 focus:border-[#00A8CC] focus:ring-4 focus:ring-[#00A8CC]/10 outline-none transition-all text-base bg-[#F8FAFC]/80 placeholder:text-gray-400 ${direction === 'rtl' ? 'pr-4 pl-12 text-right' : 'pl-4 pr-12 text-left'}`}
                   style={{
                     boxShadow: focusedField === 'password' ? '0 0 0 4px rgba(0,168,204,0.1)' : undefined,
@@ -1018,7 +1018,7 @@ function LoginScreen() {
               </div>
             </motion.div>
 
-            {/* Forgot password link â†’ forgot-password screen */}
+            {/* Forgot password link → forgot-password screen */}
             <motion.div variants={itemVariants} className="flex justify-end">
               <motion.button
                 type="button"
@@ -1068,7 +1068,7 @@ function LoginScreen() {
             </motion.button>
           </motion.form>
 
-          {/* Don't have account? â†’ register screen */}
+          {/* Don't have account? → register screen */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1105,7 +1105,7 @@ function LoginScreen() {
               whileTap={{ scale: 0.98 }}
             >
               <Zap size={16} />
-              {direction === 'rtl' ? 'ظ„ظˆط­ط© طھط­ظƒظ… ط§ظ„ظ…ط¯ظٹط±' : 'Admin Dashboard'}
+              {direction === 'rtl' ? 'لوحة تحكم المدير' : 'Admin Dashboard'}
             </motion.button>
             <p className="text-center text-[10px] mt-1.5 text-gray-400 dark:text-[#6B7F96]">
               {direction === 'rtl' ? '0910000000 / admin123' : '0910000000 / admin123'}
@@ -1117,9 +1117,9 @@ function LoginScreen() {
   );
 }
 
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 // REGISTER SCREEN
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 function RegisterScreen() {
   const { t, language } = useLanguageStore();
   const register = useMobileStore((s) => s.register);
@@ -1171,7 +1171,7 @@ function RegisterScreen() {
 
   return (
     <div className="absolute inset-0 flex flex-col bg-[#F4F7F9] dark:bg-[#0B1120]" dir={direction}>
-      {/* â”€â”€ Gradient Header â”€â”€ */}
+      {/* ── Gradient Header ── */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -1179,7 +1179,7 @@ function RegisterScreen() {
         className="pt-12 pb-14 px-6 relative overflow-hidden flex-shrink-0"
         style={{ background: 'linear-gradient(135deg, #002F3F 0%, #004B63 25%, #006B8A 55%, #00897B 85%, #00A8CC 100%)' }}
       >
-        {/* Back button â€” glassmorphism */}
+        {/* Back button — glassmorphism */}
         <motion.button
           onClick={() => setScreen('login')}
           className={`absolute top-4 ${direction === 'rtl' ? 'right-4' : 'left-4'} w-10 h-10 rounded-xl flex items-center justify-center z-10`}
@@ -1220,7 +1220,7 @@ function RegisterScreen() {
             {/* Logo glow ring */}
             <motion.div className="absolute inset-0 rounded-full" style={{ boxShadow: '0 0 25px rgba(0,168,204,0.4), inset 0 0 18px rgba(0,168,204,0.12)' }} animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' as const }} />
             <div className="w-full h-full rounded-full overflow-hidden relative z-10" style={{ background: '#FFFFFF' }}>
-              <img src="/logo-circle.png?v=3" alt="ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <img src="/logo-circle.png?v=3" alt="نبض المدينة" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
           </motion.div>
           <motion.h1
@@ -1229,7 +1229,7 @@ function RegisterScreen() {
             transition={{ delay: 0.2 }}
             className="text-xl font-bold text-white"
           >
-            {language === 'ar' ? 'ط§ظ†ط¶ظ… ط¥ظ„ظٹظ†ط§' : t('mobile.register.createAccount')}
+            {language === 'ar' ? 'انضم إلينا' : t('mobile.register.createAccount')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -1247,7 +1247,7 @@ function RegisterScreen() {
         </svg>
       </motion.div>
 
-      {/* â”€â”€ Success Overlay â”€â”€ */}
+      {/* ── Success Overlay ── */}
       <AnimatePresence>
         {registerSuccess && (
           <motion.div
@@ -1271,14 +1271,14 @@ function RegisterScreen() {
               >
                 <Check size={44} className="text-white" />
               </motion.div>
-              <p className="text-lg font-bold text-[#238636]">{language === 'ar' ? 'طھظ… ط¥ظ†ط´ط§ط، ط§ظ„ط­ط³ط§ط¨ ط¨ظ†ط¬ط§ط­' : 'Account Created Successfully'}</p>
+              <p className="text-lg font-bold text-[#238636]">{language === 'ar' ? 'تم إنشاء الحساب بنجاح' : 'Account Created Successfully'}</p>
               <div className="w-16 h-1 rounded-full mt-3" style={{ background: 'linear-gradient(90deg, transparent, #238636, transparent)' }} />
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* â”€â”€ Form Card â€” gradient border + glassmorphism â”€â”€ */}
+      {/* ── Form Card — gradient border + glassmorphism ── */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -1313,7 +1313,7 @@ function RegisterScreen() {
             )}
           </AnimatePresence>
 
-          {/* Full Name â€” User icon badge */}
+          {/* Full Name — User icon badge */}
           <motion.div variants={itemVariants}>
             <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
               <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #004B63, #00897B)' }}>
@@ -1344,7 +1344,7 @@ function RegisterScreen() {
             </div>
           </motion.div>
 
-          {/* Phone â€” Phone icon badge, RTL, 09XX placeholder */}
+          {/* Phone — Phone icon badge, RTL, 09XX placeholder */}
           <motion.div variants={itemVariants}>
             <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
               <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #004B63, #00897B)' }}>
@@ -1377,7 +1377,7 @@ function RegisterScreen() {
             </div>
           </motion.div>
 
-          {/* Email â€” Mail icon badge, optional label */}
+          {/* Email — Mail icon badge, optional label */}
           <motion.div variants={itemVariants}>
             <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
               <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #004B63, #00897B)' }}>
@@ -1410,7 +1410,7 @@ function RegisterScreen() {
             </div>
           </motion.div>
 
-          {/* Password â€” Lock icon badge, show/hide toggle */}
+          {/* Password — Lock icon badge, show/hide toggle */}
           <motion.div variants={itemVariants}>
             <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
               <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #004B63, #00897B)' }}>
@@ -1426,7 +1426,7 @@ function RegisterScreen() {
                 onChange={(e) => setPassword(e.target.value)}
                 onFocus={() => setFocusedField('password')}
                 onBlur={() => setFocusedField(null)}
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="••••••"
                 className={`w-full py-3 rounded-2xl border-2 border-[#CBD5E1] dark:border-[#1E2A42] dark:bg-[#0B1120]/80 dark:text-gray-100 focus:border-[#00A8CC] focus:ring-4 focus:ring-[#00A8CC]/10 outline-none transition-all text-base bg-[#F8FAFC]/80 placeholder:text-gray-400 ${direction === 'rtl' ? 'pr-4 pl-12 text-right' : 'pl-4 pr-12 text-left'}`}
                 style={{ boxShadow: focusedField === 'password' ? '0 0 0 4px rgba(0,168,204,0.1)' : undefined, textAlign: direction === 'rtl' ? 'right' : 'left' }}
                 autoComplete="new-password"
@@ -1451,7 +1451,7 @@ function RegisterScreen() {
             </div>
           </motion.div>
 
-          {/* Confirm Password â€” Lock icon badge, show/hide, match/mismatch indicator */}
+          {/* Confirm Password — Lock icon badge, show/hide, match/mismatch indicator */}
           <motion.div variants={itemVariants}>
             <label className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
               <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #004B63, #00897B)' }}>
@@ -1509,12 +1509,12 @@ function RegisterScreen() {
                 {passwordsMatch ? (
                   <>
                     <Check size={12} className="text-[#238636]" />
-                    <span className="text-xs text-[#238636] font-medium">{language === 'ar' ? 'ظƒظ„ظ…ط§طھ ط§ظ„ظ…ط±ظˆط± ظ…طھط·ط§ط¨ظ‚ط©' : 'Passwords match'}</span>
+                    <span className="text-xs text-[#238636] font-medium">{language === 'ar' ? 'كلمات المرور متطابقة' : 'Passwords match'}</span>
                   </>
                 ) : (
                   <>
                     <X size={12} className="text-[#FF3B30]" />
-                    <span className="text-xs text-[#FF3B30] font-medium">{language === 'ar' ? 'ظƒظ„ظ…ط§طھ ط§ظ„ظ…ط±ظˆط± ط؛ظٹط± ظ…طھط·ط§ط¨ظ‚ط©' : "Passwords don't match"}</span>
+                    <span className="text-xs text-[#FF3B30] font-medium">{language === 'ar' ? 'كلمات المرور غير متطابقة' : "Passwords don't match"}</span>
                   </>
                 )}
               </motion.div>
@@ -1542,7 +1542,7 @@ function RegisterScreen() {
             <span className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{t('mobile.register.agreeTerms')}</span>
           </motion.button>
 
-          {/* Create Account button â€” gradient + shimmer */}
+          {/* Create Account button — gradient + shimmer */}
           <motion.button
             type="submit"
             disabled={loading}
@@ -1590,7 +1590,7 @@ function RegisterScreen() {
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-[#30363D] to-transparent" />
         </motion.div>
 
-        {/* Small Google button â€” py-2.5, text-xs, w-6 h-6 icon badge */}
+        {/* Small Google button — py-2.5, text-xs, w-6 h-6 icon badge */}
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1624,9 +1624,9 @@ function RegisterScreen() {
   );
 }
 
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
-// FORGOT PASSWORD SCREEN â€” Helper Components
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
+// FORGOT PASSWORD SCREEN — Helper Components
+// ═══════════════════════════════════════════════════════════════════════
 function ConfettiParticles() {
   const confettiColors = ['#004B63', '#00A8CC', '#00897B', '#FF6F61', '#238636', '#F59E0B', '#E91E63', '#7C4DFF'];
   const particles = useMemo(() => {
@@ -1705,9 +1705,9 @@ function AnimatedCheckmark() {
   );
 }
 
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 // FORGOT PASSWORD SCREEN
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 function ForgotPasswordScreen() {
   const { t, language } = useLanguageStore();
   const setScreen = useMobileStore((s) => s.setScreen);
@@ -1988,7 +1988,7 @@ function ForgotPasswordScreen() {
         >
           <AnimatePresence mode="wait" custom={direction}>
             {step === 'success' ? (
-              /* â”€â”€ Step 4: Success â”€â”€ */
+              /* ── Step 4: Success ── */
               <motion.div
                 key="success"
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -2084,7 +2084,7 @@ function ForgotPasswordScreen() {
                   })}
                 </div>
 
-                {/* â”€â”€ Step 1: Phone â”€â”€ */}
+                {/* ── Step 1: Phone ── */}
                 {step === 'phone' && (
                   <form onSubmit={handleSendCode} className="space-y-5">
                     {renderError()}
@@ -2120,7 +2120,7 @@ function ForgotPasswordScreen() {
                   </form>
                 )}
 
-                {/* â”€â”€ Step 2: Verify OTP â”€â”€ */}
+                {/* ── Step 2: Verify OTP ── */}
                 {step === 'verify' && (
                   <form onSubmit={handleVerifyCode} className="space-y-5">
                     {renderError()}
@@ -2174,7 +2174,7 @@ function ForgotPasswordScreen() {
                   </form>
                 )}
 
-                {/* â”€â”€ Step 3: Reset Password â”€â”€ */}
+                {/* ── Step 3: Reset Password ── */}
                 {step === 'reset' && (
                   <form onSubmit={handleResetPassword} className="space-y-4">
                     {renderError()}
@@ -2195,7 +2195,7 @@ function ForgotPasswordScreen() {
                           onChange={(e) => { setNewPassword(e.target.value); setError(''); }}
                           onFocus={() => setFocusedField('fpNewPass')}
                           onBlur={() => setFocusedField(null)}
-                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢"
+                          placeholder="••••••"
                           className={`w-full py-3.5 rounded-2xl border-2 border-[#CBD5E1] dark:border-[#1E2A42] dark:bg-[#0B1120]/80 dark:text-gray-100 focus:border-[#00A8CC] focus:ring-4 focus:ring-[#00A8CC]/10 outline-none text-base bg-[#F8FAFC]/80 ${direction === 'rtl' ? 'pr-4 pl-12 text-right' : 'pl-4 pr-12 text-left'}`}
                           style={{
                             boxShadow: focusedField === 'fpNewPass' ? '0 0 0 4px rgba(0,168,204,0.1)' : undefined,
@@ -2230,7 +2230,7 @@ function ForgotPasswordScreen() {
                           onChange={(e) => { setConfirmNewPassword(e.target.value); setError(''); }}
                           onFocus={() => setFocusedField('fpConfirmPass')}
                           onBlur={() => setFocusedField(null)}
-                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢"
+                          placeholder="••••••"
                           className={`w-full py-3.5 rounded-2xl border-2 outline-none text-base bg-[#F8FAFC]/80 dark:bg-[#0B1120]/80 dark:text-gray-100 transition-colors ${direction === 'rtl' ? 'pr-4 pl-12 text-right' : 'pl-4 pr-12 text-left'} ${
                             confirmNewPassword && newPassword !== confirmNewPassword
                               ? 'border-red-300 focus:border-red-400 focus:ring-4 focus:ring-red-300/10'
@@ -2304,9 +2304,9 @@ function ForgotPasswordScreen() {
   );
 }
 
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 // MAIN SCREEN WITH BOTTOM NAV
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 function MainScreen() {
   const { t, language } = useLanguageStore();
   const direction = language === 'ar' ? 'rtl' : 'ltr';
@@ -2356,8 +2356,8 @@ function MainScreen() {
       // Show toast about the status change
       const statusMsg =
         data?.orderNumber
-          ? `ط·ظ„ط¨ #${data.orderNumber} - ${data?.status || 'طھظ… ط§ظ„طھط­ط¯ظٹط«'}`
-          : `طھظ… طھط­ط¯ظٹط« ط­ط§ظ„ط© ط§ظ„ط·ظ„ط¨`;
+          ? `طلب #${data.orderNumber} - ${data?.status || 'تم التحديث'}`
+          : `تم تحديث حالة الطلب`;
       toast(statusMsg, { description: data?.note || undefined });
     },
     onNotification: (data) => {
@@ -2368,7 +2368,7 @@ function MainScreen() {
       // Add notification to store
       const newNotif: import('./lib/mobile-store').AppNotification = {
         id: data?.id || `notif-${Date.now()}`,
-        title: (data?.titleAr || data?.title || 'ط¥ط´ط¹ط§ط± ط¬ط¯ظٹط¯') as string,
+        title: (data?.titleAr || data?.title || 'إشعار جديد') as string,
         body: (data?.bodyAr || data?.body || '') as string,
         type: (data?.type || 'system') as import('./lib/mobile-store').AppNotification['type'],
         isRead: false,
@@ -2389,7 +2389,7 @@ function MainScreen() {
   useEffect(() => { const tm = setTimeout(() => setIsLoading(false), 600); return () => clearTimeout(tm); }, []);
 
   const cartItems = useCartStore((s) => s.items);
-  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const cartItemCount = cartItems.length;
   // Count favorites: when products are loaded, filter by valid product IDs; otherwise use raw count
   const favoritesCount = useMemo(() => {
     if (!favorites || favorites.length === 0) return 0;
@@ -2423,7 +2423,7 @@ function MainScreen() {
 
   return (
     <div className="absolute inset-0 flex flex-col bg-[#F4F7F9] dark:bg-[#0B1120]">
-      {/* Dynamic Back Button â€” shown when navigation history exists */}
+      {/* Dynamic Back Button — shown when navigation history exists */}
       <AnimatePresence>
         {navHistory.length > 0 && (
           <motion.button
@@ -2437,7 +2437,7 @@ function MainScreen() {
               background: 'linear-gradient(135deg, #004B63, #00897B)',
               boxShadow: '0 4px 12px rgba(0,75,99,0.4)',
             }}
-            aria-label={language === 'ar' ? 'ط±ط¬ظˆط¹' : 'Go back'}
+            aria-label={language === 'ar' ? 'رجوع' : 'Go back'}
           >
             {direction === 'rtl' ? <ArrowRight size={18} className="text-white" /> : <ArrowLeft size={18} className="text-white" />}
           </motion.button>
@@ -2472,7 +2472,7 @@ function MainScreen() {
       {/* Chat Widget - visible on all tabs */}
       <MobileChatWidget />
 
-      {/* 3D Glassmorphism Bottom Navigation â€” Professional Light */}
+      {/* 3D Glassmorphism Bottom Navigation — Professional Light */}
       <nav
         className="relative bottom-nav-glass"
         role="navigation"
@@ -2557,5 +2557,4 @@ function MainScreen() {
     </div>
   );
 }
-
 
