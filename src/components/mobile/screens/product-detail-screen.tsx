@@ -686,7 +686,7 @@ export function ProductDetailScreen() {
   const isLowStock = stockLevel > 0 && stockLevel <= 5;
   const isOutOfStock = stockLevel === 0 || product.inStock === false;
   const relatedProducts = allProducts.filter(p => p.categoryId === product.categoryId && p.id !== product.id).slice(0, 8);
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCount = cartItems.length;
   const avgRating = reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : product.rating || 0;
   const ratingDistribution = [5, 4, 3, 2, 1].map(star => ({ star, count: reviews.filter(r => r.rating === star).length, percentage: reviews.length > 0 ? (reviews.filter(r => r.rating === star).length / reviews.length) * 100 : 0 }));
   const CatIcon = categoryConfig.icon;

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { APP_VERSION } from '../lib/constants';
@@ -22,7 +22,7 @@ import { AddressManagement } from './address-management';
 import type { MobileUser } from '../lib/types';
 import { compressImageToBase64 } from '@/lib/image-compress';
 
-// â”€â”€â”€ Brand Design Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Brand Design Tokens ────────────────────────────────────────────────
 const COLORS = {
   primary: '#004B63',
   primaryDark: '#003545',
@@ -49,7 +49,7 @@ const COLORS = {
 
 
 
-// â”€â”€â”€ Order Status Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Order Status Config ────────────────────────────────────────────────
 const statusColors: Record<string, { bg: string; text: string; dot: string }> = {
   pending:   { bg: 'bg-[#D29922]/10', text: 'text-[#D29922]', dot: '#D29922' },
   confirmed: { bg: 'bg-[#00C4E8]/10', text: 'text-[#00C4E8]', dot: '#00C4E8' },
@@ -61,7 +61,7 @@ const statusColors: Record<string, { bg: string; text: string; dot: string }> = 
 
 const statusSteps = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
 
-// â”€â”€â”€ Animation Variants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Animation Variants ─────────────────────────────────────────────────
 const itemFadeIn = {
   hidden: { opacity: 0, y: 16 },
   visible: (i: number) => ({
@@ -96,9 +96,9 @@ const staggerItem = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 25 } },
 };
 
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 // PROFILE TAB COMPONENT
-// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// ═══════════════════════════════════════════════════════════════════════
 export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode }: {
   user: MobileUser | null;
   onLogout: () => void;
@@ -110,8 +110,8 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
   const isRtl = language === 'ar';
   const direction = isRtl ? 'rtl' : 'ltr';
   const cartItems = useCartStore((s) => s.items);
-  // Total cart item count (sum of quantities) â€” matches bottom nav badge
-  const cartTotalItems = useMemo(() => cartItems.reduce((total, item) => total + item.quantity, 0), [cartItems]);
+  // Total cart item count — number of distinct products
+  const cartTotalItems = useMemo(() => cartItems.length, [cartItems]);
   const favorites = useMobileStore((s) => s.favorites);
   const products = useMobileStore((s) => s.products) || [];
   const validFavoritesCount = useMemo(() => {
@@ -124,7 +124,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
   const loyaltyTier = useMobileStore((s) => s.loyaltyTier);
   const walletBalance = useMobileStore((s) => s.walletBalance);
 
-  // â”€â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── State ──────────────────────────────────────────────────────────
   const [orders, setOrders] = useState<Array<{
     id: string; orderNumber: string; status: string; total: number; createdAt: string;
     subtotal?: number; deliveryFee?: number; discount?: number;
@@ -152,7 +152,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     existingReview: any | null;
   }>>([]);
 
-  // â”€â”€â”€ Fetch review eligibility when order is selected â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Fetch review eligibility when order is selected ──────────────────
   useEffect(() => {
     if (selectedOrder && selectedOrder.status === 'delivered' && user?.id && selectedOrder.id) {
       fetch(`/api/reviews/eligibility?orderId=${selectedOrder.id}`)
@@ -166,7 +166,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     }
   }, [selectedOrder, user?.id]);
 
-  // â”€â”€â”€ Scroll to top on mount â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Scroll to top on mount ────────────────────────────────────────
   useEffect(() => {
     const raf = requestAnimationFrame(() => {
       const scrollContainer = document.querySelector('[data-content-scroll]') as HTMLElement;
@@ -182,7 +182,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     typeof document !== 'undefined' ? document.getElementById('mobile-overlay-root') : null
   );
 
-  // Load saved photo â€” check localStorage first, then store (which may have server-synced avatar)
+  // Load saved photo — check localStorage first, then store (which may have server-synced avatar)
   const [userPhoto, setUserPhoto] = useState<string | null>(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -205,7 +205,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     return null;
   });
 
-  // â”€â”€â”€ Fetch Orders on mount (for stats sync) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Fetch Orders on mount (for stats sync) ──────────────────────────
   useEffect(() => {
     if (user) {
       let cancelled = false;
@@ -226,7 +226,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     }
   }, [user]);
 
-  // â”€â”€â”€ Refetch Orders when overlay opens (ensure fresh data) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Refetch Orders when overlay opens (ensure fresh data) ──────────
   useEffect(() => {
     if (showOrders && user) {
       let cancelled = false;
@@ -243,7 +243,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     }
   }, [showOrders, user]);
 
-  // â”€â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Handlers ───────────────────────────────────────────────────────
   const handleDarkModeToggle = () => {
     const newVal = !darkMode;
     setDarkMode(newVal);
@@ -320,7 +320,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     cancelled: t('order.cancelled'),
   };
 
-  // â”€â”€â”€ Scroll main content to top when overlays open â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Scroll main content to top when overlays open ────────────────────
   const scrollMainToTop = useCallback(() => {
     // Find the main scroll container (flex-1 overflow-y-auto inside MainScreen)
     const overlayRootEl = document.getElementById('mobile-overlay-root');
@@ -341,7 +341,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     }
   }, [showPhotoSheet, showSettings, showOrders, showLogoutModal, selectedOrder, trackingOrder, showPrivacy, showHelp, showAbout, showContact, scrollMainToTop]);
 
-  // â”€â”€â”€ Privacy Overlay (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Privacy Overlay (portal) ─────────────────────────────────────────
   const privacyOverlay = showPrivacy && overlayRoot && createPortal(
     <div className="fixed inset-0 pointer-events-auto overflow-y-auto" style={{ zIndex: 60 }}>
       <PrivacyOverlay onClose={() => setShowPrivacy(false)} language={language} direction={direction} isRTL={isRtl} t={t} darkMode={darkMode} />
@@ -349,7 +349,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ Help Overlay (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Help Overlay (portal) ─────────────────────────────────────────────
   const helpOverlay = showHelp && overlayRoot && createPortal(
     <div className="fixed inset-0 pointer-events-auto overflow-y-auto" style={{ zIndex: 60 }}>
       <HelpOverlay onClose={() => setShowHelp(false)} language={language} direction={direction} isRTL={isRtl} t={t} darkMode={darkMode} />
@@ -357,7 +357,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ About Overlay (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── About Overlay (portal) ────────────────────────────────────────────
   const aboutOverlay = showAbout && overlayRoot && createPortal(
     <div className="fixed inset-0 pointer-events-auto overflow-y-auto" style={{ zIndex: 60 }}>
       <AboutOverlay onClose={() => setShowAbout(false)} language={language} direction={direction} isRTL={isRtl} t={t} darkMode={darkMode} />
@@ -365,7 +365,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ Contact Us Overlay (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Contact Us Overlay (portal) ───────────────────────────────────────
   const contactOverlay = showContact && overlayRoot && createPortal(
     <div className="fixed inset-0 pointer-events-auto overflow-y-auto" style={{ zIndex: 60 }}>
       <ContactUsOverlay onClose={() => setShowContact(false)} language={language} direction={direction} isRTL={isRtl} t={t} darkMode={darkMode} />
@@ -373,7 +373,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ Settings Overlay (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Settings Overlay (portal) ────────────────────────────────────────
   const settingsOverlay = showSettings && overlayRoot && createPortal(
     <div className="fixed inset-0 pointer-events-auto overflow-y-auto" style={{ zIndex: 60 }}>
       <AdvancedSettingsScreen
@@ -390,7 +390,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ Order Tracking Overlay (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Order Tracking Overlay (portal) ──────────────────────────────────
   const trackingOverlay = trackingOrder && overlayRoot && createPortal(
     <div className="fixed inset-0 pointer-events-auto" style={{ zIndex: 60 }}>
       <OrderTrackingScreen orderNumber={trackingOrder} onClose={() => setTrackingOrder(null)} />
@@ -398,7 +398,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ Order Detail Full-Screen Overlay (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Order Detail Full-Screen Overlay (portal) ────────────────────────
   const orderDetailOverlay = selectedOrder && overlayRoot && createPortal(
     <AnimatePresence>
       <motion.div
@@ -523,7 +523,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                           {isRtl ? item.nameAr : item.nameEn}
                         </p>
                         <p className="text-[10px] mt-0.5" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                          {item.quantity} أ— {item.price.toFixed(2)} {t('product.currency')}
+                          {item.quantity} × {item.price.toFixed(2)} {t('product.currency')}
                         </p>
                       </div>
                       <p className="text-xs font-bold flex-shrink-0" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
@@ -541,7 +541,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                                 {[1, 2, 3, 4, 5].map((s) => (
                                   <Star key={s} size={9} className={s <= existingRating ? 'fill-[#D4A843] text-[#D4A843]' : 'text-gray-300'} />
                                 ))}
-                                <span className="text-[8px] font-bold ms-1" style={{ color: COLORS.success }}>âœ“</span>
+                                <span className="text-[8px] font-bold ms-1" style={{ color: COLORS.success }}>✓</span>
                               </div>
                             );
                           }
@@ -564,7 +564,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                               }}
                             >
                               <Star size={9} className="fill-white" />
-                              {isRtl ? 'ظ‚ظٹظ‘ظ…' : 'Rate'}
+                              {isRtl ? 'قيّم' : 'Rate'}
                             </motion.button>
                           );
                         })()
@@ -589,7 +589,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(0,168,204,0.12), rgba(0,137,123,0.12))' }}>
                   <Wallet size={14} style={{ color: COLORS.teal }} />
                 </div>
-                {isRtl ? 'ظ…ظ„ط®طµ ط§ظ„ط·ظ„ط¨' : 'Order Summary'}
+                {isRtl ? 'ملخص الطلب' : 'Order Summary'}
               </h3>
               <div className="space-y-2">
                 {selectedOrder.subtotal != null && (
@@ -675,10 +675,10 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold" style={{ color: darkMode ? '#F3F4F6' : '#92400E' }}>
-                      {isRtl ? 'ظ‚ظٹظ‘ظ… ظ…ط´طھط±ظٹط§طھظƒ' : 'Rate Your Purchase'}
+                      {isRtl ? 'قيّم مشترياتك' : 'Rate Your Purchase'}
                     </p>
                     <p className="text-[10px] mt-0.5" style={{ color: darkMode ? '#9CA3AF' : '#A16207' }}>
-                      {isRtl ? 'ط´ط§ط±ظƒظ†ط§ ط±ط£ظٹظƒ ظˆط§ط­طµظ„ ط¹ظ„ظ‰ 50 ظ†ظ‚ط·ط© ظˆظ„ط§ط،' : 'Share your opinion and earn 50 loyalty points'}
+                      {isRtl ? 'شاركنا رأيك واحصل على 50 نقطة ولاء' : 'Share your opinion and earn 50 loyalty points'}
                     </p>
                   </div>
                   <div className="flex items-center gap-1 px-2 py-0.5 rounded-md flex-shrink-0" style={{ background: darkMode ? '#D4A84315' : '#D4A84310' }}>
@@ -698,7 +698,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
               style={{ background: 'linear-gradient(135deg, #004B63, #00897B)', boxShadow: '0 4px 16px rgba(0,75,99,0.3)' }}
             >
               <Truck size={18} />
-              {isRtl ? 'طھطھط¨ط¹ ط§ظ„ط·ظ„ط¨' : 'Track Order'}
+              {isRtl ? 'تتبع الطلب' : 'Track Order'}
             </motion.button>
           </motion.div>
         </div>
@@ -707,7 +707,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ Orders Full-Screen Overlay (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Orders Full-Screen Overlay (portal) ──────────────────────────────
   const ordersOverlay = showOrders && overlayRoot && createPortal(
     <AnimatePresence>
       <motion.div
@@ -738,7 +738,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
             </motion.button>
             <div>
               <h2 className="text-white text-lg font-bold">{t('mobile.profile.myOrders')}</h2>
-              <p className="text-white/60 text-xs mt-0.5">{isRtl ? `${orders.length} ط·ظ„ط¨` : `${orders.length} orders`}</p>
+              <p className="text-white/60 text-xs mt-0.5">{isRtl ? `${orders.length} طلب` : `${orders.length} orders`}</p>
             </div>
           </div>
         </div>
@@ -759,7 +759,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   </div>
                 </div>
                 <p className="text-sm font-semibold mt-4" style={{ color: darkMode ? '#9CA3AF' : '#6B7280' }}>{t('mobile.profile.noOrders')}</p>
-                <p className="text-xs mt-1" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>{isRtl ? 'ط³طھط¸ظ‡ط± ط·ظ„ط¨ط§طھظƒ ظ‡ظ†ط§ ط¨ط¹ط¯ ط§ظ„ط´ط±ط§ط،' : 'Your orders will appear here after purchase'}</p>
+                <p className="text-xs mt-1" style={{ color: darkMode ? '#4B5563' : '#9CA3AF' }}>{isRtl ? 'ستظهر طلباتك هنا بعد الشراء' : 'Your orders will appear here after purchase'}</p>
               </motion.div>
             ) : (
               <motion.div
@@ -809,7 +809,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                           </span>
                           {order.items && order.items.length > 0 && (
                             <span className="text-[10px] ms-2" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                              {order.items.length} {isRtl ? 'ظ…ظ†طھط¬' : 'items'}
+                              {order.items.length} {isRtl ? 'منتج' : 'items'}
                             </span>
                           )}
                         </div>
@@ -827,7 +827,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ Logout Confirmation Modal (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Logout Confirmation Modal (portal) ──────────────────────────────
   const logoutModal = showLogoutModal && overlayRoot && createPortal(
     <AnimatePresence>
       <motion.div
@@ -859,7 +859,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
             onClick={() => setShowLogoutModal(false)}
             className="absolute top-3 end-3 w-8 h-8 rounded-lg flex items-center justify-center"
             style={{ background: darkMode ? COLORS.darkSubtle : '#F3F4F6' }}
-            aria-label={isRtl ? 'ط¥ط؛ظ„ط§ظ‚' : 'Close'}
+            aria-label={isRtl ? 'إغلاق' : 'Close'}
           >
             <X size={16} style={{ color: darkMode ? '#9CA3AF' : '#6B7280' }} />
           </motion.button>
@@ -879,10 +879,10 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
 
           {/* Title */}
           <h3 className="text-center text-lg font-bold mb-2" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-            {isRtl ? 'طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬' : 'Sign Out'}
+            {isRtl ? 'تسجيل الخروج' : 'Sign Out'}
           </h3>
           <p className="text-center text-sm mb-6" style={{ color: darkMode ? '#9CA3AF' : '#6B7280' }}>
-            {isRtl ? 'ظ‡ظ„ ط£ظ†طھ ظ…طھط£ظƒط¯ ظ…ظ† ط±ط؛ط¨طھظƒ ظپظٹ طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬طں' : 'Are you sure you want to sign out?'}
+            {isRtl ? 'هل أنت متأكد من رغبتك في تسجيل الخروج؟' : 'Are you sure you want to sign out?'}
           </p>
 
           {/* Buttons */}
@@ -897,7 +897,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 border: `1px solid ${darkMode ? COLORS.darkBorder : COLORS.border}`,
               }}
             >
-              {isRtl ? 'ط¥ظ„ط؛ط§ط،' : 'Cancel'}
+              {isRtl ? 'إلغاء' : 'Cancel'}
             </motion.button>
             <motion.button
               whileTap={{ scale: 0.97 }}
@@ -905,7 +905,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
               className="flex-1 py-3 rounded-xl text-white text-sm font-bold"
               style={{ background: `linear-gradient(135deg, ${COLORS.danger}, #E85D50)` }}
             >
-              {isRtl ? 'طھط£ظƒظٹط¯' : 'Confirm'}
+              {isRtl ? 'تأكيد' : 'Confirm'}
             </motion.button>
           </div>
         </motion.div>
@@ -914,7 +914,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ Photo Action Sheet (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Photo Action Sheet (portal) ─────────────────────────────────────
   const photoSheetPortal = showPhotoSheet && overlayRoot && createPortal(
     <AnimatePresence>
       <motion.div
@@ -982,7 +982,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                     className="w-28 h-28 rounded-full flex items-center justify-center text-white text-3xl font-bold relative z-10"
                     style={{ background: 'linear-gradient(135deg, #006B8A, #00897B)', border: '3px solid rgba(0,168,204,0.4)', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}
                   >
-                    {user?.name === 'ظ…ط¯ظٹط± ط§ظ„ظ†ط¸ط§ظ…' ? t('admin.systemAdmin').charAt(0) : user?.name?.charAt(0) || 'U'}
+                    {user?.name === 'مدير النظام' ? t('admin.systemAdmin').charAt(0) : user?.name?.charAt(0) || 'U'}
                   </div>
                 )}
               </motion.div>
@@ -1004,7 +1004,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              {user?.name || (isRtl ? 'ظ…ط³طھط®ط¯ظ…' : 'User')}
+              {user?.name || (isRtl ? 'مستخدم' : 'User')}
             </motion.p>
           </div>
         </div>
@@ -1019,7 +1019,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
             transition={{ delay: 0.15 }}
           >
             <p className="text-xs font-semibold tracking-wider uppercase" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-              {isRtl ? 'ط®ظٹط§ط±ط§طھ ط§ظ„طµظˆط±ط©' : 'Photo Options'}
+              {isRtl ? 'خيارات الصورة' : 'Photo Options'}
             </p>
           </motion.div>
 
@@ -1046,7 +1046,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   {t('mobile.profile.chooseFromGallery')}
                 </span>
                 <span className="block text-xs mt-0.5" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                  {isRtl ? 'ط§ط®طھط± طµظˆط±ط© ظ…ظ† ظ…ط¹ط±ط¶ ط§ظ„طµظˆط±' : 'Pick from your photo library'}
+                  {isRtl ? 'اختر صورة من معرض الصور' : 'Pick from your photo library'}
                 </span>
               </div>
               <ChevronLeft size={18} style={{ color: darkMode ? '#4B5563' : '#D1D5DB' }} />
@@ -1082,7 +1082,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   {t('mobile.profile.takePhoto')}
                 </span>
                 <span className="block text-xs mt-0.5" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                  {isRtl ? 'ط§ظ„طھظ‚ط· طµظˆط±ط© ط¬ط¯ظٹط¯ط© ط¨ط§ظ„ظƒط§ظ…ظٹط±ط§' : 'Capture a new photo with camera'}
+                  {isRtl ? 'التقط صورة جديدة بالكاميرا' : 'Capture a new photo with camera'}
                 </span>
               </div>
               <ChevronLeft size={18} style={{ color: darkMode ? '#4B5563' : '#D1D5DB' }} />
@@ -1121,7 +1121,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                     {t('mobile.profile.removePhoto')}
                   </span>
                   <span className="block text-xs mt-0.5" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                    {isRtl ? 'ط¥ط²ط§ظ„ط© ط§ظ„طµظˆط±ط© ط§ظ„ط´ط®طµظٹط© ط§ظ„ط­ط§ظ„ظٹط©' : 'Remove your current profile photo'}
+                    {isRtl ? 'إزالة الصورة الشخصية الحالية' : 'Remove your current profile photo'}
                   </span>
                 </div>
                 <ChevronLeft size={18} style={{ color: darkMode ? '#4B5563' : '#D1D5DB' }} />
@@ -1139,7 +1139,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
             <div className="flex items-center gap-2 px-4 py-3 rounded-xl" style={{ background: darkMode ? 'rgba(0,168,204,0.05)' : 'rgba(0,168,204,0.04)', border: `1px solid ${darkMode ? 'rgba(0,168,204,0.08)' : 'rgba(0,168,204,0.06)'}` }}>
               <Info size={14} style={{ color: COLORS.teal }} />
               <p className="text-xs" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                {isRtl ? 'ط§ظ„طµظˆط±ط© ط§ظ„ظ…ط«ط§ظ„ظٹط©: ظ…ط±ط¨ط¹ط© 512أ—512 ط¨ظƒط³ظ„' : 'Best results: Square image, 512أ—512 px'}
+                {isRtl ? 'الصورة المثالية: مربعة 512×512 بكسل' : 'Best results: Square image, 512×512 px'}
               </p>
             </div>
           </motion.div>
@@ -1178,7 +1178,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â”€â”€â”€ Address Management Overlay (portal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Address Management Overlay (portal) ─────────────────────────────
   const addressesOverlay = showAddresses && overlayRoot && createPortal(
     <div id="address-overlay-scroll" className="fixed inset-0 pointer-events-auto overflow-y-auto" style={{ zIndex: 60 }}>
       <AddressManagement
@@ -1192,15 +1192,15 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  // â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+  // ═══════════════════════════════════════════════════════════════════
   // MAIN PROFILE VIEW
-  // â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+  // ═══════════════════════════════════════════════════════════════════
   return (
     <>
     <div className="pb-4" dir={direction}>
-      {/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+      {/* ═══════════════════════════════════════════════════════════════
           1. ENHANCED PROFILE HEADER
-          â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */}
+          ═══════════════════════════════════════════════════════════════ */}
       <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #003545 0%, #004B63 35%, #006B8A 65%, #00897B 100%)' }}>
         {/* Decorative circles */}
         <div className="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-1/2 translate-x-1/4" />
@@ -1223,7 +1223,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                     className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold ring-3 ring-white/20"
                     style={{ background: 'linear-gradient(135deg, #006B8A, #00897B)' }}
                   >
-                    {user.name === 'ظ…ط¯ظٹط± ط§ظ„ظ†ط¸ط§ظ…' ? t('admin.systemAdmin').charAt(0) : user.name.charAt(0)}
+                    {user.name === 'مدير النظام' ? t('admin.systemAdmin').charAt(0) : user.name.charAt(0)}
                   </div>
                 )}
                 <motion.button
@@ -1239,14 +1239,14 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
 
               {/* User info */}
               <div className="flex-1 min-w-0">
-                <h2 className="text-white text-lg font-bold truncate">{user.name === 'ظ…ط¯ظٹط± ط§ظ„ظ†ط¸ط§ظ…' ? t('admin.systemAdmin') : user.name}</h2>
+                <h2 className="text-white text-lg font-bold truncate">{user.name === 'مدير النظام' ? t('admin.systemAdmin') : user.name}</h2>
                 <p className="text-white/60 text-xs mt-0.5 truncate" dir="ltr">{user.phone.replace(/^\+218/, '0')}</p>
                 {user.email && <p className="text-white/50 text-[10px] truncate">{user.email}</p>}
                 {/* Loyalty badge - Real data from DB */}
                 <div className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full" style={{ background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.25)' }}>
                   <Star size={10} style={{ color: COLORS.gold }} fill={COLORS.gold} />
                   <span className="text-[10px] font-semibold" style={{ color: COLORS.gold }}>
-                    {loyaltyPoints} {isRtl ? 'ظ†ظ‚ط·ط©' : 'pts'}
+                    {loyaltyPoints} {isRtl ? 'نقطة' : 'pts'}
                   </span>
                 </div>
               </div>
@@ -1289,9 +1289,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
         </div>
       </div>
 
-      {/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+      {/* ═══════════════════════════════════════════════════════════════
           2. COMPACT QUICK STATS (3 pills overlapping header)
-          â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */}
+          ═══════════════════════════════════════════════════════════════ */}
       {user && (
         <div className="px-4 -mt-3 relative z-20">
           <div
@@ -1328,7 +1328,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   {orders.length || 0}
                 </p>
                 <p className="text-[9px] leading-tight" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                  {isRtl ? 'ط§ظ„ط·ظ„ط¨ط§طھ' : 'Orders'}
+                  {isRtl ? 'الطلبات' : 'Orders'}
                 </p>
               </div>
             </motion.button>
@@ -1356,7 +1356,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   {validFavoritesCount}
                 </p>
                 <p className="text-[9px] leading-tight" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                  {isRtl ? 'ط§ظ„ظ…ظپط¶ظ„ط©' : 'Favorites'}
+                  {isRtl ? 'المفضلة' : 'Favorites'}
                 </p>
               </div>
             </motion.div>
@@ -1384,7 +1384,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   {cartTotalItems}
                 </p>
                 <p className="text-[9px] leading-tight" style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }}>
-                  {isRtl ? 'ط§ظ„ط³ظ„ط©' : 'Cart'}
+                  {isRtl ? 'السلة' : 'Cart'}
                 </p>
               </div>
             </motion.button>
@@ -1393,9 +1393,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
       )}
 
       <div className="px-4 mt-4 space-y-4">
-        {/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+        {/* ═════════════════════════════════════════════════════════════
             3. WALLET & POINTS SECTION
-            â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */}
+            ═════════════════════════════════════════════════════════════ */}
         {user && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1412,7 +1412,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Wallet size={18} className="text-white/70" />
-                  <span className="text-white/70 text-xs font-semibold">{isRtl ? 'ظ…ط­ظپط¸طھظٹ' : 'My Wallet'}</span>
+                  <span className="text-white/70 text-xs font-semibold">{isRtl ? 'محفظتي' : 'My Wallet'}</span>
                 </div>
                 <span className="text-white text-2xl font-bold">{walletBalance.toFixed(2)} <span className="text-xs font-normal text-white/50">{t('product.currency')}</span></span>
               </div>
@@ -1422,12 +1422,12 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}>
                   <div className="flex items-center gap-2 mb-1">
                     <Award size={14} style={{ color: COLORS.gold }} />
-                    <span className="text-white/70 text-[10px]">{isRtl ? 'ظ†ظ‚ط§ط· ط§ظ„ظˆظ„ط§ط،' : 'Loyalty Points'}</span>
+                    <span className="text-white/70 text-[10px]">{isRtl ? 'نقاط الولاء' : 'Loyalty Points'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-white text-lg font-bold">{loyaltyPoints}</span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold" style={{ background: 'rgba(212,168,67,0.2)', color: COLORS.gold }}>
-                      {loyaltyTier === 'gold' ? (isRtl ? 'ط°ظ‡ط¨ظٹ' : 'Gold') : loyaltyTier === 'silver' ? (isRtl ? 'ظپط¶ظٹ' : 'Silver') : (isRtl ? 'ط¨ط±ظˆظ†ط²ظٹ' : 'Bronze')}
+                      {loyaltyTier === 'gold' ? (isRtl ? 'ذهبي' : 'Gold') : loyaltyTier === 'silver' ? (isRtl ? 'فضي' : 'Silver') : (isRtl ? 'برونزي' : 'Bronze')}
                     </span>
                   </div>
                 </div>
@@ -1436,11 +1436,11 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}>
                   <div className="flex items-center gap-2 mb-1">
                     <Gift size={14} className="text-white/70" />
-                    <span className="text-white/70 text-[10px]">{isRtl ? 'ط§ظ„ظ…ظƒط§ظپط¢طھ' : 'Rewards'}</span>
+                    <span className="text-white/70 text-[10px]">{isRtl ? 'المكافآت' : 'Rewards'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-white text-lg font-bold">3</span>
-                    <span className="text-white/50 text-[10px]">{isRtl ? 'ظ…طھط§ط­ط©' : 'available'}</span>
+                    <span className="text-white/50 text-[10px]">{isRtl ? 'متاحة' : 'available'}</span>
                   </div>
                 </div>
               </div>
@@ -1448,9 +1448,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
           </motion.div>
         )}
 
-        {/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+        {/* ═════════════════════════════════════════════════════════════
             4. QUICK ACTIONS (4 round buttons)
-            â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */}
+            ═════════════════════════════════════════════════════════════ */}
         {user && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1459,10 +1459,10 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
             className="grid grid-cols-4 gap-3"
           >
             {[
-              { icon: <RefreshCw size={20} />, label: isRtl ? 'ط¥ط¹ط§ط¯ط© ط·ظ„ط¨' : 'Reorder', color: COLORS.info, bgColor: darkMode ? `${COLORS.info}15` : `${COLORS.info}10`, action: () => setShowOrders(true) },
-              { icon: <Truck size={20} />, label: isRtl ? 'طھطھط¨ط¹ ط§ظ„ط·ظ„ط¨' : 'Track', color: COLORS.teal, bgColor: darkMode ? `${COLORS.teal}15` : `${COLORS.teal}10`, action: () => setShowOrders(true) },
-              { icon: <Tag size={20} />, label: isRtl ? 'ظƒظˆط¨ظˆظ†ط§طھ' : 'Coupons', color: COLORS.secondary, bgColor: darkMode ? `${COLORS.secondary}15` : `${COLORS.secondary}10`, action: () => {} },
-              { icon: <Headphones size={20} />, label: isRtl ? 'ط§ظ„ط¯ط¹ظ…' : 'Support', color: COLORS.purple, bgColor: darkMode ? `${COLORS.purple}15` : `${COLORS.purple}10`, action: () => {} },
+              { icon: <RefreshCw size={20} />, label: isRtl ? 'إعادة طلب' : 'Reorder', color: COLORS.info, bgColor: darkMode ? `${COLORS.info}15` : `${COLORS.info}10`, action: () => setShowOrders(true) },
+              { icon: <Truck size={20} />, label: isRtl ? 'تتبع الطلب' : 'Track', color: COLORS.teal, bgColor: darkMode ? `${COLORS.teal}15` : `${COLORS.teal}10`, action: () => setShowOrders(true) },
+              { icon: <Tag size={20} />, label: isRtl ? 'كوبونات' : 'Coupons', color: COLORS.secondary, bgColor: darkMode ? `${COLORS.secondary}15` : `${COLORS.secondary}10`, action: () => {} },
+              { icon: <Headphones size={20} />, label: isRtl ? 'الدعم' : 'Support', color: COLORS.purple, bgColor: darkMode ? `${COLORS.purple}15` : `${COLORS.purple}10`, action: () => {} },
             ].map((item, i) => (
               <motion.button
                 key={i}
@@ -1484,12 +1484,12 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
           </motion.div>
         )}
 
-        {/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+        {/* ═════════════════════════════════════════════════════════════
             5. GROUPED MENU LISTS (3 sections)
-            â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */}
+            ═════════════════════════════════════════════════════════════ */}
         {user && (
           <div className="space-y-3">
-            {/* â”€â”€â”€ My Account â”€â”€â”€ */}
+            {/* ─── My Account ─── */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1502,14 +1502,14 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
             >
               <div className="px-4 py-2.5" style={{ background: darkMode ? `${COLORS.primary}15` : `${COLORS.primary}08`, borderBottom: `1px solid ${darkMode ? COLORS.darkBorder : COLORS.border}` }}>
                 <h3 className="text-xs font-bold" style={{ color: darkMode ? COLORS.info : COLORS.primary }}>
-                  {isRtl ? 'ط­ط³ط§ط¨ظٹ' : 'My Account'}
+                  {isRtl ? 'حسابي' : 'My Account'}
                 </h3>
               </div>
               {[
-                { icon: <Package size={18} />, label: isRtl ? 'ط·ظ„ط¨ط§طھظٹ' : 'My Orders', color: COLORS.info, bgColor: `${COLORS.info}10`, action: () => setShowOrders(true), badge: orders.length > 0 ? String(orders.length) : undefined },
-                { icon: <MapPin size={18} />, label: isRtl ? 'ط¹ظ†ط§ظˆظٹظ†ظٹ' : 'My Addresses', color: COLORS.secondary, bgColor: `${COLORS.secondary}10`, action: () => setShowAddresses(true) },
-                { icon: <Heart size={18} />, label: isRtl ? 'ط§ظ„ظ…ظپط¶ظ„ط©' : 'Favorites', color: COLORS.secondary, bgColor: `${COLORS.secondary}10`, action: () => useMobileStore.getState().setActiveTab('favorites'), badge: validFavoritesCount > 0 ? String(validFavoritesCount) : undefined },
-                { icon: <ShoppingBag size={18} />, label: isRtl ? 'ط§ظ„ط³ظ„ط©' : 'Cart', color: COLORS.teal, bgColor: `${COLORS.teal}10`, action: () => useMobileStore.getState().setActiveTab('cart'), badge: cartTotalItems > 0 ? String(cartTotalItems) : undefined },
+                { icon: <Package size={18} />, label: isRtl ? 'طلباتي' : 'My Orders', color: COLORS.info, bgColor: `${COLORS.info}10`, action: () => setShowOrders(true), badge: orders.length > 0 ? String(orders.length) : undefined },
+                { icon: <MapPin size={18} />, label: isRtl ? 'عناويني' : 'My Addresses', color: COLORS.secondary, bgColor: `${COLORS.secondary}10`, action: () => setShowAddresses(true) },
+                { icon: <Heart size={18} />, label: isRtl ? 'المفضلة' : 'Favorites', color: COLORS.secondary, bgColor: `${COLORS.secondary}10`, action: () => useMobileStore.getState().setActiveTab('favorites'), badge: validFavoritesCount > 0 ? String(validFavoritesCount) : undefined },
+                { icon: <ShoppingBag size={18} />, label: isRtl ? 'السلة' : 'Cart', color: COLORS.teal, bgColor: `${COLORS.teal}10`, action: () => useMobileStore.getState().setActiveTab('cart'), badge: cartTotalItems > 0 ? String(cartTotalItems) : undefined },
               ].map((item, i) => (
                 <motion.button
                   key={i}
@@ -1534,7 +1534,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
               ))}
             </motion.div>
 
-            {/* â”€â”€â”€ Settings â”€â”€â”€ */}
+            {/* ─── Settings ─── */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1547,7 +1547,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
             >
               <div className="px-4 py-2.5" style={{ background: darkMode ? `${COLORS.primary}15` : `${COLORS.primary}08`, borderBottom: `1px solid ${darkMode ? COLORS.darkBorder : COLORS.border}` }}>
                 <h3 className="text-xs font-bold" style={{ color: darkMode ? COLORS.info : COLORS.primary }}>
-                  {isRtl ? 'ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ' : 'Settings'}
+                  {isRtl ? 'الإعدادات' : 'Settings'}
                 </h3>
               </div>
 
@@ -1565,13 +1565,13 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   {t('mobile.language')}
                 </span>
                 <span className="text-xs font-semibold px-2 py-0.5 rounded-md" style={{ background: darkMode ? `${COLORS.warning}15` : `${COLORS.warning}10`, color: COLORS.warning }}>
-                  {language === 'ar' ? 'ط§ظ„ط¹ط±ط¨ظٹط©' : 'English'}
+                  {language === 'ar' ? 'العربية' : 'English'}
                 </span>
               </motion.button>
 
-              {/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+              {/* ═══════════════════════════════════════════════════════
                   8. DARK MODE TOGGLE
-                  â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */}
+                  ═══════════════════════════════════════════════════════ */}
               <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: `1px solid ${darkMode ? COLORS.darkBorder : '#F3F4F6'}` }}>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${COLORS.purple}10`, color: COLORS.purple }}>
                   <Sparkles size={18} />
@@ -1613,7 +1613,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   <ShieldCheck size={18} />
                 </div>
                 <span className="flex-1 text-start text-sm font-medium" style={{ color: darkMode ? '#E5E7EB' : COLORS.textPrimary }}>
-                  {isRtl ? 'ط§ظ„ط®طµظˆطµظٹط©' : 'Privacy'}
+                  {isRtl ? 'الخصوصية' : 'Privacy'}
                 </span>
                 {isRtl ? <ChevronLeft size={16} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} /> : <ChevronRight size={16} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} />}
               </motion.button>
@@ -1628,15 +1628,15 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   <Sparkles size={18} />
                 </div>
                 <span className="flex-1 text-start text-sm font-medium" style={{ color: darkMode ? '#E5E7EB' : COLORS.textPrimary }}>
-                  {isRtl ? 'ظ„ظˆط­ط© ط§ظ„طھط­ظƒظ…' : 'Admin Dashboard'}
+                  {isRtl ? 'لوحة التحكم' : 'Admin Dashboard'}
                 </span>
                 <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md" style={{ background: `${COLORS.info}15`, color: COLORS.info }}>
-                  {isRtl ? 'ظ…ط¯ظٹط±' : 'Admin'}
+                  {isRtl ? 'مدير' : 'Admin'}
                 </span>
               </motion.button>
             </motion.div>
 
-            {/* â”€â”€â”€ Support â”€â”€â”€ */}
+            {/* ─── Support ─── */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1649,15 +1649,15 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
             >
               <div className="px-4 py-2.5" style={{ background: darkMode ? `${COLORS.primary}15` : `${COLORS.primary}08`, borderBottom: `1px solid ${darkMode ? COLORS.darkBorder : COLORS.border}` }}>
                 <h3 className="text-xs font-bold" style={{ color: darkMode ? COLORS.info : COLORS.primary }}>
-                  {isRtl ? 'ط§ظ„ط¯ط¹ظ…' : 'Support'}
+                  {isRtl ? 'الدعم' : 'Support'}
                 </h3>
               </div>
               {[
-                { icon: <Headphones size={18} />, label: isRtl ? 'ظ…ط±ظƒط² ط§ظ„ظ…ط³ط§ط¹ط¯ط©' : 'Help Center', color: COLORS.info, bgColor: `${COLORS.info}10`, action: () => setShowHelp(true) },
-                { icon: <Info size={18} />, label: isRtl ? 'ط­ظˆظ„ ط§ظ„طھط·ط¨ظٹظ‚' : 'About', color: COLORS.teal, bgColor: `${COLORS.teal}10`, action: () => setShowAbout(true) },
-                { icon: <Share2 size={18} />, label: isRtl ? 'ظ…ط´ط§ط±ظƒط© ط§ظ„طھط·ط¨ظٹظ‚' : 'Share App', color: COLORS.purple, bgColor: `${COLORS.purple}10` },
-                { icon: <Download size={18} />, label: isRtl ? 'طھط­ظ…ظٹظ„ ط§ظ„طھط·ط¨ظٹظ‚ APK' : 'Download App APK', color: COLORS.success, bgColor: `${COLORS.success}10`, action: () => { window.location.hash = 'download'; } },
-                { icon: <Phone size={18} />, label: isRtl ? 'طھظˆط§طµظ„ ظ…ط¹ظ†ط§' : 'Contact Us', color: COLORS.secondary, bgColor: `${COLORS.secondary}10`, action: () => setShowContact(true) },
+                { icon: <Headphones size={18} />, label: isRtl ? 'مركز المساعدة' : 'Help Center', color: COLORS.info, bgColor: `${COLORS.info}10`, action: () => setShowHelp(true) },
+                { icon: <Info size={18} />, label: isRtl ? 'حول التطبيق' : 'About', color: COLORS.teal, bgColor: `${COLORS.teal}10`, action: () => setShowAbout(true) },
+                { icon: <Share2 size={18} />, label: isRtl ? 'مشاركة التطبيق' : 'Share App', color: COLORS.purple, bgColor: `${COLORS.purple}10` },
+                { icon: <Download size={18} />, label: isRtl ? 'تحميل التطبيق APK' : 'Download App APK', color: COLORS.success, bgColor: `${COLORS.success}10`, action: () => { window.location.hash = 'download'; } },
+                { icon: <Phone size={18} />, label: isRtl ? 'تواصل معنا' : 'Contact Us', color: COLORS.secondary, bgColor: `${COLORS.secondary}10`, action: () => setShowContact(true) },
               ].map((item, i) => {
                 const totalCount = 5;
                 return (
@@ -1682,9 +1682,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
           </div>
         )}
 
-        {/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+        {/* ═════════════════════════════════════════════════════════════
             6. EXPANDABLE ORDERS SECTION
-            â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */}
+            ═════════════════════════════════════════════════════════════ */}
         {user && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1706,7 +1706,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                   <Package size={18} />
                 </div>
                 <span className="text-sm font-bold" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-                  {isRtl ? 'ط¢ط®ط± ط§ظ„ط·ظ„ط¨ط§طھ' : 'Recent Orders'}
+                  {isRtl ? 'آخر الطلبات' : 'Recent Orders'}
                 </span>
               </div>
               <motion.div animate={{ rotate: showOrdersExpand ? (isRtl ? 90 : -90) : 0 }} transition={{ duration: 0.2 }}>
@@ -1781,7 +1781,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                           className="w-full py-2 text-center text-xs font-semibold rounded-xl"
                           style={{ color: darkMode ? COLORS.info : COLORS.primary, background: darkMode ? `${COLORS.primary}10` : `${COLORS.primary}08` }}
                         >
-                          {isRtl ? `ط¹ط±ط¶ ط§ظ„ظƒظ„ (${orders.length})` : `View All (${orders.length})`}
+                          {isRtl ? `عرض الكل (${orders.length})` : `View All (${orders.length})`}
                         </motion.button>
                       )}
                     </div>
@@ -1792,9 +1792,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
           </motion.div>
         )}
 
-        {/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+        {/* ═════════════════════════════════════════════════════════════
             9. INVITE FRIENDS CARD
-            â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */}
+            ═════════════════════════════════════════════════════════════ */}
         {user && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1818,16 +1818,16 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 </div>
                 <div className="flex-1">
                   <h3 className="text-sm font-bold" style={{ color: darkMode ? '#F3F4F6' : COLORS.textPrimary }}>
-                    {isRtl ? 'ط§ط¯ط¹ظڈ ط£طµط¯ظ‚ط§ط،ظƒ' : 'Invite Friends'}
+                    {isRtl ? 'ادعُ أصدقاءك' : 'Invite Friends'}
                   </h3>
                   <p className="text-xs" style={{ color: darkMode ? '#9CA3AF' : '#6B7280' }}>
-                    {isRtl ? 'ظˆط§ط­طµظ„ ط¹ظ„ظ‰ 50 ظ†ظ‚ط·ط©' : 'Get 50 points'}
+                    {isRtl ? 'واحصل على 50 نقطة' : 'Get 50 points'}
                   </p>
                 </div>
               </div>
               <p className="text-xs mb-3 leading-relaxed" style={{ color: darkMode ? '#9CA3AF' : '#6B7280' }}>
                 {isRtl
-                  ? 'ط§ط¯ط¹ظڈ ط£طµط¯ظ‚ط§ط،ظƒ ظˆط§ط­طµظ„ ط¹ظ„ظ‰ 50 ظ†ظ‚ط·ط© ظ„ظƒظ„ طµط¯ظٹظ‚ ظٹط³ط¬ظ„ ظ…ظ† ط®ظ„ط§ظ„ ط±ط§ط¨ط·ظƒ'
+                  ? 'ادعُ أصدقاءك واحصل على 50 نقطة لكل صديق يسجل من خلال رابطك'
                   : 'Invite your friends and get 50 points for each friend who signs up through your link'}
               </p>
               <motion.button
@@ -1851,7 +1851,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                       className="flex items-center gap-2"
                     >
                       <Check size={16} />
-                      {isRtl ? 'طھظ… ط§ظ„ظ†ط³ط®!' : 'Copied!'}
+                      {isRtl ? 'تم النسخ!' : 'Copied!'}
                     </motion.span>
                   ) : (
                     <motion.span
@@ -1862,7 +1862,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                       className="flex items-center gap-2"
                     >
                       <Copy size={16} />
-                      {isRtl ? 'ظ†ط³ط® ط±ط§ط¨ط· ط§ظ„ط¥ط­ط§ظ„ط©' : 'Copy Referral Link'}
+                      {isRtl ? 'نسخ رابط الإحالة' : 'Copy Referral Link'}
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -1871,9 +1871,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
           </motion.div>
         )}
 
-        {/* â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+        {/* ═════════════════════════════════════════════════════════════
             10. LOGOUT BUTTON
-            â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ */}
+            ═════════════════════════════════════════════════════════════ */}
         {user && (
           <motion.button
             initial={{ opacity: 0, y: 20 }}
@@ -1957,7 +1957,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 {t('mobile.language')}
               </span>
               <span className="text-xs font-semibold" style={{ color: COLORS.warning }}>
-                {language === 'ar' ? 'ط§ظ„ط¹ط±ط¨ظٹط©' : 'English'}
+                {language === 'ar' ? 'العربية' : 'English'}
               </span>
             </motion.button>
 
@@ -1977,7 +1977,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
         {/* App version */}
         <div className="text-center mt-4 mb-2">
           <p className="text-[10px]" style={{ color: darkMode ? '#4B5563' : '#D1D5DB' }}>
-            {isRtl ? 'ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط©' : 'Nabd Al-Madina'} v{APP_VERSION}
+            {isRtl ? 'نبض المدينة' : 'Nabd Al-Madina'} v{APP_VERSION}
           </p>
         </div>
         </div>
@@ -1997,4 +1997,3 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     </>
   );
 }
-
