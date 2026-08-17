@@ -88,7 +88,7 @@ export function Header() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [mobileLogoutConfirm, setMobileLogoutConfirm] = useState(false);
 
-  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const cartCount = cartItems.length;
   const favCount = useFavoritesStore(useShallow((s) => s.favoriteIds.length));
 
   // Fetch real order count for logged-in users (deferred to not block initial paint)
