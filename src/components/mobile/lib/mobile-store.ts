@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 import { useUIStore } from '@/stores/ui-store';
 import { saveLocal, loadLocal } from './helpers';
 import { DEMO_USER, OFFLINE_USERS, LOCAL_PRODUCTS, LOCAL_CATEGORIES } from './constants';
@@ -10,12 +10,12 @@ import type { Screen, Tab, Product, Category, Subcategory, MobileUser, Address, 
 // Re-export normalizePhone from shared phone-utils for convenience
 export { normalizePhone } from '@/lib/phone-utils';
 
-// Refresh interval management — prevents stacking and pauses when backgrounded
+// Refresh interval management â€” prevents stacking and pauses when backgrounded
 let _refreshIntervalId: ReturnType<typeof setInterval> | null = null;
 let _fastSyncIntervalId: ReturnType<typeof setInterval> | null = null;
 let _visibilityListenerAdded = false;
 
-// ─── Favorites sync bookkeeping ──────────────────────────────────────
+// â”€â”€â”€ Favorites sync bookkeeping â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Same philosophy as the web favorites store: a local favorite toggle that
 // happened AFTER the last successful server sync is a pending change and makes
 // the local list authoritative; otherwise the server list wins (removals made
@@ -62,7 +62,7 @@ async function pushFavorites(ids: string[]): Promise<boolean> {
   }
 }
 
-// ─── AppNotification type ─────────────────────────────────────────────
+// â”€â”€â”€ AppNotification type â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface AppNotification {
   id: string;
   title: string;
@@ -72,44 +72,44 @@ export interface AppNotification {
   date: string;
 }
 
-// ─── Demo Notifications (Arabic) ──────────────────────────────────────
+// â”€â”€â”€ Demo Notifications (Arabic) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const DEMO_NOTIFICATIONS: AppNotification[] = [
   {
     id: 'notif-1',
-    title: 'تم تأكيد طلبك',
-    body: 'طلبك رقم #NB-2024-0891 تم تأكيده بنجاح وسيتم شحنه قريباً',
+    title: 'طھظ… طھط£ظƒظٹط¯ ط·ظ„ط¨ظƒ',
+    body: 'ط·ظ„ط¨ظƒ ط±ظ‚ظ… #NB-2024-0891 طھظ… طھط£ظƒظٹط¯ظ‡ ط¨ظ†ط¬ط§ط­ ظˆط³ظٹطھظ… ط´ط­ظ†ظ‡ ظ‚ط±ظٹط¨ط§ظ‹',
     type: 'order',
     isRead: false,
     date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'notif-2',
-    title: 'عرض خاص 🔥',
-    body: 'خصم 25% على جميع منتجات المطبخ! العرض ينتهي خلال 48 ساعة',
+    title: 'ط¹ط±ط¶ ط®ط§طµ ًں”¥',
+    body: 'ط®طµظ… 25% ط¹ظ„ظ‰ ط¬ظ…ظٹط¹ ظ…ظ†طھط¬ط§طھ ط§ظ„ظ…ط·ط¨ط®! ط§ظ„ط¹ط±ط¶ ظٹظ†طھظ‡ظٹ ط®ظ„ط§ظ„ 48 ط³ط§ط¹ط©',
     type: 'promo',
     isRead: false,
     date: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'notif-3',
-    title: 'استرداد نقاط مكافأة',
-    body: 'تم إضافة 50 نقطة ولاء إلى رصيدك ك مكافأة على طلبك الأخير',
+    title: 'ط§ط³طھط±ط¯ط§ط¯ ظ†ظ‚ط§ط· ظ…ظƒط§ظپط£ط©',
+    body: 'طھظ… ط¥ط¶ط§ظپط© 50 ظ†ظ‚ط·ط© ظˆظ„ط§ط، ط¥ظ„ظ‰ ط±طµظٹط¯ظƒ ظƒ ظ…ظƒط§ظپط£ط© ط¹ظ„ظ‰ ط·ظ„ط¨ظƒ ط§ظ„ط£ط®ظٹط±',
     type: 'wallet',
     isRead: true,
     date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'notif-4',
-    title: 'تحديث التطبيق',
-    body: 'تم تحديث نبض المدينة إلى الإصدار 1.1.0 مع ميزات جديدة وتحسينات في الأداء',
+    title: 'طھط­ط¯ظٹط« ط§ظ„طھط·ط¨ظٹظ‚',
+    body: 'طھظ… طھط­ط¯ظٹط« ظ†ط¨ط¶ ط§ظ„ظ…ط¯ظٹظ†ط© ط¥ظ„ظ‰ ط§ظ„ط¥طµط¯ط§ط± 1.1.0 ظ…ط¹ ظ…ظٹط²ط§طھ ط¬ط¯ظٹط¯ط© ظˆطھط­ط³ظٹظ†ط§طھ ظپظٹ ط§ظ„ط£ط¯ط§ط،',
     type: 'system',
     isRead: true,
     date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'notif-5',
-    title: 'تم شحن طلبك',
-    body: 'طلبك رقم #NB-2024-0876 في الطريق إليك! التوصيل المتوقع خلال 24 ساعة',
+    title: 'طھظ… ط´ط­ظ† ط·ظ„ط¨ظƒ',
+    body: 'ط·ظ„ط¨ظƒ ط±ظ‚ظ… #NB-2024-0876 ظپظٹ ط§ظ„ط·ط±ظٹظ‚ ط¥ظ„ظٹظƒ! ط§ظ„طھظˆطµظٹظ„ ط§ظ„ظ…طھظˆظ‚ط¹ ط®ظ„ط§ظ„ 24 ط³ط§ط¹ط©',
     type: 'order',
     isRead: false,
     date: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
@@ -126,7 +126,7 @@ interface FetchProductsOptions {
   search?: string;
 }
 
-// ─── Navigation History Entry ────────────────────────────────────────
+// â”€â”€â”€ Navigation History Entry â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface NavHistoryEntry {
   screen: Screen;
   activeTab: Tab;
@@ -601,7 +601,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
   favoriteProducts: [],
   toggleFavorite: (productId) => {
     const user = get().user;
-    // Explicit intent (add/remove) instead of a state-agnostic toggle — see the
+    // Explicit intent (add/remove) instead of a state-agnostic toggle â€” see the
     // web favorites store for why (toggle inverts the server when states drift).
     const wasFav = get().favorites.includes(productId);
     const next = wasFav
@@ -611,7 +611,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     _favLastEditAt = favMetaNow();
     saveLocal('mobile_favorites', next);
     saveFavMeta();
-    // Sync to server if logged in — idempotent add (POST) or remove (DELETE)
+    // Sync to server if logged in â€” idempotent add (POST) or remove (DELETE)
     if (user && !user.id.startsWith('local-')) {
       const req = wasFav
         ? fetch(`/api/favorites?productId=${encodeURIComponent(productId)}`, { method: 'DELETE' })
@@ -629,7 +629,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
         })
         .catch(() => {});
     }
-    // ─── Cross-store sync: update web favorites store too ───
+    // â”€â”€â”€ Cross-store sync: update web favorites store too â”€â”€â”€
     const updatedFavs = get().favorites;
     import('@/lib/sync-bridge').then(({ syncMobileToFavoritesStore, dispatchSyncEvent }) => {
       syncMobileToFavoritesStore(updatedFavs);
@@ -641,7 +641,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
   /**
    * Rebuild the products list shown on the favorites screen.
    *
-   * The favorites screen must NOT depend on the paginated `products` feed — a
+   * The favorites screen must NOT depend on the paginated `products` feed â€” a
    * favorite made on the web (or on page 2+ of the feed) would be invisible.
    * For logged-in users we fetch full details via includeProducts (server truth,
    * includes products outside the loaded feed); for guests we fall back to the
@@ -737,15 +737,20 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     }
   },
 
-  // Dark mode — always on (dark only app)
-  darkMode: true,
-  setDarkMode: (_darkMode: boolean) => {
-    // Dark mode is always on — no-op
+  // Dark mode toggle (persisted in localStorage)
+  darkMode: loadLocal<boolean>('mobile_dark') ?? true,
+  setDarkMode: (darkMode: boolean) => {
+    set({ darkMode });
+    saveLocal('mobile_dark', darkMode);
+    // Sync CSS class on the root element so the UI updates immediately
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('dark', darkMode);
+    }
   },
 
 
 
-  // ─── Addresses (synced with DB) ────────────────────────────────────
+  // â”€â”€â”€ Addresses (synced with DB) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   addresses: [],
   fetchAddresses: async () => {
     const user = get().user;
@@ -862,7 +867,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     });
   },
 
-  // ─── Orders (synced with DB) ──────────────────────────────────────
+  // â”€â”€â”€ Orders (synced with DB) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   orders: [],
   fetchOrders: async () => {
     const user = get().user;
@@ -879,18 +884,18 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
         saveLocal('mobile_orders', data.orders || []);
       }
     } catch {
-      // Silent — keep whatever is in the store
+      // Silent â€” keep whatever is in the store
     }
   },
 
-  // ─── Notification Preferences (synced with DB) ────────────────────
+  // â”€â”€â”€ Notification Preferences (synced with DB) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   notificationPrefs: { orders: true, offers: true, points: true, news: false },
   setNotificationPrefs: (prefs) => {
     set({ notificationPrefs: { ...get().notificationPrefs, ...prefs } });
     try { localStorage.setItem('nabdh-notif-prefs', JSON.stringify(get().notificationPrefs)); } catch { /* ignore */ }
   },
 
-  // ─── User Profile Data (from DB) ───────────────────────────────────
+  // â”€â”€â”€ User Profile Data (from DB) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   loyaltyPoints: 0,
   loyaltyTier: 'bronze',
   walletBalance: 0,
@@ -900,7 +905,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     try {
       const res = await fetch(`/api/auth/profile?userId=${user.id}`);
       if (res.status === 401) {
-        // Session revoked/expired (e.g. logged out from another device) → full logout
+        // Session revoked/expired (e.g. logged out from another device) â†’ full logout
         get().logout();
         return;
       }
@@ -958,7 +963,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     }
   },
 
-  // ─── Delivery Zones ────────────────────────────────────────────────
+  // â”€â”€â”€ Delivery Zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   deliveryZones: [],
   fetchDeliveryZones: async () => {
     try {
@@ -981,7 +986,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     return zone ? zone.fee : 10; // Default 10 LYD
   },
 
-  // ─── Update User ────────────────────────────────────────────────
+  // â”€â”€â”€ Update User â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   updateUser: (data) => {
     set((state) => {
       if (!state.user) return state;
@@ -991,7 +996,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     });
   },
 
-  // ─── Set Avatar ────────────────────────────────────────────────
+  // â”€â”€â”€ Set Avatar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Check mobileAvatar first, then fall back to mobile_user_photo (used by profile-tab)
   avatar: loadLocal<string>('mobileAvatar') || (typeof window !== 'undefined' ? ((): string | null => { try { return localStorage.getItem('mobile_user_photo'); } catch { return null; } })() : null),
   setAvatar: (avatar) => {
@@ -1014,23 +1019,23 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     });
   },
 
-  // ─── Selected Order ────────────────────────────────────────────
+  // â”€â”€â”€ Selected Order â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   selectedOrder: null,
   setSelectedOrder: (selectedOrder) => set({ selectedOrder }),
 
-  // ─── Tracking Order Number ──────────────────────────────────────
+  // â”€â”€â”€ Tracking Order Number â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   trackingOrderNumber: null,
   setTrackingOrderNumber: (trackingOrderNumber) => set({ trackingOrderNumber }),
 
-  // ─── Unread Notification Count ─────────────────────────────────
+  // â”€â”€â”€ Unread Notification Count â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   unreadNotificationCount: 0,
   setUnreadNotificationCount: (unreadNotificationCount) => set({ unreadNotificationCount }),
 
-  // ─── Account Sub-Target ────────────────────────────────────────
+  // â”€â”€â”€ Account Sub-Target â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   accountSubTarget: null,
   setAccountSubTarget: (accountSubTarget) => set({ accountSubTarget }),
 
-  // ─── WebView (In-App Browser) ────────────────────────────────────
+  // â”€â”€â”€ WebView (In-App Browser) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   webviewUrl: null,
   webviewTitle: null,
   openWebview: (url, title) => {
@@ -1040,7 +1045,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     set({ webviewUrl: null, webviewTitle: null, screen: 'main' });
   },
 
-  // ─── Notifications ────────────────────────────────────────────
+  // â”€â”€â”€ Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   notifications: loadLocal<AppNotification[]>('mobile_notifications') || DEMO_NOTIFICATIONS,
   markNotificationRead: (id) => {
     set((state) => {
@@ -1059,7 +1064,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     });
   },
 
-  // ─── Sync Favorites to Server ────────────────────────────────────
+  // â”€â”€â”€ Sync Favorites to Server â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   syncFavoritesToServer: async () => {
     const user = get().user;
     const favorites = get().favorites;
@@ -1073,7 +1078,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
     } catch { /* silent */ }
   },
 
-  // ─── Fetch Favorites from Server ────────────────────────────────
+  // â”€â”€â”€ Fetch Favorites from Server â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   fetchFavoritesFromServer: async () => {
     const user = get().user;
     if (!user || user.id.startsWith('local-')) return;
@@ -1090,15 +1095,15 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
         let needsPush = false;
 
         if (_favLastServerSyncAt === 0 && localFavorites.length > 0) {
-          // Never synced on this device → guest favorites → merge with server (union)
+          // Never synced on this device â†’ guest favorites â†’ merge with server (union)
           finalIds = Array.from(new Set([...localFavorites, ...serverFavorites]));
           needsPush = true;
         } else if (favHasPendingEdits()) {
-          // Pending local toggles → local is authoritative
+          // Pending local toggles â†’ local is authoritative
           finalIds = localFavorites;
           needsPush = true;
         } else {
-          // No pending edits → server is the cross-device truth (removals propagate)
+          // No pending edits â†’ server is the cross-device truth (removals propagate)
           finalIds = serverFavorites;
         }
 
@@ -1116,7 +1121,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
           saveFavMeta();
         }
 
-        // ─── Cross-store sync: update web favorites store too ───
+        // â”€â”€â”€ Cross-store sync: update web favorites store too â”€â”€â”€
         import('@/lib/sync-bridge').then(({ syncMobileToFavoritesStore }) => {
           syncMobileToFavoritesStore(finalIds);
         }).catch(() => {});
@@ -1127,7 +1132,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
   },
 }));
 
-// ─── Initialize store from localStorage ───────────────────────────────
+// â”€â”€â”€ Initialize store from localStorage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function initMobileStore() {
   const savedUser = loadLocal<MobileUser>('mobile_user');
   // Convert +218 to 0 in case user was saved with international format
@@ -1137,19 +1142,19 @@ export function initMobileStore() {
   const _onboardingDone = loadLocal<boolean>('mobile_onboarding_done'); // kept for localStorage compat
   const savedFavs = loadLocal<string[]>('mobile_favorites');
   loadFavMeta();
-  // Dark mode is always on — no longer reading from localStorage
+  // Dark mode is always on â€” no longer reading from localStorage
   const savedAddresses = loadLocal<Address[]>('mobile_addresses');
 
   const updates: Partial<MobileAppState> = {};
   if (savedFavs) updates.favorites = savedFavs;
   if (savedUser) updates.user = savedUser;
-  // darkMode is always true — no longer loading saved preference
+  // Dark mode â€” load saved preference (default: dark)
   if (savedAddresses) updates.addresses = savedAddresses;
 
-  // ─── Unified session: adopt the web store's user if the mobile store has none ──
+  // â”€â”€â”€ Unified session: adopt the web store's user if the mobile store has none â”€â”€
   // Single source of truth for the session is useUIStore.currentUser. If the web
-  // store is logged in but the mobile store has no (matching) user — e.g. the user
-  // logged in on the web before ever opening the mobile view — adopt it so the
+  // store is logged in but the mobile store has no (matching) user â€” e.g. the user
+  // logged in on the web before ever opening the mobile view â€” adopt it so the
   // mobile view opens into the app (and server-backed data syncs immediately).
   try {
     const webUser = useUIStore.getState().currentUser;
@@ -1167,7 +1172,7 @@ export function initMobileStore() {
     useMobileStore.setState(updates);
   }
 
-  // ─── Setup cross-component event listeners ───
+  // â”€â”€â”€ Setup cross-component event listeners â”€â”€â”€
   // Server sync (fetchFavoritesFromServer) handles reconciliation now; the old
   // bidirectional union-merge was removed because it resurrected items that
   // were unfavorited on another device.
@@ -1184,7 +1189,7 @@ export function initMobileStore() {
   useMobileStore.getState().fetchCategories();
   useMobileStore.getState().fetchDeliveryZones();
 
-  // Fetch user profile if logged in (effective user — includes a web-adopted one)
+  // Fetch user profile if logged in (effective user â€” includes a web-adopted one)
   const initUser = useMobileStore.getState().user;
   if (initUser && !initUser.id.startsWith('local-')) {
     useMobileStore.getState().fetchUserProfile();
@@ -1195,7 +1200,7 @@ export function initMobileStore() {
     import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
   }
 
-  // Background refresh every 5 minutes — ensures admin changes are reflected
+  // Background refresh every 5 minutes â€” ensures admin changes are reflected
   // (with proper cleanup to prevent stacking and pause when backgrounded)
   if (typeof window !== 'undefined') {
     // Clear any existing interval to prevent stacking
@@ -1218,7 +1223,7 @@ export function initMobileStore() {
       }
     }, 5 * 60 * 1000);
 
-    // ─── Fast sync: favorites + cart every 60s (lightweight, near-real-time) ───
+    // â”€â”€â”€ Fast sync: favorites + cart every 60s (lightweight, near-real-time) â”€â”€â”€
     if (_fastSyncIntervalId !== null) {
       clearInterval(_fastSyncIntervalId);
     }
@@ -1235,7 +1240,7 @@ export function initMobileStore() {
       _visibilityListenerAdded = true;
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-          // App is backgrounded — clear the intervals to save battery/CPU
+          // App is backgrounded â€” clear the intervals to save battery/CPU
           if (_refreshIntervalId !== null) {
             clearInterval(_refreshIntervalId);
             _refreshIntervalId = null;
@@ -1245,7 +1250,7 @@ export function initMobileStore() {
             _fastSyncIntervalId = null;
           }
         } else {
-          // App is foregrounded — resume refresh and do an immediate refresh
+          // App is foregrounded â€” resume refresh and do an immediate refresh
           useMobileStore.getState().refreshData();
           const user = useMobileStore.getState().user;
           if (user && !user.id.startsWith('local-')) {
@@ -1269,7 +1274,7 @@ export function initMobileStore() {
             }
           }, 5 * 60 * 1000);
 
-          // ─── Fast sync: favorites + cart every 60s (lightweight, near-real-time) ───
+          // â”€â”€â”€ Fast sync: favorites + cart every 60s (lightweight, near-real-time) â”€â”€â”€
           // The full refresh above reloads product lists (disruptive) so it stays at
           // 5 minutes; favorites/cart are cheap server-truth pulls that make the app
           // reflect changes made on the web almost immediately.
@@ -1286,7 +1291,7 @@ export function initMobileStore() {
   }
 }
 
-/** Cleanup function — clears the refresh interval and removes the visibility listener.
+/** Cleanup function â€” clears the refresh interval and removes the visibility listener.
  *  Call this when the app unmounts or the store is torn down. */
 export function cleanupMobileRefresh() {
   if (_refreshIntervalId !== null) {
@@ -1298,3 +1303,4 @@ export function cleanupMobileRefresh() {
     _fastSyncIntervalId = null;
   }
 }
+
