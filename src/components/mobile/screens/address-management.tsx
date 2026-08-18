@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMobileStore } from '../lib/mobile-store';
 import type { Address } from '../lib/types';
@@ -108,6 +108,7 @@ interface AddressManagementProps {
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════
 export function AddressManagement({ onClose, darkMode, direction, isRTL, t }: AddressManagementProps) {
+  console.log('[DEBUG] AddressManagement rendered, addresses:', useMobileStore.getState().addresses.length);
   // Use the mobile store for addresses (synced with DB)
   const addresses = useMobileStore((s) => s.addresses);
   const storeAddAddress = useMobileStore((s) => s.addAddress);
