@@ -478,7 +478,7 @@ export function DeliveryZonesPage() {
     ? new Set(filteredRegions.map((r) => r.id))
     : expandedRegions;
 
-  const priceFilterLabels: Record<string, { ar: string; en: string }> = {
+  const priceFilterLabels: Record<'all' | 'economy' | 'standard' | 'remote', { ar: string; en: string }> = {
     'all': { ar: 'الكل', en: 'All' },
     'economy': { ar: 'اقتصادي (≤15)', en: 'Economy (≤15)' },
     'standard': { ar: 'قياسي (16-30)', en: 'Standard (16-30)' },

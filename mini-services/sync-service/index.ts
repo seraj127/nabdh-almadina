@@ -1,90 +1,153 @@
-import { createServer } from 'http'
-import { Server } from 'socket.io'
+import { createServer } from 'node:http'
+import { jwtVerify } from 'jose'
+import { Server, type Socket } from 'socket.io'
+
+const jwtSecret = process.env.JWT_SECRET
+if (!jwtSecret || jwtSecret.length < 32) {
+  throw new Error('JWT_SECRET is required and must be at least 32 characters long')
+}
+
+const secret = new TextEncoder().encode(jwtSecret)
+const sessionCheckUrl = process.env.SYNC_SESSION_CHECK_URL
+if (process.env.NODE_ENV === 'production' && !sessionCheckUrl) {
+  throw new Error('SYNC_SESSION_CHECK_URL is required in production for revocation-aware sessions')
+}
+
+const allowedOrigins = (process.env.SYNC_ALLOWED_ORIGINS || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
 
 const httpServer = createServer()
 const io = new Server(httpServer, {
   path: '/',
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
+    credentials: true,
   },
   pingTimeout: 60000,
   pingInterval: 25000,
+  maxHttpBufferSize: 64 * 1024,
 })
 
-// Track connected users
-const connectedUsers = new Map<string, { socketId: string; userId: string; role: string }>()
+type Session = {
+  userId: string
+  role: string
+  platform: 'web' | 'mobile' | 'admin'
+  jti: string
+}
 
-io.on('connection', (socket) => {
-  console.log(`Client connected: ${socket.id}`)
+const connectedUsers = new Map<string, Session>()
 
-  socket.on('join', (data: { userId: string; role: string }) => {
-    const { userId, role } = data
+function parseCookies(header: string | undefined): Record<string, string> {
+  if (!header) return {}
+  return Object.fromEntries(header.split(';').flatMap((part) => {
+    const index = part.indexOf('=')
+    if (index <= 0) return []
+    return [[part.slice(0, index).trim(), decodeURIComponent(part.slice(index + 1).trim())]]
+  }))
+}
 
-    // Store user info
-    connectedUsers.set(socket.id, { socketId: socket.id, userId, role })
+function getToken(socket: Socket): string | undefined {
+  const authToken = typeof socket.handshake.auth?.token === 'string' ? socket.handshake.auth.token : undefined
+  if (authToken) return authToken
+  const cookies = parseCookies(socket.handshake.headers.cookie)
+  return cookies.admin_session || cookies.session_token
+}
 
-    // Join user-specific room (for targeted notifications)
-    socket.join(`user-${userId}`)
+async function verifySessionToken(token: string): Promise<Session | null> {
+  try {
+    const { payload } = await jwtVerify(token, secret, {
+      issuer: 'nabd-al-madina',
+      audience: 'nabd-session',
+      algorithms: ['HS256'],
+    })
+    const userId = typeof payload.userId === 'string' ? payload.userId : ''
+    const role = typeof payload.role === 'string' ? payload.role : ''
+    const platform = payload.platform === 'web' || payload.platform === 'mobile' || payload.platform === 'admin'
+      ? payload.platform
+      : null
+    const jti = typeof payload.jti === 'string' ? payload.jti : ''
+    if (!userId || !role || !platform || !jti) return null
 
-    // Join role-specific room
-    if (role === 'admin') {
-      socket.join('admin-room')
+    if (sessionCheckUrl) {
+      const response = await fetch(sessionCheckUrl, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(3000),
+      })
+      if (!response.ok) return null
+      const current = await response.json() as { valid?: boolean; userId?: string; role?: string }
+      if (!current.valid || current.userId !== userId || current.role !== role) return null
     }
 
-    console.log(`User ${userId} (${role}) joined. Total: ${connectedUsers.size}`)
-  })
+    return { userId, role, platform, jti }
+  } catch {
+    return null
+  }
+}
 
-  // New order placed — notify admins
+function requireAdmin(socket: Socket): boolean {
+  const session = socket.data.session as Session | undefined
+  return session?.role === 'admin' && session.platform === 'admin'
+}
+
+function isSafeIdentifier(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0 && value.length <= 160
+}
+
+io.use(async (socket, next) => {
+  const token = getToken(socket)
+  if (!token) return next(new Error('Authentication required'))
+  const session = await verifySessionToken(token)
+  if (!session) return next(new Error('Invalid or expired session'))
+  socket.data.session = session
+  next()
+})
+
+io.on('connection', (socket) => {
+  const session = socket.data.session as Session
+  connectedUsers.set(socket.id, session)
+  socket.join(`user-${session.userId}`)
+  if (session.role === 'admin' && session.platform === 'admin') socket.join('admin-room')
+  console.log(`Authenticated client connected: ${session.userId} (${session.role})`)
+
+  // These events are server-controlled operational events. Only an authenticated
+  // admin session may emit them; client-provided userId/role are never trusted.
   socket.on('order-created', (data: { orderId: string; orderNumber: string; userId: string; total: number }) => {
-    console.log(`New order: ${data.orderNumber}`)
-    io.to('admin-room').emit('new-order', data)
+    if (!requireAdmin(socket) || !isSafeIdentifier(data?.orderId) || !isSafeIdentifier(data?.orderNumber) || !isSafeIdentifier(data?.userId)) return
+    io.to('admin-room').emit('new-order', { ...data, emittedBy: session.userId })
   })
 
-  // Order status updated — notify the specific user
   socket.on('order-updated', (data: { orderId: string; orderNumber: string; userId: string; status: string; note?: string }) => {
-    console.log(`Order ${data.orderNumber} updated to ${data.status}`)
-    io.to(`user-${data.userId}`).emit('order-status-changed', data)
-    // Also notify admins
-    io.to('admin-room').emit('order-status-changed', data)
+    if (!requireAdmin(socket) || !isSafeIdentifier(data?.orderId) || !isSafeIdentifier(data?.orderNumber) || !isSafeIdentifier(data?.userId) || !isSafeIdentifier(data?.status)) return
+    const payload = { ...data, emittedBy: session.userId }
+    io.to(`user-${data.userId}`).emit('order-status-changed', payload)
+    io.to('admin-room').emit('order-status-changed', payload)
   })
 
-  // Send notification to a specific user
   socket.on('notify-user', (data: { userId: string; titleAr: string; titleEn: string; bodyAr: string; bodyEn: string; type: string }) => {
-    io.to(`user-${data.userId}`).emit('notification', data)
+    if (!requireAdmin(socket) || !isSafeIdentifier(data?.userId) || !isSafeIdentifier(data?.type)) return
+    io.to(`user-${data.userId}`).emit('notification', { ...data, emittedBy: session.userId })
   })
 
-  // Dashboard data changed — tell admins to refresh
   socket.on('dashboard-refresh', () => {
-    io.to('admin-room').emit('refresh-stats')
-  })
-
-  // Broadcast to all connected clients
-  socket.on('broadcast', (data: { event: string; payload: any }) => {
-    io.emit(data.event, data.payload)
+    if (requireAdmin(socket)) io.to('admin-room').emit('refresh-stats')
   })
 
   socket.on('disconnect', () => {
-    const user = connectedUsers.get(socket.id)
-    if (user) {
-      console.log(`User ${user.userId} (${user.role}) disconnected`)
-      connectedUsers.delete(socket.id)
-    }
-  })
-
-  socket.on('error', (error) => {
-    console.error(`Socket error (${socket.id}):`, error)
+    connectedUsers.delete(socket.id)
   })
 })
 
-const PORT = 3004
-httpServer.listen(PORT, () => {
-  console.log(`Sync WebSocket server running on port ${PORT}`)
+const port = Number(process.env.PORT || 3004)
+httpServer.listen(port, () => {
+  console.log(`Authenticated sync WebSocket server running on port ${port}`)
 })
 
-process.on('SIGTERM', () => {
-  httpServer.close(() => process.exit(0))
-})
-process.on('SIGINT', () => {
-  httpServer.close(() => process.exit(0))
-})
+function shutdown() {
+  io.close(() => httpServer.close(() => process.exit(0)))
+}
+process.on('SIGTERM', shutdown)
+process.on('SIGINT', shutdown)

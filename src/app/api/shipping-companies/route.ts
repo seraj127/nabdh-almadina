@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { serializeDecimal } from '@/lib/serialize';
+import { serializePublicShippingCompany } from '@/lib/shipping-company-utils';
+import { requireAdmin } from '@/lib/auth-utils';
 
 export const dynamic = "force-dynamic";
 
 // ─── CORS Headers ─────────────────────────────────────────
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'null',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
     });
 
     const serialized = companies.map((company) => {
-      const base = serializeDecimal(company);
+      const base = serializePublicShippingCompany(company);
       return {
         ...base,
         _count: {
@@ -67,6 +68,9 @@ export async function GET(request: NextRequest) {
 
 // ─── POST: Create a new shipping company ──────────────────
 export async function POST(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const body = await request.json();
 
@@ -122,7 +126,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const serialized = serializeDecimal(company);
+    const serialized = serializePublicShippingCompany(company);
 
     return NextResponse.json(
       { company: serialized },

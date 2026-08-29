@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { serializeDecimal } from '@/lib/serialize';
+import { requireAdmin } from '@/lib/auth-utils';
 
 export const dynamic = "force-dynamic";
 
 // ─── CORS Headers ─────────────────────────────────────────
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'null',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
@@ -61,6 +62,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const { id } = await params;
     const body = await request.json();

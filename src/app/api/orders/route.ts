@@ -304,13 +304,17 @@ export async function POST(request: NextRequest) {
 
       // Parse images to get the first image for the order item
       let image = product.mainImage || null
-      if (!image) {
-        try {
-          const parsed = JSON.parse(product.images)
-          const imgs = Array.isArray(parsed) ? parsed : [parsed]
-          image = imgs[0] || null
-        } catch {
-          // keep null
+      if (!image && product.images) {
+        if (typeof product.images === 'string') {
+          try {
+            const parsed = JSON.parse(product.images)
+            const imgs = Array.isArray(parsed) ? parsed : [parsed]
+            image = imgs[0] || null
+          } catch {
+            // keep null
+          }
+        } else if (Array.isArray(product.images)) {
+          image = (product.images as any[])[0] || null
         }
       }
 

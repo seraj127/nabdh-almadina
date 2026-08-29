@@ -280,7 +280,7 @@ export function CheckoutPage() {
 
   // Can proceed checks
   const canProceedAddress = selectedAddressId !== '' && selectedZone !== null;
-  const canProceedPayment = paymentMethod !== '';
+  const canProceedPayment = Boolean(paymentMethod);
   const canPlaceOrder = canProceedAddress && canProceedPayment;
 
   // When a saved address is selected, auto-detect and set the zone

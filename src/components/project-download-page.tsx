@@ -318,7 +318,7 @@ export function ProjectDownloadPage({ onBack }: { onBack?: () => void }) {
               return (
                 <button
                   key={type}
-                  onClick={() => { setSelectedType(type); setDownloadComplete(false); setDownloadProgress(0); }}
+                  onClick={() => { setSelectedType(type); setDownloadComplete(false); }}
                   className="relative rounded-2xl p-4 border-2 transition-all duration-300 text-right"
                   style={{
                     background: isSelected

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const { mockDb, mockAuth } = vi.hoisted(() => ({
   mockDb: {
-    favoriteItem: { createMany: vi.fn(), findMany: vi.fn(), deleteMany: vi.fn() },
+    favoriteItem: { createMany: vi.fn(), upsert: vi.fn(), findMany: vi.fn(), deleteMany: vi.fn() },
     product: { findUnique: vi.fn(), findMany: vi.fn() },
   },
   mockAuth: { requireAuth: vi.fn() },
@@ -19,6 +19,7 @@ describe('Favorites API', () => {
     vi.clearAllMocks();
     mockAuth.requireAuth.mockResolvedValue({ userId: 'user-1' });
     mockDb.favoriteItem.createMany.mockResolvedValue({ count: 1 });
+    mockDb.favoriteItem.upsert.mockResolvedValue({ id: 'f1', userId: 'user-1', productId: 'p1' });
     mockDb.favoriteItem.deleteMany.mockResolvedValue({ count: 1 });
     mockDb.favoriteItem.findMany.mockResolvedValue([]);
     mockDb.product.findUnique.mockResolvedValue({ id: 'p1' });
@@ -35,9 +36,10 @@ describe('Favorites API', () => {
     const body = await res.json();
     expect(res.status).toBe(200);
     expect(body.isFavorite).toBe(true);
-    expect(mockDb.favoriteItem.createMany).toHaveBeenCalledWith({
-      data: [{ userId: 'user-1', productId: 'p1' }],
-      skipDuplicates: true,
+    expect(mockDb.favoriteItem.upsert).toHaveBeenCalledWith({
+      where: { userId_productId: { userId: 'user-1', productId: 'p1' } },
+      update: {},
+      create: { userId: 'user-1', productId: 'p1' },
     });
   });
 

@@ -62,16 +62,15 @@ export function useRealtimeSync(options: RealtimeSyncOptions) {
       reconnectionDelay: 5000, // Increased from 2s to 5s to reduce CPU/battery impact
       reconnectionDelayMax: 30000, // Cap at 30s between retries
       timeout: 15000, // Increased timeout
+      withCredentials: true,
     });
 
     socketRef.current = socket;
 
     socket.on('connect', () => {
       setIsConnected(true);
-      // Join with user info
-      if (userId && role) {
-        socket.emit('join', { userId, role });
-      }
+      // The server authenticates from the session cookie. Client-provided
+      // userId/role are intentionally not sent as identity claims.
     });
 
     socket.on('disconnect', () => {

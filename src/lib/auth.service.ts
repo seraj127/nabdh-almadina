@@ -24,7 +24,7 @@ export type LoginOk = {
   user: {
     id: string;
     phone: string;
-    name: string;
+    name?: string | null;
     email?: string | null;
     role: string;
     language?: string | null;
@@ -86,7 +86,19 @@ export async function authenticate(input: AuthenticateInput): Promise<LoginResul
     return { ok: false, status: 403, message: 'Account is deactivated. Please contact support.' };
   }
 
-  const validPlatform = ['web', 'mobile', 'admin'].includes(platform) ? platform : 'web';
+  const requestedPlatform = ['web', 'mobile', 'admin'].includes(platform) ? platform : 'web';
+  if (requestedPlatform === 'admin' && user.role !== 'admin') {
+    await safeAudit({
+      userId: user.id,
+      action: 'admin_login_denied',
+      entity: 'User',
+      entityId: user.id,
+      details: 'Non-admin user attempted to request an admin session',
+      ip,
+    });
+    return { ok: false, status: 403, message: 'Admin access required' };
+  }
+  const validPlatform = requestedPlatform;
   const token = await createSessionToken(
     { id: user.id, role: user.role, phone: user.phone },
     validPlatform as 'web' | 'mobile' | 'admin',

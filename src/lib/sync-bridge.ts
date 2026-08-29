@@ -101,36 +101,18 @@ export async function syncFavoritesToMobileStore(favoriteIds: string[]) {
   }
 }
 
-/** Full bidirectional favorites sync — merge both stores and update both */
+/**
+ * Reconcile both UI stores from the server. The server is the only cross-device
+ * source of truth; local stores must never union stale IDs back into it.
+ */
 export async function syncFavoritesBidirectional() {
   try {
     const { useFavoritesStore } = await import('@/stores/favorites-store');
-    const { useMobileStore } = await import('@/components/mobile/lib/mobile-store');
-    
-    const webIds = useFavoritesStore.getState().favoriteIds;
-    const mobileIds = useMobileStore.getState().favorites;
-    
-    // Merge (union) both sets
-    const merged = [...new Set([...webIds, ...mobileIds])];
-    
-    // Update both stores if they differ
-    const webSet = new Set(webIds);
-    const mergedSet = new Set(merged);
-    
-    const webNeedsUpdate = !(webSet.size === mergedSet.size && [...webSet].every(id => mergedSet.has(id)));
-    const mobileNeedsUpdate = !(new Set(mobileIds).size === mergedSet.size && [...new Set(mobileIds)].every(id => mergedSet.has(id)));
-    
-    if (webNeedsUpdate) {
-      useFavoritesStore.getState().syncIds(merged);
-    }
-    if (mobileNeedsUpdate) {
-      useMobileStore.setState({ favorites: merged });
-      try {
-        localStorage.setItem('mobile_favorites', JSON.stringify(merged));
-      } catch { /* ignore */ }
-    }
+    await useFavoritesStore.getState().fetchFavorites();
+    const serverIds = useFavoritesStore.getState().favoriteIds;
+    await syncFavoritesToMobileStore(serverIds);
   } catch {
-    // Silent fail
+    // Keep the last known local state during a transient network failure.
   }
 }
 

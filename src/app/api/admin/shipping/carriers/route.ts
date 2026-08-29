@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
         apiSecret: apiSecret || null,
         webhookUrl: webhookUrl || null,
         trackingUrl: trackingUrl || null,
-        coverageAreas: coverageAreas ? JSON.stringify(coverageAreas) : null,
+        coverageAreas: coverageAreas ? (coverageAreas as any) : undefined,
         maxWeight: maxWeight ?? 30,
         pricePerKg: pricePerKg ?? 1.5,
         basePrice: basePrice ?? 5,

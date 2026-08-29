@@ -1,27 +1,33 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient as SqlitePrismaClient } from '@/generated/sqlite'
+import { PrismaClient as PostgresPrismaClient } from '@/generated/postgresql'
 
-// ─── Database Configuration ─────────────────────────────────
-// Supports both SQLite (local) and PostgreSQL/Supabase (production)
-// When SUPABASE_DATABASE_URL is set, uses Supabase PostgreSQL
-// Otherwise falls back to SQLite via DATABASE_URL
+// The two generated clients are intentionally separate. Prisma engines are
+// provider-specific; a PostgreSQL URL must never be passed to a SQLite client.
+const isSupabaseEnabled = Boolean(process.env.SUPABASE_DATABASE_URL)
 
-const isSupabaseEnabled = !!(
-  process.env.SUPABASE_DATABASE_URL &&
-  process.env.NEXT_PUBLIC_SUPABASE_URL &&
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
-
+type DatabaseClient = SqlitePrismaClient
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+  prisma: DatabaseClient | undefined
 }
 
-function createPrismaClient(): PrismaClient {
-  const datasourceUrl = isSupabaseEnabled
-    ? process.env.SUPABASE_DATABASE_URL
-    : process.env.DATABASE_URL
+function createPrismaClient(): DatabaseClient {
+  if (isSupabaseEnabled) {
+    const url = process.env.SUPABASE_DATABASE_URL
+    if (!url || !/^postgres(ql)?:\/\//.test(url)) {
+      throw new Error('SUPABASE_DATABASE_URL must be a PostgreSQL connection URL')
+    }
+    return new PostgresPrismaClient({
+      datasourceUrl: url,
+      log: process.env.NODE_ENV === 'development' ? ['query'] : [],
+    }) as unknown as DatabaseClient
+  }
 
-  return new PrismaClient({
-    datasourceUrl,
+  const url = process.env.DATABASE_URL
+  if (url && !url.startsWith('file:')) {
+    throw new Error('DATABASE_URL must be a file: URL when using the SQLite client')
+  }
+  return new SqlitePrismaClient({
+    datasourceUrl: url,
     log: process.env.NODE_ENV === 'development' ? ['query'] : [],
   })
 }
@@ -30,7 +36,6 @@ export const db = globalForPrisma.prisma ?? createPrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
 
-// ─── Database Status Check ──────────────────────────────────
 export function getDatabaseStatus() {
   return {
     provider: isSupabaseEnabled ? 'supabase' : 'sqlite',
@@ -43,7 +48,6 @@ export function getDatabaseStatus() {
 
 function maskUrl(url: string): string {
   if (!url) return '(not set)'
-  if (url.startsWith('file:')) return url
-  // Mask password in PostgreSQL URLs
+  if (url.startsWith('file:')) return 'file:<configured>'
   return url.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@')
 }

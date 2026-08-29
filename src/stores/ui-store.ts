@@ -26,6 +26,7 @@ interface UIState {
   isReturningUser: boolean;
   pendingAuthView: AuthView | null; // Where to redirect after login
   profileScrollTo: 'top' | 'orders' | 'addresses'; // Scroll target when navigating to profile
+  setProfileScrollTo: (target: 'top' | 'orders' | 'addresses') => void;
   catalogSearchQuery: string; // Search query to filter the product catalog
   catalogSearchTotal: number; // Total results count for search feedback
   selectedCategorySlug: string | null; // Slug of the selected category for category page

@@ -1599,7 +1599,6 @@ export const translations: Record<string, Record<Language, string>> = {
 
   // ─── Write Review (for inline i18n conversion) ───
   'review.writeReview': { ar: 'كتابة تقييم', en: 'Write a Review' },
-  'review.yourRating': { ar: 'تقييمك', en: 'Your Rating' },
   'review.reviewTitle': { ar: 'عنوان التقييم', en: 'Review Title' },
   'review.reviewTitlePlaceholder': { ar: 'لخص تجربتك في جملة', en: 'Summarize your experience in a sentence' },
   'review.reviewBody': { ar: 'التقييم التفصيلي', en: 'Detailed Review' },
@@ -1611,8 +1610,6 @@ export const translations: Record<string, Record<Language, string>> = {
   'review.selectRating': { ar: 'يرجى اختيار التقييم', en: 'Please select a rating' },
   'review.verifiedBuyer': { ar: 'مشتري موثق', en: 'Verified Buyer' },
   'review.ratePurchase': { ar: 'قيّم مشترياتك', en: 'Rate Your Purchase' },
-  'review.rateProduct': { ar: 'قيّم هذا المنتج', en: 'Rate this product' },
-  'review.rateNow': { ar: 'قيّم الآن', en: 'Rate Now' },
   'review.editReview': { ar: 'تعديل التقييم', en: 'Edit Review' },
   'review.customerReviews': { ar: 'تقييمات العملاء', en: 'Customer Reviews' },
   'review.noReviews': { ar: 'لا توجد تقييمات بعد', en: 'No reviews yet' },
@@ -1624,7 +1621,6 @@ export const translations: Record<string, Record<Language, string>> = {
   'review.reviews': { ar: 'تقييم', en: 'reviews' },
   'review.signInToReview': { ar: 'سجّل دخولك لكتابة تقييم', en: 'Sign in to write a review' },
   'review.verifiedNotice': { ar: 'شراء مؤكد — سيظهر كـ "مشتري موثق" + 50 نقطة مكافأة', en: 'Confirmed purchase — will show as "Verified Buyer" + 50 bonus points' },
-  'review.updateReview': { ar: 'تحديث التقييم', en: 'Update Review' },
   'review.deliveredRatePrompt': { ar: 'تم التوصيل! قيّم منتجاتك لمساعدة الآخرين', en: 'Delivered! Rate your products to help others' },
 
   // ─── Privacy Policy Content ───

@@ -1107,9 +1107,6 @@ function LoginScreen() {
               <Zap size={16} />
               {direction === 'rtl' ? 'لوحة تحكم المدير' : 'Admin Dashboard'}
             </motion.button>
-            <p className="text-center text-[10px] mt-1.5 text-gray-400 dark:text-[#6B7F96]">
-              {direction === 'rtl' ? '0910000000 / admin123' : '0910000000 / admin123'}
-            </p>
           </motion.div>
         </div>
       </motion.div>

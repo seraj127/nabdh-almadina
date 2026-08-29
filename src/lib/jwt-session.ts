@@ -35,7 +35,7 @@ export async function createSessionToken(user: {
       data: {
         userId: user.id,
         token: jti,
-        deviceInfo: deviceInfo || null,
+        deviceInfo: deviceInfo ? (deviceInfo as any) : undefined,
         ipAddress: ipAddress || null,
         platform,
         expiresAt,
@@ -107,8 +107,14 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
         data: { lastSeenAt: new Date() },
       }).catch(() => {}); // Fire-and-forget, non-critical
     }
-  } catch {
-    // DB check failed - allow if token itself is valid (graceful degradation)
+  } catch (error) {
+    // DB check failed. Regular users keep access (graceful degradation during
+    // transient DB issues), but admin tokens fail closed — a revoked admin
+    // session must never pass just because the session table is unreachable.
+    console.error('Session DB verification failed:', error);
+    if (payload.platform === 'admin') {
+      return null;
+    }
   }
 
   return payload;

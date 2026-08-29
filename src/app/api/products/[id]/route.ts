@@ -30,13 +30,15 @@ export async function GET(
 
     // Parse images field
     let parsedImages: string[] = []
-    try {
-      if (product.images) {
+    if (typeof product.images === 'string') {
+      try {
         const parsed = JSON.parse(product.images)
-        parsedImages = Array.isArray(parsed) ? parsed : [parsed]
+        parsedImages = Array.isArray(parsed) ? parsed.map(String) : [String(parsed)]
+      } catch {
+        parsedImages = [product.images]
       }
-    } catch {
-      parsedImages = product.images ? [product.images] : []
+    } else if (Array.isArray(product.images)) {
+      parsedImages = (product.images as any[]).map(String)
     }
 
     // Parse attributes field

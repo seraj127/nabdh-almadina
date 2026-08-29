@@ -8,20 +8,13 @@ export async function GET() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const supabaseDbUrl = process.env.SUPABASE_DATABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
   const checks = {
     supabase: {
       configured: !!(supabaseUrl && supabaseKey && supabaseDbUrl),
-      url: supabaseUrl ? '✅ Set' : '❌ Missing',
-      anonKey: supabaseKey ? '✅ Set' : '❌ Missing',
-      databaseUrl: supabaseDbUrl ? '✅ Set' : '❌ Missing',
-      serviceRoleKey: supabaseServiceKey ? '✅ Set' : '⚠️ Missing (optional)',
     },
     database: {
       provider: status.provider,
       supabaseEnabled: status.supabaseEnabled,
-      connectionUrl: status.url,
     },
     steps: getSetupSteps(),
   }

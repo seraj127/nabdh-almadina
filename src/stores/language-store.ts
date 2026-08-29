@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { translations } from '@/lib/i18n/translations';
+import { translations, type Language } from '@/lib/i18n/translations';
 
 // Re-export the Language type for backwards compatibility
 export type { Language } from '@/lib/i18n/translations';
@@ -9,11 +9,10 @@ export type Direction = 'rtl' | 'ltr';
 // guard against a concurrent profile fetch reverting it before the server echo.
 let _lastLocalLanguageChangeAt = 0;
 
-
-
 interface LanguageState {
   language: Language;
   direction: Direction;
+  isAr: boolean;
 
   // Actions
   setLanguage: (lang: Language) => void;
@@ -25,9 +24,11 @@ interface LanguageState {
 export const useLanguageStore = create<LanguageState>()((set, get) => ({
       language: 'ar',
       direction: 'rtl',
+      isAr: true,
 
       setLanguage: (lang: Language) => {
         const direction: Direction = lang === 'ar' ? 'rtl' : 'ltr';
+        const isAr = lang === 'ar';
 
         // Update document attributes for RTL/LTR support
         if (typeof document !== 'undefined') {
@@ -35,7 +36,7 @@ export const useLanguageStore = create<LanguageState>()((set, get) => ({
           document.documentElement.lang = lang;
         }
 
-        set({ language: lang, direction });
+        set({ language: lang, direction, isAr });
         // Save to localStorage
         try { localStorage.setItem('nabdh-language-storage', JSON.stringify({ language: lang, direction })); } catch { /* ignore */ }
         // Remember when the user changed it locally so a concurrent profile
@@ -63,7 +64,8 @@ export const useLanguageStore = create<LanguageState>()((set, get) => ({
         // Skip if the user changed the language locally just now (echo race)
         if (Date.now() - _lastLocalLanguageChangeAt < 2000) return;
         const direction: Direction = lang === 'ar' ? 'rtl' : 'ltr';
-        set({ language: lang, direction });
+        const isAr = lang === 'ar';
+        set({ language: lang, direction, isAr });
         try { localStorage.setItem('nabdh-language-storage', JSON.stringify({ language: lang, direction })); } catch { /* ignore */ }
         if (typeof document !== 'undefined') {
           document.documentElement.dir = direction;
@@ -96,7 +98,8 @@ export const useLanguageStore = create<LanguageState>()((set, get) => ({
       if (raw) {
         const saved = JSON.parse(raw);
         if (saved.language && saved.direction) {
-          set({ language: saved.language, direction: saved.direction });
+          const isAr = saved.language === 'ar';
+          set({ language: saved.language, direction: saved.direction, isAr });
           if (typeof document !== 'undefined') {
             document.documentElement.dir = saved.direction;
             document.documentElement.lang = saved.language;

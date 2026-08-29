@@ -1,8 +1,12 @@
 import { db } from '@/lib/db'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/auth-utils'
 
 // POST /api/admin/seed-subcategories — Seed all subcategories for the 23 parent categories
-export async function POST() {
+export async function POST(request: NextRequest) {
+  const authError = await requireAdmin(request)
+  if (authError) return authError
+
   try {
     const subcategories = [
       // cookware - أواني الطبخ

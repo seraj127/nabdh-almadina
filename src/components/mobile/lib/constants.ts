@@ -11,19 +11,8 @@ export const APP_VERSION = '1.9'; // Must match versionName in android/app/build
 // â”€â”€â”€ Capacitor Platform Detection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const isNative = typeof window !== 'undefined' && !window.location.protocol.startsWith('http');
 
-// â”€â”€â”€ Offline Users for Fallback Authentication â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// These users are available when the API server is unreachable (e.g., APK mode)
-// Passwords are stored in plaintext for offline comparison (dev only)
-export const OFFLINE_USERS = [
-  { phone: '+218910000000', password: 'admin123', name: 'ظ…ط¯ظٹط± ط§ظ„ظ†ط¸ط§ظ…', role: 'admin' as const, loyaltyTier: 'platinum', loyaltyPoints: 0, walletBalance: 0 },
-  { phone: '+218911234567', password: '123456', name: 'ط£ط­ظ…ط¯ ظ…ط­ظ…ط¯', role: 'customer' as const, loyaltyTier: 'silver', loyaltyPoints: 150, walletBalance: 0 },
-  { phone: '+218917654321', password: '123456', name: 'ظپط§ط·ظ…ط© ط¹ظ„ظٹ', role: 'customer' as const, loyaltyTier: 'gold', loyaltyPoints: 500, walletBalance: 50 },
-];
+// Offline authentication is server-only. No credentials are embedded in the client.
 
-// Backward compatibility alias
-export const DEMO_USER = { phone: '+218911234567', password: '123456', name: 'ط£ط­ظ…ط¯ ظ…ط­ظ…ط¯' };
-
-// â”€â”€â”€ Local Categories for Offline Fallback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const LOCAL_CATEGORIES: Category[] = [
   { id: 'cmocboa8b0000mtchox0rocv3', nameAr: 'ط£ظˆط§ظ†ظٹ ط§ظ„ط·ط¨ط®', nameEn: 'Cookware', slug: 'cookware', icon: 'ًںچ³', image: '/categories/cookware.png', productCount: 7 },
   { id: 'cmocboa8c0003mtch8sbbvg8d', nameAr: 'ط£ط¯ظˆط§طھ ط§ظ„ظ…ط·ط¨ط®', nameEn: 'Kitchen Tools', slug: 'kitchen-tools', icon: 'ًں¥„', image: '/categories/kitchen-tools.png', productCount: 7 },

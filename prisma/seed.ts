@@ -944,7 +944,11 @@ async function main() {
   // ─── Admin User ─────────────────────────────────────────────
   console.log('👤 Creating admin user...')
 
-  const adminHash = await bcrypt.hash('admin123', 10)
+  const seedAdminPassword = process.env.SEED_ADMIN_PASSWORD
+  if (!seedAdminPassword || seedAdminPassword.length < 16) {
+    throw new Error('SEED_ADMIN_PASSWORD must be provided and at least 16 characters long')
+  }
+  const adminHash = await bcrypt.hash(seedAdminPassword, 12)
   const admin = await db.user.create({
     data: {
       phone: '+218910000000',

@@ -8,16 +8,14 @@ export const dynamic = "force-dynamic";
 
 const VALID_VENDOR_TYPES = ['RETAILER', 'BRAND_OFFICIAL', 'LOCAL_ARTISAN', 'SERVICE_PROVIDER'];
 
-/** Extract userId from JWT cookie or x-user-id header for audit logging */
+/** Extract userId for audit logging — session identity wins over the spoofable header */
 async function getAuthUserId(request: NextRequest): Promise<string | undefined> {
-  const headerId = request.headers.get('x-user-id');
-  if (headerId) return headerId;
   const token = request.cookies.get('admin_session')?.value;
   if (token) {
     const payload = await verifySessionToken(token);
     if (payload) return payload.userId;
   }
-  return undefined;
+  return request.headers.get('x-user-id') || undefined;
 }
 
 // ─── GET: Get single vendor with full details ───

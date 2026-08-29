@@ -155,23 +155,6 @@ export function AdminLogin() {
           </Button>
         </form>
 
-        {/* Hint — only visible in development */}
-        {process.env.NODE_ENV === 'development' && (
-        <div
-          className="mt-6 p-3 rounded-lg text-xs"
-          style={{
-            backgroundColor: `${COLORS.active}10`,
-            border: `1px solid ${COLORS.active}20`,
-            color: COLORS.muted,
-          }}
-        >
-          <p className="font-medium mb-1" style={{ color: COLORS.active }}>
-            {isRTL ? '💡 معلومات الدخول الافتراضية:' : '💡 Default credentials:'}
-          </p>
-          <p>{isRTL ? 'الهاتف: 0910000000' : 'Phone: 0910000000'}</p>
-          <p>{isRTL ? 'كلمة المرور: admin123 (أول تسجيل دخول يعيّن كلمة المرور)' : 'Password: admin123 (first login sets the password)'}</p>
-        </div>
-        )}
       </div>
     </div>
   );

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { serializeDecimal } from '@/lib/serialize';
+import { serializePublicShippingCompany } from '@/lib/shipping-company-utils';
+import { requireAdmin } from '@/lib/auth-utils';
 
 export const dynamic = "force-dynamic";
 
 // ─── CORS Headers ─────────────────────────────────────────
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'null',
   'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
@@ -43,7 +44,7 @@ export async function GET(
       );
     }
 
-    const serialized = serializeDecimal(company);
+    const serialized = serializePublicShippingCompany(company);
 
     return NextResponse.json(
       { company: serialized },
@@ -63,6 +64,9 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -115,7 +119,7 @@ export async function PUT(
       },
     });
 
-    const serialized = serializeDecimal(company);
+    const serialized = serializePublicShippingCompany(company);
 
     return NextResponse.json(
       { company: serialized },
@@ -135,6 +139,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const { id } = await params;
 
@@ -153,7 +160,7 @@ export async function DELETE(
       data: { isActive: false },
     });
 
-    const serialized = serializeDecimal(company);
+    const serialized = serializePublicShippingCompany(company);
 
     return NextResponse.json(
       { company: serialized, message: 'Shipping company deactivated successfully' },

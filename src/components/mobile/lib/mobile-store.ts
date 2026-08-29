@@ -1,10 +1,9 @@
 import { create } from 'zustand';
 import { useUIStore } from '@/stores/ui-store';
 import { saveLocal, loadLocal } from './helpers';
-import { DEMO_USER, OFFLINE_USERS, LOCAL_PRODUCTS, LOCAL_CATEGORIES } from './constants';
+import { LOCAL_PRODUCTS, LOCAL_CATEGORIES } from './constants';
 import { normalizeProduct } from './helpers';
 import { normalizePhone } from '@/lib/phone-utils';
-import bcrypt from 'bcryptjs';
 import type { Screen, Tab, Product, Category, Subcategory, MobileUser, Address, Review, Order } from './types';
 
 // Re-export normalizePhone from shared phone-utils for convenience
@@ -345,61 +344,25 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, password, platform: 'mobile' }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok && data.user) {
         const u: MobileUser = { id: data.user.id, name: data.user.name, phone: toLocalPhone(data.user.phone), email: data.user.email, avatar: data.user.avatar, role: data.user.role };
         set({ user: u, screen: 'main', loading: false, isReturningUser: data.isReturningUser || false });
         saveLocal('mobile_user', u);
         useUIStore.getState().login({ id: u.id, name: u.name, phone: u.phone, email: u.email, avatar: u.avatar, role: u.role });
-        // Fetch user profile, addresses, orders, and delivery zones after login
         get().fetchUserProfile();
         get().fetchAddresses();
         get().fetchOrders();
         get().fetchDeliveryZones();
-        // Merge guest favorites with user account (pull + reconcile + push)
         await get().fetchFavoritesFromServer();
-        // Sync cart with server (fetchFromServer merges guest items and pushes if needed)
         try {
           const { useCartStore } = await import('@/stores/cart-store');
           await useCartStore.getState().fetchFromServer();
-        } catch { /* silent */ }
+        } catch { /* non-critical background sync */ }
         return true;
       }
     } catch {
-      console.warn('Login API failed, checking offline fallback');
-    }
-    // Offline fallback: check all offline users (normalize phone for comparison)
-    const normalizedInput = normalizePhone(phone);
-    const offlineUser = OFFLINE_USERS.find((u) => normalizePhone(u.phone) === normalizedInput && u.password === password);
-    if (offlineUser) {
-      const u: MobileUser = {
-        id: offlineUser.role === 'admin' ? 'offline-admin-001' : `offline-${Date.now()}`,
-        name: offlineUser.name,
-        phone: toLocalPhone(offlineUser.phone),
-        role: offlineUser.role,
-      };
-      set({ user: u, screen: 'main', loading: false });
-      saveLocal('mobile_user', u);
-      useUIStore.getState().login({ id: u.id, name: u.name, phone: u.phone, email: undefined, avatar: undefined, role: u.role });
-      // Set loyalty data for offline users
-      if ('loyaltyPoints' in offlineUser) {
-        set({
-          loyaltyPoints: offlineUser.loyaltyPoints || 0,
-          loyaltyTier: offlineUser.loyaltyTier || 'bronze',
-          walletBalance: offlineUser.walletBalance || 0,
-        });
-      }
-      return true;
-    }
-    // Check locally registered users (use bcrypt.compare for hashed passwords)
-    const localUsers = loadLocal<Array<{ phone: string; password: string; name: string; email?: string }>>('mobile_local_users') || [];
-    const localUser = localUsers.find((u) => normalizePhone(u.phone) === normalizePhone(phone));
-    if (localUser && await bcrypt.compare(password, localUser.password)) {
-      const u: MobileUser = { id: `local-${phone}`, name: localUser.name, phone: toLocalPhone(localUser.phone), email: localUser.email, role: 'customer' };
-      set({ user: u, screen: 'main', loading: false });
-      saveLocal('mobile_user', u);
-      useUIStore.getState().login({ id: u.id, name: u.name, phone: u.phone, email: u.email, avatar: undefined, role: u.role });
-      return true;
+      // The client never authenticates locally. The caller receives a normal failure.
     }
     set({ loading: false });
     return false;
@@ -412,7 +375,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, phone, password, email }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok && data.user) {
         const u: MobileUser = { id: data.user.id, name: data.user.name, phone: toLocalPhone(data.user.phone), email: data.user.email, role: data.user.role };
         set({ user: u, screen: 'main', loading: false });
@@ -421,27 +384,15 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
         return true;
       }
     } catch {
-      console.warn('Register API failed, using offline fallback');
+      // Registration requires the server; no local account is created.
     }
-    // Offline fallback: store user locally (hash password before storing)
-    const localUsers = loadLocal<Array<{ phone: string; password: string; name: string; email?: string }>>('mobile_local_users') || [];
-    if (localUsers.some((u) => normalizePhone(u.phone) === normalizePhone(phone))) {
-      set({ loading: false });
-      return false;
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    localUsers.push({ phone, password: hashedPassword, name, email });
-    saveLocal('mobile_local_users', localUsers);
-    const u: MobileUser = { id: `local-${phone}`, name, phone, email, role: 'customer' };
-    set({ user: u, screen: 'main', loading: false });
-    saveLocal('mobile_user', u);
-    useUIStore.getState().login({ id: u.id, name: u.name, phone: u.phone, email: u.email, avatar: undefined, role: u.role });
-    return true;
+    set({ loading: false });
+    return false;
   },
   logout: async () => {
     const user = get().user;
     // Call logout API to revoke server-side session
-    if (user && !user.id.startsWith('local-')) {
+    if (user) {
       try {
         await fetch('/api/auth/logout', {
           method: 'POST',
@@ -1094,7 +1045,7 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
       const res = await fetch('/api/favorites');
       if (res.ok) {
         const data = await res.json();
-        const serverFavorites = Array.from(new Set(
+        const serverFavorites: string[] = Array.from(new Set(
           (data.favorites || []).map((f: { productId: string }) => f.productId)
         ));
         const localFavorites = get().favorites;
@@ -1142,7 +1093,13 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
 
 // ─── Initialize store from localStorage ───────────────────────────────
 export function initMobileStore() {
-  const savedUser = loadLocal<MobileUser>('mobile_user');
+  const savedUserCandidate = loadLocal<MobileUser>('mobile_user');
+  const savedUser = savedUserCandidate && !savedUserCandidate.id.startsWith('local-') && !savedUserCandidate.id.startsWith('offline-')
+    ? savedUserCandidate
+    : null;
+  if (!savedUser && savedUserCandidate && typeof window !== 'undefined') {
+    try { localStorage.removeItem('mobile_user'); } catch { /* ignore */ }
+  }
   // Convert +218 to 0 in case user was saved with international format
   if (savedUser && savedUser.phone && savedUser.phone.startsWith('+218')) {
     savedUser.phone = savedUser.phone.replace(/^\+218/, '0');
@@ -1206,6 +1163,13 @@ export function initMobileStore() {
     useMobileStore.getState().fetchFavoritesFromServer();
     // Sync cart with server (dynamic import to avoid circular dep)
     import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
+    // Sync unread notification count from server immediately
+    fetch(`/api/notifications?userId=${initUser.id}&limit=1`).then(async (res) => {
+      if (res.ok) {
+        const data = await res.json();
+        useMobileStore.getState().setUnreadNotificationCount(data.unreadCount || 0);
+      }
+    }).catch(() => {});
   }
 
   // Background refresh every 5 minutes — ensures admin changes are reflected
@@ -1228,6 +1192,10 @@ export function initMobileStore() {
         useMobileStore.getState().fetchFavoritesFromServer();
         // Keep cart in sync with the web store
         import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
+        // Sync unread notification count
+        fetch(`/api/notifications?userId=${user.id}&limit=1`).then(async (res) => {
+          if (res.ok) { const d = await res.json(); useMobileStore.getState().setUnreadNotificationCount(d.unreadCount || 0); }
+        }).catch(() => {});
       }
     }, 5 * 60 * 1000);
 
@@ -1240,6 +1208,10 @@ export function initMobileStore() {
       if (fu && !fu.id.startsWith('local-')) {
         useMobileStore.getState().fetchFavoritesFromServer();
         import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
+        // Sync notification count on fast sync too
+        fetch(`/api/notifications?userId=${fu.id}&limit=1`).then(async (res) => {
+          if (res.ok) { const d = await res.json(); useMobileStore.getState().setUnreadNotificationCount(d.unreadCount || 0); }
+        }).catch(() => {});
       }
     }, 60 * 1000);
 
@@ -1268,6 +1240,10 @@ export function initMobileStore() {
             useMobileStore.getState().fetchFavoritesFromServer();
             // Also sync cart from server
             import('@/stores/cart-store').then((m) => m.useCartStore.getState().fetchFromServer()).catch(() => {});
+            // Sync unread notification count on resume
+            fetch(`/api/notifications?userId=${user.id}&limit=1`).then(async (res) => {
+              if (res.ok) { const d = await res.json(); useMobileStore.getState().setUnreadNotificationCount(d.unreadCount || 0); }
+            }).catch(() => {});
           }
           _refreshIntervalId = setInterval(() => {
             useMobileStore.getState().refreshData();

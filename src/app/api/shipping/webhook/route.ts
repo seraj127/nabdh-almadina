@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createHmac } from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { db } from '@/lib/db';
 import { getCarrierAdapter } from '@/lib/shipping-integration';
 
@@ -13,9 +13,12 @@ function validateWebhookSignature(
   secret: string
 ): boolean {
   try {
-    // Simple HMAC-based validation
+    // Simple HMAC-based validation, constant-time comparison
     const expected = createHmac('sha256', secret).update(rawBody).digest('hex');
-    return signature === expected;
+    const sigBuf = Buffer.from(signature);
+    const expBuf = Buffer.from(expected);
+    if (sigBuf.length !== expBuf.length) return false;
+    return timingSafeEqual(sigBuf, expBuf);
   } catch {
     return false;
   }
@@ -105,7 +108,15 @@ export async function POST(request: NextRequest) {
     }
 
     // ─── Validate webhook signature if carrier has API integration ───
-    if (carrier.isIntegrated && carrier.apiSecret && carrierSignature) {
+    // Integrated carriers with a configured secret MUST send a valid signature
+    // (previously the check was skipped entirely when the header was absent).
+    if (carrier.isIntegrated && carrier.apiSecret) {
+      if (!carrierSignature) {
+        return NextResponse.json(
+          { error: 'Missing webhook signature' },
+          { status: 401, headers: corsHeaders }
+        );
+      }
       const rawBody = JSON.stringify(body);
       const isValid = validateWebhookSignature(
         resolvedCarrierCode,

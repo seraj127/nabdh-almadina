@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
     // If userId is provided, check purchase status & review eligibility
     let canReview = false;
     let hasReviewed = false;
-    let existingReview = null;
+    let existingReview: any = null;
 
     if (userId) {
       // ✅ Only buyers with delivered orders can review
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
         rating,
         title: title ?? null,
         comment: comment ?? null,
-        images: images ? JSON.stringify(images) : null,
+        images: images ? (images as any) : undefined,
         isVerified,
       },
       create: {
@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
         rating,
         title: title ?? null,
         comment: comment ?? null,
-        images: images ? JSON.stringify(images) : null,
+        images: images ? (images as any) : undefined,
         isVerified,
       },
     });

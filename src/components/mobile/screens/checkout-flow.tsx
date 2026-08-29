@@ -694,7 +694,6 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
         );
         if (!alreadySaved) {
           addAddress({
-            id: '',
             label: 'منزل',
             address: address.streetAddress.trim(),
             city: address.city,
@@ -804,7 +803,6 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
           );
           if (!alreadySaved) {
             addAddress({
-              id: '',
               label: 'منزل',
               address: address.streetAddress.trim(),
               city: address.city,

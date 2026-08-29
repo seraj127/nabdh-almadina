@@ -1,8 +1,12 @@
 import { db } from '@/lib/db'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/auth-utils'
 
 // GET /api/admin/seed-categories — Seed 4 new product categories
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authError = await requireAdmin(request)
+  if (authError) return authError
+
   try {
     // Get the max sortOrder among existing categories to determine next sortOrder
     const maxSortCategory = await db.category.findFirst({

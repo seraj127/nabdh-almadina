@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@/generated/sqlite'
 
 export const dynamic = "force-dynamic";
 
@@ -93,15 +93,17 @@ export async function GET(request: NextRequest) {
     const transformedProducts = products.map((product) => {
       const { price, comparePrice, costPrice, weight, rating, images, ...rest } = product
 
-      // Parse images field (may be JSON string) to array
+      // Parse images field (may be JSON string or array)
       let parsedImages: string[] = []
-      try {
-        if (images) {
+      if (typeof images === 'string') {
+        try {
           const parsed = JSON.parse(images)
-          parsedImages = Array.isArray(parsed) ? parsed : [parsed]
+          parsedImages = Array.isArray(parsed) ? parsed.map(String) : [String(parsed)]
+        } catch {
+          parsedImages = [images]
         }
-      } catch {
-        parsedImages = images ? [images] : []
+      } else if (Array.isArray(images)) {
+        parsedImages = (images as any[]).map(String)
       }
 
       return {

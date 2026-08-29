@@ -7,14 +7,14 @@ import { verifySessionToken } from '@/lib/jwt-session';
 export const dynamic = "force-dynamic";
 
 async function getAuthUserId(request: NextRequest): Promise<string | undefined> {
-  const headerId = request.headers.get('x-user-id');
-  if (headerId) return headerId;
+  // Prefer the verified session identity — the x-user-id header is client-controlled
+  // and only kept as a legacy fallback for audit metadata.
   const token = request.cookies.get('admin_session')?.value;
   if (token) {
     const payload = await verifySessionToken(token);
     if (payload) return payload.userId;
   }
-  return undefined;
+  return request.headers.get('x-user-id') || undefined;
 }
 
 const VALID_TYPES = ['in', 'out', 'reservation', 'release', 'adjustment', 'return'];

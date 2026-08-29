@@ -344,7 +344,7 @@ export async function createShipmentForOrder(
         shippingCost: result.shippingCost || Number(serialized.basePrice),
         codAmount: shipmentParams.codAmount || 0,
         estimatedDelivery: result.estimatedDelivery,
-        carrierData: result.carrierData ? JSON.stringify(result.carrierData) : null,
+        carrierData: result.carrierData ? (result.carrierData as any) : undefined,
         lastSyncedAt: new Date(),
         logs: {
           create: {

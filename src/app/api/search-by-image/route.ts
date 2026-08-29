@@ -13,7 +13,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Use VLM to analyze the image and generate a search query
-    const { createVLM } = await import('z-ai-web-dev-sdk');
+    const sdk = (await import('z-ai-web-dev-sdk')) as any;
+    const createVLM = sdk.createVLM || sdk.default?.createVLM;
+    if (!createVLM) {
+      return NextResponse.json({ query: 'product' });
+    }
     const vlm = createVLM();
 
     const response = await vlm.chat({

@@ -1,0 +1,71 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/components/mobile/**'
+      - 'src/lib/**'
+      - 'src/stores/**'
+      - 'android/**'
+      - 'capacitor.config.json'
+      - 'next.config.ts'
+      - 'package.json'
+      - 'prisma/**'
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup JDK 21 (required by Capacitor 8)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate Prisma client
+        run: npx prisma generate --schema prisma/schema.postgresql.prisma
+
+      - name: Build static export (mobile)
+        env:
+          BUILD_MOBILE: '1'
+        run: npx next build
+
+      - name: Sync Capacitor android
+        run: npx cap sync android
+
+      - name: Build release APK
+        working-directory: android
+        env:
+          NABD_KEYSTORE_PASSWORD: ${{ secrets.NABD_KEYSTORE_PASSWORD }}
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ github.run_number }}
+          name: APK build #${{ github.run_number }}
+          files: android/app/build/outputs/apk/release/app-release.apk
+          generate_release_notes: true

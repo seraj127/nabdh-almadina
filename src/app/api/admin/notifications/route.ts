@@ -270,10 +270,15 @@ export async function PATCH(request: NextRequest) {
       const readData = unreadNotifs.map(n => ({ userId: adminId, notificationId: n.id }));
 
       if (readData.length > 0) {
-        await db.notificationReadStatus.createMany({
-          data: readData,
-          skipDuplicates: true,
-        });
+        await Promise.all(
+          readData.map((d) =>
+            db.notificationReadStatus.upsert({
+              where: { userId_notificationId: { userId: d.userId, notificationId: d.notificationId } },
+              update: {},
+              create: d,
+            })
+          )
+        );
       }
 
       // Create audit log

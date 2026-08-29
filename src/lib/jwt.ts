@@ -9,13 +9,17 @@ import { SignJWT, jwtVerify } from 'jose';
  * Only import jwt-session.ts from server-side code (API routes, middleware).
  */
 
-// JWT Secret — fail hard in production if not set
+// JWT Secret — must always be provided. A hardcoded fallback would let
+// anyone forge session tokens (including admin) on any misconfigured deploy.
 function getJwtSecret() {
   const secret = process.env.JWT_SECRET;
-  if (!secret && process.env.NODE_ENV === 'production') {
-    throw new Error('FATAL: JWT_SECRET environment variable is not set. Refusing to start with insecure defaults in production.');
+  if (!secret || secret.length < 32) {
+    throw new Error(
+      'FATAL: JWT_SECRET environment variable is missing or shorter than 32 chars. ' +
+      'Refusing to run with insecure defaults. Generate one with: node -e "console.log(require(\'crypto\').randomBytes(48).toString(\'hex\'))"'
+    );
   }
-  return new TextEncoder().encode(secret || 'nabd-al-madina-dev-secret-key-change-in-production-2024');
+  return new TextEncoder().encode(secret);
 }
 
 const JWT_SECRET = getJwtSecret();

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { serializeDecimal } from '@/lib/serialize';
+import { requireAdmin } from '@/lib/auth-utils';
 
 export const dynamic = "force-dynamic";
 
 // ─── CORS Headers ─────────────────────────────────────────
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': process.env.NEXT_PUBLIC_APP_URL || 'null',
   'Access-Control-Allow-Methods': 'PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
@@ -21,6 +22,9 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string; zoneId: string }> }
 ) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const { id, zoneId } = await params;
     const body = await request.json();
@@ -74,6 +78,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string; zoneId: string }> }
 ) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   try {
     const { id, zoneId } = await params;
 

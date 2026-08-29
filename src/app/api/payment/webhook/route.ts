@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'crypto';
 import { db } from '@/lib/db';
 
 export const dynamic = "force-dynamic";
+
+function safeEqual(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+}
 
 // POST /api/payment/webhook
 // Webhook from payment gateway
@@ -17,9 +25,14 @@ export async function POST(request: NextRequest) {
       signature?: string;
     };
 
-    // Validate webhook signature if configured
+    // Validate webhook signature — fail closed if the secret is not configured.
+    // Without this, anyone could mark transactions paid by omitting the signature.
     const webhookSecret = process.env.PAYMENT_WEBHOOK_SECRET;
-    if (webhookSecret && signature !== webhookSecret) {
+    if (!webhookSecret) {
+      console.error('[Payment Webhook] PAYMENT_WEBHOOK_SECRET is not set — rejecting request (fail closed)');
+      return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
+    }
+    if (!signature || typeof signature !== 'string' || !safeEqual(signature, webhookSecret)) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { statSync, existsSync, createReadStream, mkdirSync } from 'fs';
 import { join } from 'path';
 import { execSync } from 'child_process';
+import { requireAdmin } from '@/lib/auth-utils';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -32,8 +33,11 @@ function formatBytes(bytes: number): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
-// ─── GET: Download with resume support ──────────────────
+// ─── GET: Download with resume support (admin only) ─────
 export async function GET(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get('type') || 'source';
 
@@ -172,8 +176,11 @@ export async function GET(request: NextRequest) {
   });
 }
 
-// ─── POST: Create/rebuild the archive on demand ────────
+// ─── POST: Create/rebuild the archive on demand (admin only)
 export async function POST(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get('type') || 'full';
 
@@ -233,8 +240,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// ─── HEAD: Get file info without downloading ────────────
+// ─── HEAD: Get file info without downloading (admin only)
 export async function HEAD(request: NextRequest) {
+  const authError = await requireAdmin(request);
+  if (authError) return authError;
+
   const searchParams = request.nextUrl.searchParams;
   const type = searchParams.get('type') || 'source';
 

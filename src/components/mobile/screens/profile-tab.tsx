@@ -1192,6 +1192,8 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
+  const isAdmin = user?.role === 'admin';
+
   // ═══════════════════════════════════════════════════════════════════
   // MAIN PROFILE VIEW
   // ═══════════════════════════════════════════════════════════════════
@@ -1292,7 +1294,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
       {/* ═══════════════════════════════════════════════════════════════
           2. COMPACT QUICK STATS (3 pills overlapping header)
           ═══════════════════════════════════════════════════════════════ */}
-      {user && (
+      {user && !isAdmin && (
         <div className="px-4 -mt-3 relative z-20">
           <div
             className="flex items-center justify-between rounded-2xl px-2 py-2"

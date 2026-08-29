@@ -125,7 +125,7 @@ export const useFavoritesStore = create<FavoritesState>()((set, get) => ({
       if (res.ok) {
         const data = await res.json();
         if (data.favorites && Array.isArray(data.favorites)) {
-          const serverIds = Array.from(new Set(
+          const serverIds: string[] = Array.from(new Set(
             data.favorites.map((f: { productId: string }) => f.productId)
           ));
           const localIds = get().favoriteIds;

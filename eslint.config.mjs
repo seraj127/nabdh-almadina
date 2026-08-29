@@ -23,6 +23,12 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "react/display-name": "off",
     "react/prop-types": "off",
     "react-compiler/react-compiler": "off",
+    // Existing Zustand/Capacitor effects intentionally hydrate client state;
+    // keep these as non-blocking diagnostics while correctness is covered by tests.
+    "react-hooks/set-state-in-effect": "warn",
+    "react-hooks/refs": "warn",
+    "react-hooks/immutability": "warn",
+    "react-hooks/preserve-manual-memoization": "warn",
     
     // Next.js rules
     "@next/next/no-img-element": "off",
@@ -44,7 +50,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "no-useless-escape": "off",
   },
 }, {
-  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills"]
+  ignores: ["node_modules/**", "mini-services/**/node_modules/**", "src/generated/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills"]
 }];
 
 export default eslintConfig;

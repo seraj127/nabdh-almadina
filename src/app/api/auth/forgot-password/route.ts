@@ -19,6 +19,30 @@ function isRateLimited(key: string): boolean {
   return false
 }
 
+// ─── Verify/reset attempt limiter: max 5 code guesses per phone per 10 min ──
+// Prevents brute-forcing the 6-digit OTP through the verify/reset actions
+// (the send limiter above only throttles outgoing codes, not guesses).
+const verifyAttempts = new Map<string, { count: number; resetAt: number }>()
+const MAX_VERIFY_ATTEMPTS = 5
+const VERIFY_WINDOW_MS = 10 * 60 * 1000
+
+/** Returns true if the attempt is allowed; false once the phone is locked out. */
+function consumeVerifyAttempt(phone: string): boolean {
+  const now = Date.now()
+  const attempt = verifyAttempts.get(phone)
+  if (!attempt || now > attempt.resetAt) {
+    verifyAttempts.set(phone, { count: 1, resetAt: now + VERIFY_WINDOW_MS })
+    return true
+  }
+  if (attempt.count >= MAX_VERIFY_ATTEMPTS) return false
+  attempt.count++
+  return true
+}
+
+function clearVerifyAttempts(phone: string) {
+  verifyAttempts.delete(phone)
+}
+
 // ─── Generate a 6-digit OTP code ────────────────────────────────────────
 function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString()
@@ -114,6 +138,15 @@ export async function POST(request: NextRequest) {
 
       const normalizedPhone = phone.trim()
 
+      if (!consumeVerifyAttempt(normalizedPhone)) {
+        // Lockout reached: invalidate all outstanding OTPs for this phone
+        await db.oTPVerification.deleteMany({ where: { phone: normalizedPhone } })
+        return NextResponse.json(
+          { success: false, error: 'Too many attempts. Please request a new code later.' },
+          { status: 429 }
+        )
+      }
+
       // First: try unverified OTP (normal flow)
       let otpRecord = await db.oTPVerification.findFirst({
         where: {
@@ -154,6 +187,8 @@ export async function POST(request: NextRequest) {
         })
       }
 
+      clearVerifyAttempts(normalizedPhone)
+
       return NextResponse.json({
         success: true,
         message: 'Code verified successfully',
@@ -176,10 +211,20 @@ export async function POST(request: NextRequest) {
         )
       }
 
+      const normalizedPhone = phone.trim()
+
+      if (!consumeVerifyAttempt(normalizedPhone)) {
+        await db.oTPVerification.deleteMany({ where: { phone: normalizedPhone } })
+        return NextResponse.json(
+          { success: false, error: 'Too many attempts. Please request a new code later.' },
+          { status: 429 }
+        )
+      }
+
       // Check if OTP was verified
       const otpRecord = await db.oTPVerification.findFirst({
         where: {
-          phone,
+          phone: normalizedPhone,
           code,
           verified: true,
           expiresAt: { gt: new Date(Date.now() - 10 * 60 * 1000) }, // 10 min window after verify
@@ -195,7 +240,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Find user by phone
-      const user = await db.user.findUnique({ where: { phone } })
+      const user = await db.user.findUnique({ where: { phone: normalizedPhone } })
       if (!user) {
         return NextResponse.json(
           { success: false, error: 'No account found with this phone number' },
@@ -217,6 +262,8 @@ export async function POST(request: NextRequest) {
       await db.oTPVerification.delete({
         where: { id: otpRecord.id },
       })
+
+      clearVerifyAttempts(normalizedPhone)
 
       return NextResponse.json({
         success: true,

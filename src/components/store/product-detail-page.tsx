@@ -36,6 +36,10 @@ import {
   Maximize2,
   Eye,
   Info,
+  AlertTriangle,
+  Flame,
+  Sparkles,
+  Sun,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -97,15 +101,11 @@ const ATTR_ICONS: Record<string, typeof Palette> = {
   style: Eye,
   النمط: Eye,
   الطراز: Eye,
-  season: SunIcon,
-  الموسم: SunIcon,
+  season: Sun,
+  الموسم: Sun,
   pattern: Layers,
   النقش: Layers,
 };
-
-function SunIcon(props: React.SVGProps<SVGSVGElement> & { size?: number }) {
-  return <Star {...props} />;
-}
 
 // ─── Zoom Hook ─────────────────────────────────────────────────────────
 function useImageZoom(containerRef: React.RefObject<HTMLDivElement | null>) {
@@ -486,7 +486,8 @@ export function ProductDetailPage() {
       }
       // Handle object values (e.g. countryOfOrigin, finish, warranty)
       else if (typeof val === 'object' && val !== null) {
-        displayValue = isAr ? (val.nameAr || val.ar || val.name || JSON.stringify(val)) : (val.nameEn || val.en || val.name || JSON.stringify(val));
+        const objVal = val as Record<string, any>;
+        displayValue = isAr ? (objVal.nameAr || objVal.ar || objVal.name || JSON.stringify(objVal)) : (objVal.nameEn || objVal.en || objVal.name || JSON.stringify(objVal));
       }
       else {
         displayValue = String(val);

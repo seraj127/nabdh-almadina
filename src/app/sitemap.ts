@@ -84,7 +84,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }))
   } catch (error) {
-    console.error('[SITEMAP] Failed to fetch categories:', error)
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[SITEMAP] Categories unavailable during local build:', error)
+    }
   }
 
   // ─── Dynamic product pages ─────────────────────────────────────────
@@ -103,7 +105,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: product.isFeatured ? 0.8 : 0.6,
     }))
   } catch (error) {
-    console.error('[SITEMAP] Failed to fetch products:', error)
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[SITEMAP] Products unavailable during local build:', error)
+    }
   }
 
   return [...staticPages, ...categoryPages, ...productPages]

@@ -123,10 +123,15 @@ export async function POST(request: NextRequest) {
         .map(id => ({ userId, notificationId: id }))
 
       if (toInsert.length > 0) {
-        await db.notificationReadStatus.createMany({
-          data: toInsert,
-          skipDuplicates: true,
-        })
+        await Promise.all(
+          toInsert.map((d) =>
+            db.notificationReadStatus.upsert({
+              where: { userId_notificationId: { userId: d.userId, notificationId: d.notificationId } },
+              update: {},
+              create: d,
+            })
+          )
+        );
       }
 
       return NextResponse.json({
@@ -139,15 +144,20 @@ export async function POST(request: NextRequest) {
     if (notificationIds && Array.isArray(notificationIds) && notificationIds.length > 0) {
       // Mark only the specified notifications as read for this user
       const data = notificationIds.map(id => ({ userId, notificationId: id }))
-      const result = await db.notificationReadStatus.createMany({
-        data,
-        skipDuplicates: true,
-      })
+      await Promise.all(
+        data.map((d) =>
+          db.notificationReadStatus.upsert({
+            where: { userId_notificationId: { userId: d.userId, notificationId: d.notificationId } },
+            update: {},
+            create: d,
+          })
+        )
+      );
 
       return NextResponse.json({
         success: true,
-        markedCount: result.count,
-        message: `${result.count} notification(s) marked as read`,
+        markedCount: data.length,
+        message: `${data.length} notification(s) marked as read`,
       })
     }
 

@@ -2,6 +2,9 @@
 
 # dependencies
 node_modules
+
+# Prisma-generated clients (binary engines) — regenerated via `prisma generate` in build
+/src/generated/
 /.pnp
 .pnp.*
 .yarn/*
@@ -30,8 +33,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files and signing material — never commit real values
+.env
+.env.local
+.env.*
+!.env.example
+*.jks
+*.keystore
 
 # vercel
 .vercel
@@ -77,8 +85,7 @@ splash-screen.png
 store-check.png
 store-final.png
 
-# Lock files (project uses bun)
-package-lock.json
+# Keep package-lock.json committed for reproducible npm/CI installs.
 
 # Expo/RN build artifacts
 public/_expo/
@@ -100,4 +107,3 @@ FILES-DETAIL.md
 MOBILE_APP_STATE.md
 gen-log.txt
 .vercel
-.env*

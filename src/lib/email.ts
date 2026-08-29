@@ -155,7 +155,7 @@ export async function sendEmail(
         subjectEn: subject,
         template,
         status: 'pending',
-        data: data ? JSON.stringify(data) : null,
+        data: data ? (data as any) : undefined,
       },
     });
 

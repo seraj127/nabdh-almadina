@@ -37,9 +37,10 @@ export async function addFavorite(userId: string, productId: string): Promise<{ 
   const product = await db.product.findUnique({ where: { id: productId } });
   if (!product) throw new FavoriteError('المنتج غير موجود', 404);
 
-  await db.favoriteItem.createMany({
-    data: [{ userId, productId }],
-    skipDuplicates: true,
+  await db.favoriteItem.upsert({
+    where: { userId_productId: { userId, productId } },
+    update: {},
+    create: { userId, productId },
   });
 
   return { isFavorite: true, productId };

@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { db } from '@/lib/db'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
@@ -22,39 +25,42 @@ export async function GET() {
 
     // Test Supabase Auth connection
     const supabase = await createClient()
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
+    const { error: authError } = await supabase.auth.getSession()
 
-    // Test database connection via Prisma
-    let dbStatus = 'unknown'
+    // Test database connection via Prisma — report a boolean only,
+    // raw driver errors can leak hostnames/credentials internals.
+    let dbConnected = false
     try {
-      const { PrismaClient } = await import('@prisma/client')
-      const prisma = new PrismaClient({
-        datasourceUrl: supabaseDbUrl,
-      })
-      await prisma.$queryRaw`SELECT 1`
-      await prisma.$disconnect()
-      dbStatus = 'connected'
+      await db.$queryRaw`SELECT 1`
+      dbConnected = true
     } catch (dbError) {
-      dbStatus = `error: ${dbError instanceof Error ? dbError.message : 'Unknown error'}`
+      console.error('[SUPABASE_TEST_CONNECTION] DB error:', dbError)
     }
 
-    const isConnected = dbStatus === 'connected'
+    if (!dbConnected) {
+      return NextResponse.json({
+        success: false,
+        message: '⚠️ تم الاتصال بـ Supabase Auth لكن قاعدة البيانات لم تستجب. راجع سجلات الخادم للتفاصيل.',
+        details: {
+          auth: authError ? 'error' : 'connected (no active session - normal)',
+          database: 'error',
+        },
+      })
+    }
 
     return NextResponse.json({
-      success: isConnected,
-      message: isConnected
-        ? '✅ تم الاتصال بـ Supabase بنجاح! قاعدة البيانات تعمل بشكل صحيح.'
-        : `⚠️ تم الاتصال بـ Supabase Auth لكن قاعدة البيانات لم تستجب: ${dbStatus}`,
+      success: true,
+      message: '✅ تم الاتصال بـ Supabase بنجاح! قاعدة البيانات تعمل بشكل صحيح.',
       details: {
-        auth: authError ? `error: ${authError.message}` : 'connected (no active session - normal)',
-        database: dbStatus,
-        url: supabaseUrl,
+        auth: authError ? 'error' : 'connected (no active session - normal)',
+        database: 'connected',
       },
     })
   } catch (error) {
+    console.error('[SUPABASE_TEST_CONNECTION]', error)
     return NextResponse.json({
       success: false,
-      message: `❌ فشل الاتصال بـ Supabase: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`,
+      message: '❌ فشل الاتصال بـ Supabase. راجع سجلات الخادم للتفاصيل.',
     }, { status: 500 })
   }
 }
