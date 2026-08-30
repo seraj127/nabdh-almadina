@@ -107,3 +107,4 @@ FILES-DETAIL.md
 MOBILE_APP_STATE.md
 gen-log.txt
 .vercel
+.env*

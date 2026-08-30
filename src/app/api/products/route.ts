@@ -27,6 +27,9 @@ export async function GET(request: NextRequest) {
     // Active filter: only active by default, "all" for admin
     if (isActiveParam !== 'all') {
       where.isActive = true
+      // Hide sold-out products from the public storefront (availableStock = stock - reservedStock).
+      // Admin ("all") can still see and manage products that are out of stock.
+      where.stock = { gt: 0 }
     }
 
     // Search filter
@@ -89,8 +92,15 @@ export async function GET(request: NextRequest) {
       },
     })
 
+    // Hide any product that is effectively sold out (stock - reservedStock <= 0)
+    // as an extra safety layer on top of the SQL WHERE (stock > 0) filter.
+    const availableProducts = products.filter(
+      (product) =>
+        (Number(product.stock) || 0) - (Number(product.reservedStock) || 0) > 0
+    )
+
     // Transform products: convert Decimal to number, parse images JSON string
-    const transformedProducts = products.map((product) => {
+    const transformedProducts = availableProducts.map((product) => {
       const { price, comparePrice, costPrice, weight, rating, images, ...rest } = product
 
       // Parse images field (may be JSON string or array)
