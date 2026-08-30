@@ -106,6 +106,10 @@ export function NotificationsScreen() {
   const darkMode = useMobileStore((s) => s.darkMode);
   const direction = language === 'ar' ? 'rtl' : 'ltr';
   const isRtl = direction === 'rtl';
+  // Use the server-wide unread count (same source as the web NotificationBell)
+  // so the badge stays in sync with the site instead of counting from a limited local list.
+  const unreadCount = useMobileStore((s) => s.unreadNotificationCount);
+  const setUnreadNotificationCount = useMobileStore((s) => s.setUnreadNotificationCount);
 
   const [notifications, setNotifications] = useState<ApiNotification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -124,6 +128,8 @@ export function NotificationsScreen() {
         const data = await res.json();
         if (!cancelled) {
           setNotifications(data.notifications || []);
+          // Keep the badge in sync with the site-wide unread count
+          setUnreadNotificationCount(data.unreadCount || 0);
         }
       } catch {
         if (!cancelled) setNotifications([]);
@@ -147,11 +153,6 @@ export function NotificationsScreen() {
     return notifications;
   }, [notifications, activeFilter]);
 
-  const unreadCount = useMemo(
-    () => notifications.filter((n) => !n.isRead).length,
-    [notifications]
-  );
-
   // ─── Handlers ───
   const handleBack = () => {
     useMobileStore.getState().setScreen('main');
@@ -162,6 +163,7 @@ export function NotificationsScreen() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
     );
+    setUnreadNotificationCount(Math.max(0, unreadCount - 1));
     try {
       await fetch('/api/notifications', {
         method: 'POST',
@@ -174,6 +176,7 @@ export function NotificationsScreen() {
   const markAllAsRead = async () => {
     if (!user) return;
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    setUnreadNotificationCount(0);
     try {
       await fetch('/api/notifications', {
         method: 'POST',
