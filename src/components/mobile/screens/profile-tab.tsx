@@ -1396,9 +1396,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
 
       <div className="px-4 mt-4 space-y-4">
         {/* ═════════════════════════════════════════════════════════════
-            3. WALLET & POINTS SECTION
+            3. WALLET & POINTS SECTION (hidden for admin)
             ═════════════════════════════════════════════════════════════ */}
-        {user && (
+        {user && !isAdmin && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1451,9 +1451,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
         )}
 
         {/* ═════════════════════════════════════════════════════════════
-            4. QUICK ACTIONS (4 round buttons)
+            4. QUICK ACTIONS (4 round buttons) - hidden for admin
             ═════════════════════════════════════════════════════════════ */}
-        {user && (
+        {user && !isAdmin && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1487,11 +1487,12 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
         )}
 
         {/* ═════════════════════════════════════════════════════════════
-            5. GROUPED MENU LISTS (3 sections)
+            5. GROUPED MENU LISTS (3 sections) - My Account hidden for admin
             ═════════════════════════════════════════════════════════════ */}
         {user && (
           <div className="space-y-3">
-            {/* ─── My Account ─── */}
+            {/* ─── My Account (hidden for admin) ─── */}
+            {!isAdmin && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1535,6 +1536,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 </motion.button>
               ))}
             </motion.div>
+            )}
 
             {/* ─── Settings ─── */}
             <motion.div
@@ -1638,7 +1640,8 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
               </motion.button>
             </motion.div>
 
-            {/* ─── Support ─── */}
+            {/* ─── Support (hidden for admin) ─── */}
+            {!isAdmin && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1681,13 +1684,14 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 );
               })}
             </motion.div>
+            )}
           </div>
         )}
 
         {/* ═════════════════════════════════════════════════════════════
-            6. EXPANDABLE ORDERS SECTION
+            6. EXPANDABLE ORDERS SECTION (hidden for admin)
             ═════════════════════════════════════════════════════════════ */}
-        {user && (
+        {user && !isAdmin && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1795,9 +1799,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
         )}
 
         {/* ═════════════════════════════════════════════════════════════
-            9. INVITE FRIENDS CARD
+            9. INVITE FRIENDS CARD (hidden for admin)
             ═════════════════════════════════════════════════════════════ */}
-        {user && (
+        {user && !isAdmin && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
