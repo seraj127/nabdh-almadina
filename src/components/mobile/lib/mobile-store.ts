@@ -523,11 +523,25 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
           ...cat,
           children: cat.children || [],
         }));
-        const dbBySlug = new Map(dbCats.map((c) => [c.slug, c]));
+        const localBySlug = new Map(LOCAL_CATEGORIES.map((c) => [c.slug, c]));
+        const localByNameAr = new Set(LOCAL_CATEGORIES.map((c) => c.nameAr));
+        // Start with the curated local catalog (clean names, icons, presentation).
+        // Enrich each with DB children/productCount when a matching slug exists.
         const categories = LOCAL_CATEGORIES.map((local) => {
-          const db = dbBySlug.get(local.slug);
+          const db = dbCats.find((c) => c.slug === local.slug);
           return db ? { ...db, ...local, children: db.children || [] } : local;
         });
+        // Union: append any DB category not already covered by the local catalog
+        // (e.g. phones-tablets, home-appliances, beauty-cosmetics, sports-fitness,
+        // books-stationery, food-beverages, furniture-home). Skip duplicate slugs,
+        // and skip DB categories that merely re-route an existing local category
+        // under a different slug with the same Arabic name (e.g. mens-clothing ==
+        // fashion-men) to avoid showing the same section twice.
+        for (const db of dbCats) {
+          if (!localBySlug.has(db.slug) && !localByNameAr.has(db.nameAr)) {
+            categories.push({ ...db, children: db.children || [] });
+          }
+        }
         set({ categories });
         return;
       }
