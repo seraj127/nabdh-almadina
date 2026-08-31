@@ -862,73 +862,46 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
     const el = catScrollerRef.current;
     if (el) {
       catPosRef.current = 0;
-      el.style.transform = `translate3d(0px, 0, 0)`;
+      el.scrollLeft = 0;
     }
   }, [categories.length]);
 
-  // Category scroll by arrow — with boundary clamping
+  // Category scroll by arrow — using native scrollLeft (works with overflow-x-auto)
   const handleCatScroll = useCallback((direction: 'left' | 'right') => {
     const el = catScrollerRef.current;
     if (!el) return;
     const scrollAmount = 200; // px
     const rtl = catRtlRef.current;
     const delta = direction === 'right' ? (rtl ? scrollAmount : -scrollAmount) : (rtl ? -scrollAmount : scrollAmount);
-    const newPos = catPosRef.current + delta;
-    // Clamp: don't scroll past content bounds
-    const parentWidth = el.parentElement?.clientWidth ?? 0;
-    const contentWidth = el.scrollWidth;
-    const maxScroll = 0;
-    const minScroll = -(contentWidth - parentWidth);
-    catPosRef.current = Math.max(minScroll, Math.min(maxScroll, newPos));
-    el.style.transition = 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    el.style.transform = `translate3d(${catPosRef.current}px, 0, 0)`;
-    // Remove transition after animation
-    setTimeout(() => {
-      el.style.transition = '';
-    }, 400);
+    const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
+    const newPos = Math.max(0, Math.min(maxScroll, el.scrollLeft + delta));
+    el.scrollTo({ left: newPos, behavior: 'smooth' });
   }, []);
 
-  // Category touch/drag handlers — with boundary clamping
+  // Category touch/drag handlers — using native scrollLeft
   const handleCatTouchStart = useCallback((e: React.TouchEvent) => {
     catDraggingRef.current = true;
-    catDragStartXRef.current = e.touches[0].clientX;
-    catDragStartPosRef.current = catPosRef.current;
     const el = catScrollerRef.current;
-    if (el) el.style.transition = '';
+    if (!el) return;
+    catDragStartXRef.current = e.touches[0].clientX;
+    catDragStartPosRef.current = el.scrollLeft;
   }, []);
 
   const handleCatTouchMove = useCallback((e: React.TouchEvent) => {
     if (!catDraggingRef.current) return;
-    const dx = e.touches[0].clientX - catDragStartXRef.current;
-    const newPos = catDragStartPosRef.current + dx;
     const el = catScrollerRef.current;
-    if (el) {
-      // Clamp position within bounds
-      const parentWidth = el.parentElement?.clientWidth ?? 0;
-      const contentWidth = el.scrollWidth;
-      const maxScroll = 0;
-      const minScroll = -(contentWidth - parentWidth);
-      catPosRef.current = Math.max(minScroll, Math.min(maxScroll, newPos));
-      el.style.transform = `translate3d(${catPosRef.current}px, 0, 0)`;
-    }
+    if (!el) return;
+    const dx = e.touches[0].clientX - catDragStartXRef.current;
+    const rtl = catRtlRef.current;
+    const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
+    let newPos = catDragStartPosRef.current + (rtl ? -dx : dx);
+    newPos = Math.max(0, Math.min(maxScroll, newPos));
+    el.scrollLeft = newPos;
+    e.preventDefault();
   }, []);
 
   const handleCatTouchEnd = useCallback(() => {
     catDraggingRef.current = false;
-    // Snap to nearest boundary if out of bounds
-    const el = catScrollerRef.current;
-    if (el) {
-      const parentWidth = el.parentElement?.clientWidth ?? 0;
-      const contentWidth = el.scrollWidth;
-      const maxScroll = 0;
-      const minScroll = -(contentWidth - parentWidth);
-      if (catPosRef.current > maxScroll || catPosRef.current < minScroll) {
-        catPosRef.current = Math.max(minScroll, Math.min(maxScroll, catPosRef.current));
-        el.style.transition = 'transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        el.style.transform = `translate3d(${catPosRef.current}px, 0, 0)`;
-        setTimeout(() => { el.style.transition = ''; }, 300);
-      }
-    }
   }, []);
 
   // Pause best-seller auto-scroll animations when app is backgrounded
@@ -1100,9 +1073,9 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
             {/* Category Items Track */}
             <div className="overflow-hidden flex-1 mx-5" dir={direction}>
               <div
-                className="flex gap-3 py-1 px-2"
+                className="flex gap-3 py-1 px-2 overflow-x-auto scrollbar-hide overscroll-x-contain"
                 ref={catScrollerRef}
-                style={{ willChange: 'transform', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
+                style={{ willChange: 'transform', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 onTouchStart={handleCatTouchStart}
                 onTouchMove={handleCatTouchMove}
                 onTouchEnd={handleCatTouchEnd}
