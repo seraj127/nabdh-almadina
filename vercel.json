@@ -1,5 +1,5 @@
 {
   "framework": "nextjs",
-  "buildCommand": "BUILD_MOBILE=1 CAPACITOR_SERVER_URL=https://nabdh-almadina.vercel.app next build",
+  "buildCommand": "npm run build:vercel",
   "installCommand": "npm install"
 }
