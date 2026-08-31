@@ -870,12 +870,19 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
   const handleCatScroll = useCallback((direction: 'left' | 'right') => {
     const el = catScrollerRef.current;
     if (!el) return;
-    const scrollAmount = 200; // px
+    const scrollAmount = 220; // px per arrow press
     const rtl = catRtlRef.current;
-    const delta = direction === 'right' ? (rtl ? scrollAmount : -scrollAmount) : (rtl ? -scrollAmount : scrollAmount);
-    const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
-    const newPos = Math.max(0, Math.min(maxScroll, el.scrollLeft + delta));
-    el.scrollTo({ left: newPos, behavior: 'smooth' });
+    // In RTL, the scrollable container origin is on the right, so native
+    // scrollLeft is negative. Use scrollBy (relative) which the WebView handles
+    // correctly for both directions, instead of computing an absolute position
+    // that assumes a positive scrollLeft range.
+    if (rtl) {
+      const delta = direction === 'right' ? -scrollAmount : scrollAmount;
+      el.scrollBy({ left: delta, behavior: 'smooth' });
+    } else {
+      const delta = direction === 'right' ? scrollAmount : -scrollAmount;
+      el.scrollBy({ left: delta, behavior: 'smooth' });
+    }
   }, []);
 
   // Category touch/drag handlers — using native scrollLeft
@@ -1080,7 +1087,9 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
                 onTouchMove={handleCatTouchMove}
                 onTouchEnd={handleCatTouchEnd}
               >
-                {categories.map((cat) => (
+                {categories.filter(
+                  (cat, i, arr) => arr.findIndex((c) => c.id === cat.id || (c.nameAr && c.nameAr === cat.nameAr)) === i
+                ).map((cat) => (
                   <div
                     key={cat.id}
                     className="flex flex-col items-center min-w-[68px] group cursor-pointer"
