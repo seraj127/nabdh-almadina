@@ -36,17 +36,13 @@ function CategoryIcon3D({ cat, size = 44 }: { cat: { slug?: string; id?: string;
     <svg width={size} height={size} viewBox="0 0 14 20" fill="none" xmlns="http://www.w3.org/2000/svg"
       className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-translate-y-0.5"
       style={{ filter: `drop-shadow(0 4px 6px ${c1}66) drop-shadow(0 1px 2px rgba(0,0,0,0.25))` }}>
-      <defs>
-        <linearGradient id="nb3d-g" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={c0} /><stop offset="100%" stopColor={c1} />
-        </linearGradient>
-      </defs>
       <g transform="translate(3.5,0) scale(0.78)">
-        <rect x="1" y="0" width="12" height="20" rx="2.4" fill="url(#nb3d-g)" />
-        <rect x="2.8" y="2.6" width="8.4" height="14.6" rx="1.6" fill="#0b1020" />
-        <circle cx="7" cy="19.7" r="0.95" fill="#fff" />
+        <rect x="1" y="0" width="12" height="20" rx="2.4" fill={c0} />
+        <rect x="1.9" y="0.9" width="10.2" height="4.2" rx="1.6" fill={c1} />
+        <rect x="2.8" y="6" width="8.4" height="11.5" rx="1.5" fill={c1} />
+        <path d="M1.9 5.6 L12.1 5.6" stroke="#ffffffc0" strokeWidth="0.9" strokeLinecap="round" />
+        <circle cx="7" cy="17.3" r="0.9" fill="#fff" />
       </g>
-      <path d="M3.5 3 C5.5 1.6 8.5 1.6 10.5 3" fill="none" stroke="#ffffff99" strokeWidth="0.9" strokeLinecap="round" />
     </svg>
   );
 }
