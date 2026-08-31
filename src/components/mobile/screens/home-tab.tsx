@@ -1131,9 +1131,14 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
           <h3 className="text-white font-bold text-sm">{t('mobile.home.todayOffers')}</h3>
           <p className="text-white/80 text-xs mt-0.5">{t('mobile.home.offersDesc')}</p>
         </div>
-        <div className="bg-white/25 rounded-xl px-3 py-1.5 relative z-10 backdrop-blur-sm">
+        <button
+          type="button"
+          onClick={() => setActiveTab('categories')}
+          aria-label={language === 'ar' ? 'تسوق الآن' : 'Shop now'}
+          className="bg-white/25 rounded-xl px-3 py-1.5 relative z-10 backdrop-blur-sm cursor-pointer"
+        >
           <span className="text-white text-xs font-bold">{t('mobile.home.shop')}</span>
-        </div>
+        </button>
       </div>
 
       {/* Offers Section with Countdown */}
