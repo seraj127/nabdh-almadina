@@ -1087,9 +1087,11 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
                 onTouchMove={handleCatTouchMove}
                 onTouchEnd={handleCatTouchEnd}
               >
-                {categories.filter(
-                  (cat, i, arr) => arr.findIndex((c) => c.id === cat.id || (c.nameAr && c.nameAr === cat.nameAr)) === i
-                ).map((cat) => (
+                {categories.filter((cat, i, arr) => {
+                  const DUP_KITCHEN = ['kitchen-tools', 'serving-ware', 'preparation-tools'];
+                  if (DUP_KITCHEN.includes(cat.slug)) return false;
+                  return arr.findIndex((c) => c.id === cat.id || (c.nameAr && c.nameAr === cat.nameAr)) === i;
+                }).map((cat) => (
                   <div
                     key={cat.id}
                     className="flex flex-col items-center min-w-[68px] group cursor-pointer"
