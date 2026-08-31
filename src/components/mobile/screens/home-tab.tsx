@@ -867,7 +867,8 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
   }, [categories.length]);
 
   // Category scroll by arrow — using native scrollLeft (works with overflow-x-auto)
-  const handleCatScroll = useCallback((direction: 'left' | 'right') => {
+  const handleCatScroll = useCallback((direction: 'left' | 'right', e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
     const el = catScrollerRef.current;
     if (!el) return;
     const scrollAmount = 220; // px per arrow press
@@ -876,13 +877,12 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
     // scrollLeft is negative. Use scrollBy (relative) which the WebView handles
     // correctly for both directions, instead of computing an absolute position
     // that assumes a positive scrollLeft range.
-    if (rtl) {
-      const delta = direction === 'right' ? -scrollAmount : scrollAmount;
-      el.scrollBy({ left: delta, behavior: 'smooth' });
-    } else {
-      const delta = direction === 'right' ? scrollAmount : -scrollAmount;
-      el.scrollBy({ left: delta, behavior: 'smooth' });
-    }
+    // Use instant (auto) movement on the X axis only and explicitly preserve the
+    // current vertical top, so the page does not vibrate when tapping an arrow.
+    const delta = direction === 'right'
+      ? (rtl ? -scrollAmount : scrollAmount)
+      : (rtl ? scrollAmount : -scrollAmount);
+    el.scrollBy({ left: delta, top: 0, behavior: 'auto' });
   }, []);
 
   // Category touch/drag handlers — using native scrollLeft
@@ -1069,7 +1069,7 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
             {/* Left Arrow — overlaid on left side */}
             <motion.button
               whileTap={{ scale: 0.85 }}
-              onClick={() => handleCatScroll('left')}
+              onClick={(e) => handleCatScroll('left', e)}
               className="absolute left-0 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/90 dark:bg-[#1E2A42]/90 shadow-md border border-gray-200/60 dark:border-gray-700/40 backdrop-blur-sm"
               style={{ transform: 'translateX(-2px)' }}
               aria-label={language === 'ar' ? 'تمرير لليمين' : 'Scroll right'}
@@ -1110,7 +1110,7 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
             {/* Right Arrow — overlaid on right side */}
             <motion.button
               whileTap={{ scale: 0.85 }}
-              onClick={() => handleCatScroll('right')}
+              onClick={(e) => handleCatScroll('right', e)}
               className="absolute right-0 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/90 dark:bg-[#1E2A42]/90 shadow-md border border-gray-200/60 dark:border-gray-700/40 backdrop-blur-sm"
               style={{ transform: 'translateX(2px)' }}
               aria-label={language === 'ar' ? 'تمرير لليسار' : 'Scroll left'}
