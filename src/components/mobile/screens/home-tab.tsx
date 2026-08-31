@@ -19,30 +19,38 @@ import {
 
 function CategoryIcon3D({ cat, size = 44 }: { cat: { slug?: string; id?: string; nameEn?: string; icon?: string }; size?: number }) {
   const h = [cat.slug, cat.id, cat.nameEn].filter(Boolean).join(' ').toLowerCase();
-  const pairs: Array<[RegExp, [string, string]]> = [
-    [/phone|mobile/, ['#60a5fa', '#1d4ed8']], [/appliance|riger|fridge/, ['#f59e0b', '#92400e']],
-    [/cosmetic/, ['#ec4899', '#9d174d']], [/sport/, ['#22c55e', '#166534']], [/book/, ['#a855f7', '#6b21a8']],
-    [/food/, ['#f97316', '#c2410c']], [/furniture/, ['#f59e0b', '#92400e']], [/fashion|cloth/, ['#f472b6', '#9d174d']],
-    [/cook|pan/, ['#9ca3af', '#111827']], [/baby/, ['#22d3ee', '#0e7490']], [/grocery/, ['#4ade80', '#166534']],
-    [/pet/, ['#eab308', '#854d0e']], [/toy/, ['#f0abfc', '#a21caf']], [/gift/, ['#f87171', '#be123c']],
-    [/electro|audio|head|tv/, ['#2dd4bf', '#0f766e']], [/clean/, ['#93c5fd', '#2563eb']], [/jewel/, ['#fde047', '#a16207']],
-    [/watch/, ['#93c5fd', '#1e3a8a']], [/kitchen/, ['#fbbf24', '#78350f']], [/shoe/, ['#fb923c', '#7c2d12']],
-    [/bag/, ['#2dd4bf', '#134e4a']], [/station/, ['#c084fc', '#7c3aed']],
+  const defs = [
+    { re: /phone|mobile/, c0: '#60a5fa', c1: '#1d4ed8', body: <><rect x="4" y="0" width="14" height="22" rx="2.6" fill="#60a5fa" /><rect x="5.2" y="1.4" width="11.6" height="16.2" rx="1.6" fill="#1d4ed8" /><circle cx="11" cy="20.2" r="0.8" fill="#fff" /><rect x="7" y="3" width="8" height="11" rx="1" fill="#93c5fd" /></> },
+    { re: /riger|fridge|appliance/, c0: '#f59e0b', c1: '#92400e', body: <><rect x="2" y="0" width="18" height="22" rx="2.4" fill="#f59e0b" /><rect x="2" y="0" width="18" height="10.5" rx="2" fill="#fbbf24" /><g fill="#92400e"><rect x="4" y="2.4" width="14" height="2.2" rx="1" /><rect x="4" y="6" width="14" height="2.6" rx="1" /><rect x="3.2" y="12.6" width="15.6" height="2.6" rx="1" /><rect x="3.2" y="16.8" width="15.6" height="2.6" rx="1" /></g></> },
+    { re: /cosmetic/, c0: '#ec4899', c1: '#9d174d', body: <><rect x="6" y="3" width="10" height="15" rx="3" fill="#ec4899" /><rect x="6.5" y="0" width="9" height="4" rx="2" fill="#9d174d" /><circle cx="11" cy="10.5" r="3" fill="#fdf2f8" /><circle cx="11" cy="10.5" r="1.6" fill="#ec4899" /></> },
+    { re: /sport/, c0: '#22c55e', c1: '#166534', body: <><circle cx="11" cy="11" r="8" fill="#22c55e" /><circle cx="11" cy="11" r="6.4" fill="none" stroke="#fff" strokeWidth="2" /><circle cx="11" cy="11" r="1.8" fill="#fff" /></> },
+    { re: /book/, c0: '#a855f7', c1: '#6b21a8', body: <><path d="M5 1 h12 v20 h-12 z" fill="#6b21a8" /><rect x="5.8" y="2.2" width="10.4" height="17" rx="0.8" fill="#a855f7" /><g stroke="#e9d5ff" strokeWidth="1"><line x1="5" y1="2" x2="5" y2="22" /></g><rect x="6.6" y="4" width="8" height="1.2" rx="0.6" fill="#e9d5ff" /><rect x="6.6" y="7" width="8" height="1.2" rx="0.6" fill="#e9d5ff" /></> },
+    { re: /food/, c0: '#f97316', c1: '#c2410c', body: <><path d="M2 8 h18 l-1.4 8 h-15.2 z" fill="#f97316" /><rect x="3.4" y="5" width="3.2" height="3.4" rx="1" fill="#fff" /><rect x="8.4" y="5" width="3.2" height="3.4" rx="1" fill="#fff" /><rect x="13.4" y="5" width="3.2" height="3.4" rx="1" fill="#fff" /></> },
+    { re: /furniture/, c0: '#f59e0b', c1: '#92400e', body: <><rect x="4" y="6" width="14" height="4" rx="1.2" fill="#92400e" /><rect x="6" y="10" width="10" height="9" rx="1.4" fill="#f59e0b" /><rect x="7" y="11.6" width="8" height="6" rx="1" fill="#fde68a" /></> },
+    { re: /fashion|cloth/, c0: '#f472b6', c1: '#9d174d', body: <><path d="M6 2 L4 7 L8 8 L11 4 L14 8 L18 7 L16 2 L11 4.6 Z" fill="#f472b6" /><path d="M4 7 L2.6 20 h5 v-6 h6.8 v6 h5 L18 7 L14 8 L11 4 Z" fill="#9d174d" /></> },
+    { re: /cook|pan/, c0: '#9ca3af', c1: '#111827', body: <><rect x="1.5" y="5" width="15" height="4" rx="1" fill="#111827" /><path d="M16.5 7 l4 -2" stroke="#111827" strokeWidth="1.6" /><path d="M3 9 v8 h12 v-8 z" fill="#9ca3af" /><rect x="5" y="6" width="8" height="2" rx="1" fill="#e5e7eb" /></> },
+    { re: /baby/, c0: '#22d3ee', c1: '#0e7490', body: <><circle cx="11" cy="9" r="6.5" fill="#22d3ee" /><path d="M4.5 9 h1.8 M15.7 9 h1.8" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" /><rect x="3.5" y="11" width="15" height="6.5" rx="3" fill="#0e7490" /><circle cx="5.5" cy="8.4" r="1.4" fill="#fff" /><circle cx="16.5" cy="8.4" r="1.4" fill="#fff" /><circle cx="9" cy="9" r="1" fill="#0284c7" /><circle cx="13" cy="9" r="1" fill="#0284c7" /></> },
+    { re: /grocery/, c0: '#4ade80', c1: '#166534', body: <><path d="M5 2 h14 l-1.6 13 h-11 z" fill="#166534" /><rect x="3.5" y="7" width="17" height="7" rx="2.4" fill="#4ade80" /><g stroke="#166534" strokeWidth="1.2"><line x1="6" y1="9" x2="6" y2="12" /><line x1="9" y1="9" x2="9" y2="12" /><line x1="12" y1="9" x2="12" y2="12" /><line x1="15" y1="9" x2="15" y2="12" /></g></> },
+    { re: /pet/, c0: '#eab308', c1: '#854d0e', body: <><circle cx="6.5" cy="10" r="4.5" fill="#eab308" /><circle cx="15.5" cy="10" r="4.5" fill="#eab308" /><ellipse cx="11" cy="13" rx="7" ry="6" fill="#854d0e" /><circle cx="8.2" cy="9" r="1" fill="#fff" /><circle cx="13.8" cy="9" r="1" fill="#fff" /></> },
+    { re: /toy/, c0: '#f0abfc', c1: '#a21caf', body: <><circle cx="11" cy="8" r="5.5" fill="#f0abfc" /><path d="M7 10 h8 v6 a4 4 0 0 1 -8 0 z" fill="#a21caf" /><g stroke="#fff" strokeWidth="1.4"><line x1="9" y1="8" x2="9" y2="8" /><line x1="13" y1="8" x2="13" y2="8" /></g><circle cx="9" cy="8" r="0.7" fill="#7c3aed" /><circle cx="13" cy="8" r="0.7" fill="#7c3aed" /><path d="M9.6 12 q1.4 -1 2.8 0" stroke="#fff" strokeWidth="1" fill="none" /></> },
+    { re: /gift/, c0: '#f87171', c1: '#be123c', body: <><rect x="3" y="8" width="16" height="12" rx="1.6" fill="#be123c" /><rect x="5" y="8" width="12" height="2.4" rx="1" fill="#f87171" /><path d="M6 10 l0 10 z" /><rect x="9" y="10" width="4" height="10" fill="#fca5a5" /><path d="M11 8 C11 1 5 2 6 6 C6.8 3 11 3 11 8 Z" fill="#f87171" /></> },
+    { re: /electro|audio|head|tv/, c0: '#2dd4bf', c1: '#0f766e', body: <><rect x="2" y="3" width="18" height="12" rx="1.6" fill="#2dd4bf" /><rect x="2" y="3" width="18" height="1.6" fill="#0f766e" /><rect x="10.5" y="1" width="1" height="2.4" fill="#0f766e" /><rect x="4" y="15" width="16" height="0" /><path d="M4.5 15.4 h13 l-1.6 3 h-9.8 z" fill="#0f766e" /></> },
+    { re: /clean/, c0: '#93c5fd', c1: '#2563eb', body: <><circle cx="11" cy="9" r="6" fill="#93c5fd" /><circle cx="11" cy="9" r="3" fill="#2563eb" /><rect x="10" y="14" width="2" height="6" fill="#2563eb" /><path d="M8 15 h6" stroke="#2563eb" strokeWidth="1.4" /></> },
+    { re: /jewel/, c0: '#fde047', c1: '#a16207', body: <><path d="M4 4 h14 l3 4 h-20 z" fill="#a16207" /><path d="M2.4 8 h19.2 l-3 10 h-13.2 z" fill="#fde047" /><circle cx="11" cy="13" r="2.2" fill="#fef08a" /></> },
+    { re: /watch/, c0: '#93c5fd', c1: '#1e3a8a', body: <><rect x="6.5" y="1.5" width="9" height="3.4" rx="1" fill="#1e3a8a" /><rect x="6.5" y="17" width="9" height="3.4" rx="1" fill="#1e3a8a" /><circle cx="11" cy="11" r="7" fill="#1e3a8a" /><circle cx="11" cy="11" r="5.4" fill="#bfdbfe" /><g stroke="#1e3a8a" strokeWidth="1.2" strokeLinecap="round"><line x1="11" y1="8" x2="11" y2="11" /><line x1="11" y1="11" x2="13" y2="12" /></g></> },
+    { re: /kitchen/, c0: '#fbbf24', c1: '#78350f', body: <><path d="M4 2 h8 l-1 20 h-6 z" fill="#78350f" /><rect x="14" y="5" width="4" height="15" rx="2" fill="#fbbf24" /><rect x="4.2" y="3" width="7.6" height="4" rx="1" fill="#d97706" /></> },
+    { re: /shoe/, c0: '#fb923c', c1: '#7c2d12', body: <><path d="M2 16 h14 l4 -7 h-2 l-3 5 h-13 z" fill="#7c2d12" /><path d="M6 15 l2 -5 h6 l2 3 v2 z" fill="#fb923c" /><rect x="2" y="17" width="20" height="1.6" rx="0.8" fill="#7c2d12" /></> },
+    { re: /bag/, c0: '#2dd4bf', c1: '#134e4a', body: <><path d="M5 8 h12 v11 a1.6 1.6 0 0 1 -1.6 1.6 h-8.8 a1.6 1.6 0 0 1 -1.6 -1.6 z" fill="#134e4a" /><path d="M7.5 8 v-2 a3.5 3.5 0 0 1 7 0 v2" fill="none" stroke="#2dd4bf" strokeWidth="2" /><rect x="4" y="5" width="14" height="4.4" rx="1.4" fill="#2dd4bf" /></> },
+    { re: /station/, c0: '#c084fc', c1: '#7c3aed', body: <><rect x="8" y="2" width="6" height="19" rx="1.6" fill="#c084fc" /><rect x="3.5" y="8" width="15" height="3.4" rx="1.6" fill="#7c3aed" /><rect x="5" y="4" width="12" height="1.8" rx="0.9" fill="#f3e8ff" /></> },
   ];
-  let color: [string, string] = ['#8b5cf6', '#5b21b6'];
-  for (const [re, c] of pairs) if (re.test(h)) { color = c; break; }
-  const [c0, c1] = color;
+  let shape = defs.find((d) => d.re.test(h));
+  if (!shape) shape = defs[0];
   return (
-    <svg width={size} height={size} viewBox="0 0 14 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+    <svg width={size} height={size} viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"
       className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-translate-y-0.5"
-      style={{ filter: `drop-shadow(0 4px 6px ${c1}66) drop-shadow(0 1px 2px rgba(0,0,0,0.25))` }}>
-      <g transform="translate(3.5,0) scale(0.78)">
-        <rect x="1" y="0" width="12" height="20" rx="2.4" fill={c0} />
-        <rect x="1.9" y="0.9" width="10.2" height="4.2" rx="1.6" fill={c1} />
-        <rect x="2.8" y="6" width="8.4" height="11.5" rx="1.5" fill={c1} />
-        <path d="M1.9 5.6 L12.1 5.6" stroke="#ffffffc0" strokeWidth="0.9" strokeLinecap="round" />
-        <circle cx="7" cy="17.3" r="0.9" fill="#fff" />
-      </g>
+      style={{ filter: `drop-shadow(0 4px 6px ${shape.c1}66) drop-shadow(0 1px 2px rgba(0,0,0,0.25))` }}>
+      <rect x="0" y="0" width="22" height="22" rx="5" fill="#ffffff14" />
+      <g transform="translate(0.6,0.4) scale(0.92)">{shape.body}</g>
     </svg>
   );
 }
