@@ -17,47 +17,6 @@ import {
   Users, Clock,
 } from 'lucide-react';
 
-function CategoryIcon3D({ cat, size = 44 }: { cat: { slug?: string; id?: string; nameEn?: string; icon?: string }; size?: number }) {
-  const h = [cat.slug, cat.id, cat.nameEn].filter(Boolean).join(' ').toLowerCase();
-  const defs = [
-    { re: /phone|tablet|mobile|electronics/, c0: '#60a5fa', c1: '#1d4ed8', body: <><rect x="6" y="0" width="12" height="22" rx="2.6" fill="#60a5fa" /><rect x="7.2" y="1.4" width="9.6" height="15.4" rx="1.6" fill="#1d4ed8" /><rect x="8.4" y="3.2" width="7.2" height="11" rx="1" fill="#93c5fd" /><circle cx="12" cy="20" r="0.8" fill="#fff" /></> },
-    { re: /appliance|fridge|riger|electrical/, c0: '#f59e0b', c1: '#92400e', body: <><rect x="2" y="0" width="18" height="22" rx="2.4" fill="#f59e0b" /><rect x="2" y="0" width="18" height="11" rx="2" fill="#fbbf24" /><g fill="#92400e"><rect x="4" y="2.4" width="14" height="2.2" rx="1" /><rect x="4" y="6" width="14" height="2.6" rx="1" /><line x1="11" y1="13" x2="11" y2="19" stroke="#fff" strokeWidth="1.4" /></g></> },
-    { re: /beauty|cosmetic|perfume|oud/, c0: '#ec4899', c1: '#9d174d', body: <><rect x="7" y="3" width="11" height="16" rx="3" fill="#ec4899" /><rect x="8" y="0" width="9" height="4" rx="2" fill="#9d174d" /><circle cx="11.5" cy="10.5" r="3.2" fill="#fdf2f8" /><circle cx="11.5" cy="10.5" r="1.6" fill="#be185d" /></> },
-    { re: /sport|fitness/, c0: '#22c55e', c1: '#166534', body: <><circle cx="11" cy="10" r="7.5" fill="#22c55e" /><circle cx="11" cy="10" r="5.8" fill="none" stroke="#fff" strokeWidth="2" /><circle cx="11" cy="10" r="1.7" fill="#fff" /></> },
-    { re: /book|station/, c0: '#a855f7', c1: '#6b21a8', body: <><path d="M5 1 h12 v20 h-12 z" fill="#6b21a8" /><rect x="6" y="2.4" width="10" height="16.6" rx="0.8" fill="#a855f7" /><rect x="7" y="4.4" width="7.5" height="1.3" rx="0.6" fill="#e9d5ff" /><rect x="7" y="7.6" width="7.5" height="1.3" rx="0.6" fill="#e9d5ff" /></> },
-    { re: /food|beverage|grocer/, c0: '#f97316', c1: '#c2410c', body: <><path d="M3 7 h17 l-1.2 8 h-14.6 z" fill="#f97316" /><rect x="4.4" y="4.4" width="3" height="3" rx="1" fill="#fff" /><rect x="8.9" y="4.4" width="3" height="3" rx="1" fill="#fff" /><rect x="13.4" y="4.4" width="3" height="3" rx="1" fill="#fff" /><path d="M5 15 v5 M17 15 v5" stroke="#c2410c" strokeWidth="1.6" /></> },
-    { re: /furniture|home/, c0: '#f59e0b', c1: '#92400e', body: <><rect x="4" y="6" width="14" height="4" rx="1.2" fill="#92400e" /><rect x="5.5" y="10" width="11" height="9" rx="1.4" fill="#f59e0b" /><rect x="7" y="12" width="8" height="5.4" rx="1" fill="#fde68a" /></> },
-    { re: /fashion|cloth|apparel|fashion-men/, c0: '#f472b6', c1: '#9d174d', body: <><path d="M6 2 L4 7 L8 8 L11 4 L14 8 L18 7 L16 2 L11 4.6 Z" fill="#f472b6" /><path d="M4 7 L2.6 20 h5 v-6 h6.8 v6 h5 L18 7 L14 8 L11 4 Z" fill="#9d174d" /></> },
-    { re: /cook|cookware|pan|pot/, c0: '#9ca3af', c1: '#111827', body: <><rect x="2" y="5" width="15" height="4" rx="1" fill="#111827" /><path d="M17 7 l3.4 -2.4" stroke="#111827" strokeWidth="1.8" /><path d="M2.5 9 v8 h14 v-8 z" fill="#9ca3af" /><rect x="4.4" y="5.6" width="8" height="2.2" rx="1" fill="#e5e7eb" /></> },
-    { re: /table|plate|serving|dish/, c0: '#38bdf8', c1: '#0369a1', body: <><ellipse cx="11" cy="8" rx="8" ry="3.6" fill="#38bdf8" /><path d="M3 8 v4 a8 6 0 0 0 16 0 v-4 z" fill="#0ea5e9" /><ellipse cx="11" cy="8" rx="5.6" ry="2.4" fill="#bae6fd" /></> },
-    { re: /cup|glass|pitcher|drink/, c0: '#f472b6', c1: '#be185d', body: <><path d="M6 2 h10 l-1.4 14 a2 2 0 0 1 -2 1.8 h-3.2 a2 2 0 0 1 -2 -1.8 z" fill="#f472b6" /><path d="M4.6 2 h12.8" stroke="#be185d" strokeWidth="1.6" /><path d="M8 7 h6" stroke="#fff" strokeWidth="1.2" /></> },
-    { re: /preparation|knife|cutting|blender/, c0: '#38bdf8', c1: '#075985', body: <><path d="M13 2 L20 9 L14 15 L11 12 Z" fill="#94a3b8" /><rect x="2" y="14" width="3" height="6" rx="0.8" fill="#075985" /><path d="M3 12 c-2 2 0 6 0 6 c0 0 2 -4 0 -6 z" fill="#075985" /><line x1="11" y1="12" x2="15" y2="8" stroke="#075985" strokeWidth="1.6" /></> },
-    { re: /storage|container|organiz/, c0: '#4ade80', c1: '#166534', body: <><rect x="3" y="4" width="16" height="15" rx="2" fill="#4ade80" /><rect x="4.6" y="2" width="12.8" height="3" rx="1.2" fill="#166534" /><line x1="8" y1="9" x2="16" y2="9" stroke="#166534" strokeWidth="1.4" /></> },
-    { re: /footwear|shoe/, c0: '#fb923c', c1: '#7c2d12', body: <><path d="M3 14 h12 l4 -6 h-2.4 l-3 4 h-10.6 z" fill="#7c2d12" /><path d="M5 13 l2 -4 h6 l2 3 v2 z" fill="#fb923c" /><rect x="2.5" y="16" width="18.5" height="1.8" rx="0.9" fill="#7c2d12" /></> },
-    { re: /shirt|mens-top|mens-top|tops/, c0: '#38bdf8', c1: '#0e7490', body: <><path d="M7 2 L3 6 L7 8 L11 3 L15 8 L19 6 L15 2 L11 5 Z" fill="#38bdf8" /><path d="M3 6 V20 h16 V6 L15 8 L11 3 Z" fill="#0e7490" /></> },
-    { re: /dress|womens|abaya|hijab/, c0: '#f472b6', c1: '#9d174d', body: <><path d="M7 2 L11 2 L15 2 L19 6 L15 9 L13 7 V20 h-4 V7 L7 9 L3 6 Z" fill="#f472b6" /><path d="M13 7 V20 L15 20 L15 9 Z" fill="#9d174d" /></> },
-    { re: /kids|baby|child/, c0: '#fbbf24', c1: '#b45309', body: <><circle cx="11" cy="7" r="4" fill="#fbbf24" /><path d="M6 11 h10 v4 a6 5 0 0 1 -10 0 z" fill="#b45309" /></> },
-    { re: /mother/, c0: '#22d3ee', c1: '#0e7490', body: <><circle cx="11" cy="7" r="4.2" fill="#22d3ee" /><path d="M4 12 h14 v5 h-14 z" fill="#0e7490" /><path d="M2 12 a3 3 0 0 1 6 0" fill="#22d3ee" /></> },
-    { re: /clean|care|care-home/, c0: '#93c5fd', c1: '#2563eb', body: <><circle cx="11" cy="10" r="5.4" fill="#93c5fd" /><circle cx="11" cy="10" r="2.8" fill="#2563eb" /><line x1="11" y1="13" x2="11" y2="18" stroke="#2563eb" strokeWidth="1.6" /></> },
-    { re: /plant|garden|ornamental/, c0: '#4ade80', c1: '#166534', body: <><path d="M11 10 v9 M6 9 h10" stroke="#166534" strokeWidth="1.6" /><path d="M8 6 c0 -3 6 -3 6 0 c0 3 -6 3 -6 0 z" fill="#4ade80" /><path d="M4 6 a3 3 0 0 1 6 0 a3 3 0 0 1 -6 0 z" fill="#22c55e" /><path d="M12 6 a3 3 0 0 1 6 0 a3 3 0 0 1 -6 0 z" fill="#22c55e" /></> },
-    { re: /pet|animal/, c0: '#eab308', c1: '#854d0e', body: <><circle cx="7" cy="9" r="3.4" fill="#eab308" /><circle cx="15" cy="9" r="3.4" fill="#eab308" /><ellipse cx="11" cy="15" rx="7" ry="5.4" fill="#854d0e" /><circle cx="8.4" cy="8" r="0.9" fill="#fff" /><circle cx="13.6" cy="8" r="0.9" fill="#fff" /></> },
-    { re: /toy|children-toys/, c0: '#f0abfc', c1: '#a21caf', body: <><circle cx="11" cy="8" r="5" fill="#f0abfc" /><path d="M6.6 10 h8.8 v5 a4 4 0 0 1 -8.8 0 z" fill="#a21caf" /><line x1="9" y1="8" x2="9" y2="8" stroke="#7c3aed" strokeWidth="1.2" /><line x1="13" y1="8" x2="13" y2="8" stroke="#7c3aed" strokeWidth="1.2" /></> },
-    { re: /gift|gifts|antique/, c0: '#f87171', c1: '#be123c', body: <><rect x="3" y="9" width="16" height="10" rx="1.6" fill="#be123c" /><rect x="5" y="9" width="12" height="2.4" rx="1" fill="#f87171" /><rect x="10" y="9" width="2.4" height="10" fill="#fca5a5" /><path d="M11 9 C11 3 5 3 6.5 7 C7 5 11 3.5 11 9 Z" fill="#f87171" /></> },
-    { re: /wall|art|frame|decor/, c0: '#c084fc', c1: '#7c3aed', body: <><rect x="4" y="4" width="14" height="14" rx="1.4" fill="#7c3aed" /><rect x="6.4" y="6.4" width="9.2" height="9.2" fill="#c084fc" /><circle cx="10" cy="9" r="1.6" fill="#fff" /><path d="M7 13 l3 -3 4 4" stroke="#fff" strokeWidth="1.2" fill="none" /></> },
-    { re: /accessorie|watch|jewel|bag|wallet/, c0: '#fde047', c1: '#a16207', body: <><rect x="6" y="2" width="10" height="4" rx="1.2" fill="#a16207" /><rect x="6" y="16" width="10" height="4" rx="1.2" fill="#a16207" /><circle cx="11" cy="11" r="5.4" fill="#a16207" /><circle cx="11" cy="11" r="4" fill="#fde047" /><line x1="11" y1="9" x2="11" y2="12" stroke="#a16207" strokeWidth="1.2" /></> },
-  ];
-  let shape = defs[0];
-  for (const d of defs) if (d.re.test(h)) { shape = d; break; }
-  return (
-    <svg width={size} height={size} viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"
-      className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-translate-y-0.5"
-      style={{ filter: `drop-shadow(0 4px 6px ${shape.c1}66) drop-shadow(0 1px 2px rgba(0,0,0,0.25))` }}>
-      <rect x="0" y="0" width="22" height="22" rx="5" fill="#ffffff14" />
-      <g transform="translate(0.6,0.4) scale(0.92)">{shape.body}</g>
-    </svg>
-  );
-}
-
 // ═══════════════════════════════════════════════════════════════════════
 // TYPEWRITER - Isolated component to prevent parent re-renders
 // ═══════════════════════════════════════════════════════════════════════
@@ -1130,8 +1089,8 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
                       setActiveTab('categories');
                     }}
                   >
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center premium-icon-container transition-all group-hover:shadow-md group-hover:scale-105" >
-                      <CategoryIcon3D cat={cat} size={44} />
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl premium-icon-container transition-all group-hover:shadow-md group-hover:scale-105" >
+                      {cat.icon || '📦'}
                     </div>
                     <span className="text-[10px] text-[#3B4F63] dark:text-[#6B7F96] mt-1.5 text-center font-medium max-w-[60px] line-clamp-1">{language === 'ar' ? cat.nameAr : cat.nameEn}</span>
                   </div>
