@@ -17,6 +17,40 @@ import {
   Users, Clock,
 } from 'lucide-react';
 
+function CategoryIcon3D({ cat, size = 44 }: { cat: { slug?: string; id?: string; nameEn?: string; icon?: string }; size?: number }) {
+  const h = [cat.slug, cat.id, cat.nameEn].filter(Boolean).join(' ').toLowerCase();
+  const pairs: Array<[RegExp, [string, string]]> = [
+    [/phone|mobile/, ['#60a5fa', '#1d4ed8']], [/appliance|riger|fridge/, ['#f59e0b', '#92400e']],
+    [/cosmetic/, ['#ec4899', '#9d174d']], [/sport/, ['#22c55e', '#166534']], [/book/, ['#a855f7', '#6b21a8']],
+    [/food/, ['#f97316', '#c2410c']], [/furniture/, ['#f59e0b', '#92400e']], [/fashion|cloth/, ['#f472b6', '#9d174d']],
+    [/cook|pan/, ['#9ca3af', '#111827']], [/baby/, ['#22d3ee', '#0e7490']], [/grocery/, ['#4ade80', '#166534']],
+    [/pet/, ['#eab308', '#854d0e']], [/toy/, ['#f0abfc', '#a21caf']], [/gift/, ['#f87171', '#be123c']],
+    [/electro|audio|head|tv/, ['#2dd4bf', '#0f766e']], [/clean/, ['#93c5fd', '#2563eb']], [/jewel/, ['#fde047', '#a16207']],
+    [/watch/, ['#93c5fd', '#1e3a8a']], [/kitchen/, ['#fbbf24', '#78350f']], [/shoe/, ['#fb923c', '#7c2d12']],
+    [/bag/, ['#2dd4bf', '#134e4a']], [/station/, ['#c084fc', '#7c3aed']],
+  ];
+  let color: [string, string] = ['#8b5cf6', '#5b21b6'];
+  for (const [re, c] of pairs) if (re.test(h)) { color = c; break; }
+  const [c0, c1] = color;
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+      className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-translate-y-0.5"
+      style={{ filter: `drop-shadow(0 4px 6px ${c1}66) drop-shadow(0 1px 2px rgba(0,0,0,0.25))` }}>
+      <defs>
+        <linearGradient id="nb3d-g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={c0} /><stop offset="100%" stopColor={c1} />
+        </linearGradient>
+      </defs>
+      <g transform="translate(3.5,0) scale(0.78)">
+        <rect x="1" y="0" width="12" height="20" rx="2.4" fill="url(#nb3d-g)" />
+        <rect x="2.8" y="2.6" width="8.4" height="14.6" rx="1.6" fill="#0b1020" />
+        <circle cx="7" cy="19.7" r="0.95" fill="#fff" />
+      </g>
+      <path d="M3.5 3 C5.5 1.6 8.5 1.6 10.5 3" fill="none" stroke="#ffffff99" strokeWidth="0.9" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════════════
 // TYPEWRITER - Isolated component to prevent parent re-renders
 // ═══════════════════════════════════════════════════════════════════════
@@ -1089,8 +1123,8 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
                       setActiveTab('categories');
                     }}
                   >
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl premium-icon-container transition-all group-hover:shadow-md group-hover:scale-105" >
-                      {cat.icon || '📦'}
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center premium-icon-container transition-all group-hover:shadow-md group-hover:scale-105" >
+                      <CategoryIcon3D cat={cat} size={44} />
                     </div>
                     <span className="text-[10px] text-[#3B4F63] dark:text-[#6B7F96] mt-1.5 text-center font-medium max-w-[60px] line-clamp-1">{language === 'ar' ? cat.nameAr : cat.nameEn}</span>
                   </div>
