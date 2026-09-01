@@ -226,10 +226,10 @@ export function NotificationsView() {
   const summary = data?.summary ?? { total: 0, unread: 0, broadcast: 0, sentToday: 0 };
 
   const statCards = [
-    { label: t('admin.totalNotifications'), value: summary.total.toString(), icon: <Bell className="h-5 w-5" />, color: COLORS.active },
-    { label: t('admin.unread'), value: summary.unread.toString(), icon: <EyeOff className="h-5 w-5" />, color: COLORS.danger },
-    { label: t('admin.broadcast'), value: summary.broadcast.toString(), icon: <Megaphone className="h-5 w-5" />, color: COLORS.purple },
-    { label: t('admin.sentToday'), value: summary.sentToday.toString(), icon: <CheckCheck className="h-5 w-5" />, color: COLORS.success },
+    { label: t('admin.totalNotifications'), value: summary?.total?.toString() || '0', icon: <Bell className="h-5 w-5" />, color: COLORS.active },
+    { label: t('admin.unread'), value: summary?.unread?.toString() || '0', icon: <EyeOff className="h-5 w-5" />, color: COLORS.danger },
+    { label: t('admin.broadcast'), value: summary?.broadcast?.toString() || '0', icon: <Megaphone className="h-5 w-5" />, color: COLORS.purple },
+    { label: t('admin.sentToday'), value: summary?.sentToday?.toString() || '0', icon: <CheckCheck className="h-5 w-5" />, color: COLORS.success },
   ];
 
   const typeFilterOptions = [

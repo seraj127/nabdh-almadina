@@ -85,7 +85,7 @@ export function DashboardView() {
     },
     {
       label: t('admin.totalOrders'),
-      value: data.totalOrders.toString(),
+      value: data?.totalOrders?.toString() || '0',
       icon: <ShoppingCart className="h-5 w-5" />,
       color: COLORS.active,
       trend: undefined,
@@ -93,7 +93,7 @@ export function DashboardView() {
     },
     {
       label: t('admin.totalProducts'),
-      value: data.totalProducts.toString(),
+      value: data?.totalProducts?.toString() || '0',
       icon: <Package className="h-5 w-5" />,
       color: COLORS.purple,
       trend: undefined,
@@ -101,7 +101,7 @@ export function DashboardView() {
     },
     {
       label: t('admin.totalCustomers'),
-      value: data.totalUsers.toString(),
+      value: data?.totalUsers?.toString() || '0',
       icon: <Users className="h-5 w-5" />,
       color: COLORS.orange,
       trend: undefined,

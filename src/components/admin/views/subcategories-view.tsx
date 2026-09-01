@@ -308,19 +308,19 @@ export function SubcategoriesView() {
   const statCards = [
     {
       label: isRTL ? 'التصنيفات الفرعية' : 'Subcategories',
-      value: totalSubcategories.toString(),
+              value: totalSubcategories?.toString() || '0',
       icon: <FolderTree className="h-5 w-5" />,
       color: COLORS.active,
     },
     {
       label: isRTL ? 'نشطة' : 'Active',
-      value: activeSubcategories.toString(),
+      value: activeSubcategories?.toString() || '0',
       icon: <Power className="h-5 w-5" />,
       color: COLORS.success,
     },
     {
       label: isRTL ? 'إجمالي المنتجات' : 'Total Products',
-      value: totalProductsInSubcats.toString(),
+      value: totalProductsInSubcats?.toString() || '0',
       icon: <Package className="h-5 w-5" />,
       color: COLORS.purple,
     },

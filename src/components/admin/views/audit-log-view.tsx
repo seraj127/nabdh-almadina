@@ -94,13 +94,13 @@ export function AuditLogView() {
   const statCards = [
     {
       label: language === 'ar' ? 'سجلات اليوم' : 'Logs Today',
-      value: logs.length.toString(),
+      value: (logs?.length ?? 0).toString(),
       icon: <FileText className="h-5 w-5" />,
       color: COLORS.active,
     },
     {
       label: language === 'ar' ? 'مستخدمون فريدون' : 'Unique Users',
-      value: uniqueUsers.toString(),
+      value: (uniqueUsers ?? 0).toString(),
       icon: <Users className="h-5 w-5" />,
       color: COLORS.purple,
     },

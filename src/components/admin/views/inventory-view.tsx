@@ -179,9 +179,9 @@ export function InventoryView() {
   const summary = data?.summary ?? { totalProducts: 0, lowStockCount: 0, outOfStockCount: 0, movementsToday: 0, totalStockValue: 0 };
 
   const statCards = [
-    { label: t('admin.totalProducts'), value: summary.totalProducts.toString(), icon: <Package className="h-5 w-5" />, color: COLORS.active },
-    { label: t('admin.lowStock'), value: summary.lowStockCount.toString(), icon: <AlertTriangle className="h-5 w-5" />, color: COLORS.warning },
-    { label: t('admin.outOfStock'), value: summary.outOfStockCount.toString(), icon: <XCircle className="h-5 w-5" />, color: COLORS.danger },
+    { label: t('admin.totalProducts'), value: summary?.totalProducts?.toString() || '0', icon: <Package className="h-5 w-5" />, color: COLORS.active },
+    { label: t('admin.lowStock'), value: summary?.lowStockCount?.toString() || '0', icon: <AlertTriangle className="h-5 w-5" />, color: COLORS.warning },
+    { label: t('admin.outOfStock'), value: summary?.outOfStockCount?.toString() || '0', icon: <XCircle className="h-5 w-5" />, color: COLORS.danger },
     { label: t('admin.stockValue'), value: `${summary.totalStockValue.toFixed(0)} ${t('product.currency')}`, icon: <TrendingUp className="h-5 w-5" />, color: COLORS.success },
   ];
 

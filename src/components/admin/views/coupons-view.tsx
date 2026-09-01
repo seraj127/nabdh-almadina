@@ -145,19 +145,19 @@ export function CouponsView() {
   const statCards = [
     {
       label: t('admin.totalCoupons'),
-      value: summary.totalCoupons.toString(),
+      value: summary?.totalCoupons?.toString() || '0',
       icon: <Tag className="h-5 w-5" />,
       color: COLORS.active,
     },
     {
       label: t('admin.activeCoupons'),
-      value: summary.activeCoupons.toString(),
+      value: summary?.activeCoupons?.toString() || '0',
       icon: <Power className="h-5 w-5" />,
       color: COLORS.success,
     },
     {
       label: t('admin.totalUsage'),
-      value: summary.totalUsageCount.toString(),
+      value: summary?.totalUsageCount?.toString() || '0',
       icon: <Tag className="h-5 w-5" />,
       color: COLORS.purple,
     },

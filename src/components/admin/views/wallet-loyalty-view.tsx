@@ -69,7 +69,7 @@ export function WalletLoyaltyView() {
     },
     {
       label: language === 'ar' ? 'أعضاء نشطون' : 'Active Members',
-      value: totalMembers.toString(),
+      value: totalMembers?.toString() || '0',
       icon: <Award className="h-5 w-5" />,
       color: COLORS.purple,
     },

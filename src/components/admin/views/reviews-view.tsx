@@ -82,7 +82,7 @@ export function ReviewsView() {
   const statCards = [
     {
       label: language === 'ar' ? 'إجمالي التقييمات' : 'Total Reviews',
-      value: summary.totalReviews.toString(),
+      value: summary?.totalReviews?.toString() || '0',
       icon: <MessageSquare className="h-5 w-5" />,
       color: COLORS.active,
     },
@@ -94,13 +94,13 @@ export function ReviewsView() {
     },
     {
       label: language === 'ar' ? 'تقييمات موثقة' : 'Verified Reviews',
-      value: summary.verifiedReviews.toString(),
+      value: summary?.verifiedReviews?.toString() || '0',
       icon: <Shield className="h-5 w-5" />,
       color: COLORS.success,
     },
     {
       label: language === 'ar' ? 'تقييمات معلقة' : 'Pending Reviews',
-      value: summary.pendingReviews.toString(),
+      value: summary?.pendingReviews?.toString() || '0',
       icon: <TrendingUp className="h-5 w-5" />,
       color: COLORS.purple,
     },

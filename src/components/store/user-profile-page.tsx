@@ -213,9 +213,9 @@ function OverviewTab({ user, isAr, isRTL, onTabChange }: {
 
   const stats = [
     { icon: Wallet, label: isAr ? 'المحفظة' : 'Wallet', value: formatCurrency(user.walletBalance, isAr), color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/30', tab: 'wallet' as ProfileTab },
-    { icon: Gift, label: isAr ? 'نقاط الولاء' : 'Loyalty', value: user.loyaltyPoints.toString(), color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30', tab: 'loyalty' as ProfileTab },
-    { icon: ShoppingBag, label: isAr ? 'الطلبات' : 'Orders', value: user.orders.length.toString(), color: 'text-nabdh-primary', bg: 'bg-nabdh-primary/10', tab: 'orders' as ProfileTab },
-    { icon: CheckCircle2, label: isAr ? 'مكتملة' : 'Completed', value: completedOrders.toString(), color: 'text-teal-600', bg: 'bg-teal-50 dark:bg-teal-900/30', tab: 'orders' as ProfileTab },
+    { icon: Gift, label: isAr ? 'نقاط الولاء' : 'Loyalty', value: (user?.loyaltyPoints ?? 0).toString(), color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30', tab: 'loyalty' as ProfileTab },
+    { icon: ShoppingBag, label: isAr ? 'الطلبات' : 'Orders', value: (user?.orders?.length ?? 0).toString(), color: 'text-nabdh-primary', bg: 'bg-nabdh-primary/10', tab: 'orders' as ProfileTab },
+    { icon: CheckCircle2, label: isAr ? 'مكتملة' : 'Completed', value: (completedOrders ?? 0).toString(), color: 'text-teal-600', bg: 'bg-teal-50 dark:bg-teal-900/30', tab: 'orders' as ProfileTab },
   ];
 
   const quickActions = [

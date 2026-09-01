@@ -171,13 +171,13 @@ export function ShippingView() {
   const statCards = [
     {
       label: t('admin.activeShippingCompanies'),
-      value: activeCount.toString(),
+      value: activeCount?.toString() || '0',
       icon: <Ship className="h-5 w-5" />,
       color: COLORS.active,
     },
     {
       label: t('admin.totalCoverageZones'),
-      value: totalZones.toString(),
+      value: totalZones?.toString() || '0',
       icon: <MapPin className="h-5 w-5" />,
       color: COLORS.success,
     },
@@ -189,7 +189,7 @@ export function ShippingView() {
     },
     {
       label: t('shipping.codSupport'),
-      value: codCount.toString(),
+      value: codCount?.toString() || '0',
       icon: <Banknote className="h-5 w-5" />,
       color: COLORS.purple,
     },
