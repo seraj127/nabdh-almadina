@@ -9,6 +9,23 @@ export function loadLocal<T>(key: string): T | null {
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch { return null; }
 }
 
+// ─── Theme helpers — unified with web (next-themes uses localStorage 'theme') ──
+export function readThemeDark(): boolean {
+  try {
+    const raw = localStorage.getItem('theme');
+    if (raw === 'dark') return true;
+    if (raw === 'light') return false;
+  } catch { /* ignore */ }
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch { /* ignore */ }
+  }
+  return false;
+}
+
+export function writeThemeDark(darkMode: boolean): void {
+  try { localStorage.setItem('theme', darkMode ? 'dark' : 'light'); } catch { /* ignore */ }
+}
+
 // ─── Helper: Parse images field (may be JSON string or array) ──────────
 export function parseImages(images: string | string[] | undefined): string[] | undefined {
   if (!images) return undefined;

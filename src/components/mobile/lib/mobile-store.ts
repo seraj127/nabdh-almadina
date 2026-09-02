@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { useUIStore } from '@/stores/ui-store';
 import { saveLocal, loadLocal } from './helpers';
 import { LOCAL_PRODUCTS, LOCAL_CATEGORIES } from './constants';
-import { normalizeProduct } from './helpers';
+import { normalizeProduct, readThemeDark, writeThemeDark } from './helpers';
 import { normalizePhone } from '@/lib/phone-utils';
 import type { Screen, Tab, Product, Category, Subcategory, MobileUser, Address, Review, Order } from './types';
 
@@ -720,11 +720,11 @@ localStorage.removeItem('mobile_user');
     }
   },
 
-  // Dark mode toggle (persisted in localStorage, default: light)
-  darkMode: loadLocal<boolean>('mobile_dark') ?? false,
+  // Dark mode toggle (unified with web via localStorage 'theme', default follows system)
+  darkMode: readThemeDark(),
   setDarkMode: (darkMode: boolean) => {
     set({ darkMode });
-    saveLocal('mobile_dark', darkMode);
+    writeThemeDark(darkMode);
     // Sync CSS class on the root element so the UI updates immediately
     if (typeof document !== 'undefined') {
       document.documentElement.classList.toggle('dark', darkMode);
@@ -1139,13 +1139,12 @@ export function initMobileStore() {
   const _onboardingDone = loadLocal<boolean>('mobile_onboarding_done'); // kept for localStorage compat
   const savedFavs = loadLocal<string[]>('mobile_favorites');
   loadFavMeta();
-  // Dark mode is always on — no longer reading from localStorage
+  // Dark mode is unified with the web — read from localStorage 'theme'
   const savedAddresses = loadLocal<Address[]>('mobile_addresses');
 
   const updates: Partial<MobileAppState> = {};
   if (savedFavs) updates.favorites = savedFavs;
   if (savedUser) updates.user = savedUser;
-  // Dark mode — load saved preference (default: dark)
   if (savedAddresses) updates.addresses = savedAddresses;
 
   // ─── Unified session: adopt the web store's user if the mobile store has none ──
