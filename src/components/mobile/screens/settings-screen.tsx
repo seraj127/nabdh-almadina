@@ -490,18 +490,18 @@ export function AdvancedSettingsScreen({ onClose, user, darkMode, handleDarkMode
               value={language === 'ar' ? 'العربية' : 'English'}
             />
             <Divider darkMode={darkMode} />
-            {/* Dark Mode â€” Always On */}
+{/* Dark Mode */}
             <SettingItem
               icon={<Moon size={18} />}
               iconBg="linear-gradient(135deg, rgba(0,168,204,0.12), rgba(0,137,123,0.12))"
               iconColor={COLORS.teal}
               title={isRTL ? 'الوضع الداكن' : 'Dark Mode'}
-              subtitle={isRTL ? 'مفعّل دائماً' : 'Always on'}
+              subtitle={darkMode ? (isRTL ? 'مفعّل' : 'Enabled') : (isRTL ? 'معطّل' : 'Disabled')}
               isRTL={isRTL}
               darkMode={darkMode}
               toggle
-              toggleValue={true}
-              onToggle={() => {}}
+              toggleValue={darkMode}
+              onToggle={() => handleDarkMode?.(!darkMode)}
             />
             <Divider darkMode={darkMode} />
             {/* Notifications */}
