@@ -1192,7 +1192,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     overlayRoot
   );
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role?.toLowerCase() === 'admin';
 
   // ═══════════════════════════════════════════════════════════════════
   // MAIN PROFILE VIEW

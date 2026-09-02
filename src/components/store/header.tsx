@@ -80,7 +80,7 @@ export function Header() {
   const { t, language, setLanguage, direction } = useLanguageStore(useShallow((s) => ({ t: s.t, language: s.language, setLanguage: s.setLanguage, direction: s.direction })));
   const cartItems = useCartStore(useShallow((s) => s.items));
   const { toggleAdminMode, isAdminMode, isLoggedIn, currentUser, login, logout, authView } = useUIStore(useShallow((s) => ({ toggleAdminMode: s.toggleAdminMode, isAdminMode: s.isAdminMode, isLoggedIn: s.isLoggedIn, currentUser: s.currentUser, login: s.login, logout: s.logout, authView: s.authView })));
-  const isAdminUser = currentUser?.role === 'admin';
+  const isAdminUser = currentUser?.role?.toLowerCase() === 'admin';
   const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -292,7 +292,7 @@ export function Header() {
                       )}
 
                       {/* Admin Panel Section — shown only for admin role */}
-                      {currentUser?.role === 'admin' && (
+                      {isAdminUser && (
                         <>
                           <div className="px-3 mt-3">
                             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">

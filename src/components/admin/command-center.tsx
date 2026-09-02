@@ -279,7 +279,7 @@ export function CommandCenter() {
                 {user.name === 'مدير النظام' ? t('admin.systemAdmin') : user.name}
               </p>
               <p className="text-[10px] truncate" style={{ color: COLORS.muted }}>
-                {user.role === 'admin' ? t('admin.systemAdminRole') : user.role}
+                {user?.role?.toLowerCase() === 'admin' ? t('admin.systemAdminRole') : user?.role}
               </p>
             </div>
           </div>

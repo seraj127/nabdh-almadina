@@ -1092,7 +1092,7 @@ function SettingsTab({ user, isAr, onRefresh }: {
         <h3 className="font-semibold text-sm">{isAr ? 'معلومات الحساب' : 'Account Info'}</h3>
         <div className="space-y-2.5">
           {[
-            { icon: ShieldCheck, label: isAr ? 'الدور' : 'Role', value: user.role === 'admin' ? (isAr ? 'مدير' : 'Admin') : (isAr ? 'عميل' : 'Customer') },
+            { icon: ShieldCheck, label: isAr ? 'الدور' : 'Role', value: user.role.toLowerCase() === 'admin' ? (isAr ? 'مدير' : 'Admin') : (isAr ? 'عميل' : 'Customer') },
             { icon: Clock, label: isAr ? 'تاريخ التسجيل' : 'Joined', value: formatDate(user.createdAt, isAr) },
             { icon: Crown, label: isAr ? 'مستوى العضوية' : 'Membership', value: getLoyaltyTierConfig(user.loyaltyTier, isAr).label },
           ].map((info) => {
