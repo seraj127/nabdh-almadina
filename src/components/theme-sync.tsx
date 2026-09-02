@@ -22,5 +22,18 @@ export function ThemeSync() {
     return () => window.removeEventListener('nabdh:theme-sync', handler);
   }, [setTheme]);
 
+  // On mount, pull the persisted theme from the server so the website matches
+  // whatever theme the user last chose on mobile (or on the site while logged in).
+  useEffect(() => {
+    let cancelled = false;
+    const apply = (t: string | null) => {
+      if (!cancelled && (t === 'dark' || t === 'light')) setTheme(t);
+    };
+    import('@/lib/theme-sync').then(({ fetchThemeFromServer }) => {
+      fetchThemeFromServer().then((serverTheme) => apply(serverTheme)).catch(() => {});
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [setTheme]);
+
   return null;
 }

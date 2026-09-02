@@ -229,7 +229,7 @@ export function Header() {
                           </div>
                         )}
                       </div>
-                      <span className="hidden sm:inline text-sm font-medium max-w-[80px] truncate">
+                      <span className={`hidden sm:inline text-sm font-semibold max-w-[80px] truncate transition-colors ${isScrolled ? 'text-foreground' : authView !== 'none' ? 'text-foreground' : 'text-white'}`}>
                         {currentUser.name.split(' ')[0]}
                       </span>
                       <ChevronDown className="size-3.5 opacity-60" />

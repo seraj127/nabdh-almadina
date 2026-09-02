@@ -1,6 +1,7 @@
 'use client';
 
 import { patchFetchForNative } from '@/lib/api-bridge';
+import { fetchThemeFromServer } from '@/lib/theme-sync';
 patchFetchForNative();
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -282,7 +283,11 @@ function SplashScreen() {
           // If a user is already logged in (persisted session), skip straight to the main screen
           const savedUser = useMobileStore.getState().user;
           if (savedUser && savedUser.id) {
-            setScreen('main');
+            fetchThemeFromServer().then((theme) => {
+              if (theme === 'dark') { useMobileStore.getState().setDarkMode(true); localStorage.setItem('theme', 'dark'); }
+              else if (theme === 'light') { useMobileStore.getState().setDarkMode(false); localStorage.setItem('theme', 'light'); }
+              setScreen('main');
+            }).catch(() => setScreen('main'));
           } else {
             setShowButtons(true);
           }
@@ -763,6 +768,11 @@ function LoginScreen() {
     const success = await login(phone, password);
     if (success) {
       setLoginSuccess(true);
+      try {
+        const theme = await fetchThemeFromServer();
+        if (theme === 'dark') { useMobileStore.getState().setDarkMode(true); localStorage.setItem('theme', 'dark'); }
+        else if (theme === 'light') { useMobileStore.getState().setDarkMode(false); localStorage.setItem('theme', 'light'); }
+      } catch { /* ignore */ }
     } else {
       setError(t('mobile.login.errorCredentials'));
     }

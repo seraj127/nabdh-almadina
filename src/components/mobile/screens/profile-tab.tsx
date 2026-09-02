@@ -21,6 +21,7 @@ import { AdvancedSettingsScreen } from './settings-screen';
 import { AddressManagement } from './address-management';
 import type { MobileUser } from '../lib/types';
 import { compressImageToBase64 } from '@/lib/image-compress';
+import { syncThemeToServer } from '@/lib/theme-sync';
 
 // ─── Brand Design Tokens ────────────────────────────────────────────────
 const COLORS = {
@@ -248,6 +249,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
     const newVal = !darkMode;
     setDarkMode(newVal);
     setDarkModeStore(newVal);
+    syncThemeToServer(newVal ? 'dark' : 'light');
   };
 
   const handleCopyReferral = () => {
@@ -380,7 +382,7 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
         onClose={() => setShowSettings(false)}
         user={user}
         darkMode={darkMode}
-        handleDarkMode={(v: boolean) => { setDarkMode(v); setDarkModeStore(v); }}
+        handleDarkMode={(v: boolean) => { setDarkMode(v); setDarkModeStore(v); syncThemeToServer(v ? 'dark' : 'light'); }}
         onLogout={() => { setShowSettings(false); setShowLogoutModal(true); }}
         onGoToFavorites={() => { setShowSettings(false); useMobileStore.getState().setActiveTab('favorites'); }}
         onGoToOrders={() => { setShowSettings(false); useMobileStore.getState().setScreen('order-tracking'); }}
