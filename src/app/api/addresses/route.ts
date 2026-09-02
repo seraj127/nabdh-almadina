@@ -54,6 +54,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // De-duplication: prevent creating a duplicate of an identical address for
+    // the same user. Many sources can trigger overlapping creation (double-clicks,
+    // retries, concurrent syncs), so instead of blindly inserting, reuse an
+    // existing matching address (normalizing the nullable `area` comparison).
+    const normalizedArea = area || null;
+    const existing = await db.address.findFirst({
+      where: {
+        userId,
+        address,
+        city,
+        area: normalizedArea,
+      },
+    });
+
+    if (existing) {
+      // Reuse the existing address. If requested and it isn't default, promote it.
+      if (isDefault && !existing.isDefault) {
+        await db.address.updateMany({
+          where: { userId, isDefault: true },
+          data: { isDefault: false },
+        });
+        await db.address.update({
+          where: { id: existing.id },
+          data: { isDefault: true },
+        });
+        existing.isDefault = true;
+      }
+      return NextResponse.json({
+        address: {
+          id: existing.id,
+          label: existing.label,
+          address: existing.address,
+          city: existing.city,
+          area: existing.area || '',
+          notes: existing.notes || '',
+          isDefault: existing.isDefault,
+        },
+      });
+    }
+
     // If this is set as default, unset other defaults
     if (isDefault) {
       await db.address.updateMany({
