@@ -244,6 +244,7 @@ export const useUIStore = create<UIState>()((set) => ({
       import('@/components/mobile/lib/mobile-store').then(({ useMobileStore }) => {
         useMobileStore.setState({
           user: null,
+          avatar: null,
           favorites: [],
           addresses: [],
           loyaltyPoints: 0,
@@ -251,6 +252,8 @@ export const useUIStore = create<UIState>()((set) => ({
           loyaltyTier: 'bronze',
         });
         try { localStorage.removeItem('mobile_user'); } catch { /* ignore */ }
+        try { localStorage.removeItem('mobile_user_photo'); } catch { /* ignore */ }
+        try { localStorage.removeItem('mobileAvatar'); } catch { /* ignore */ }
       }).catch(() => {});
     }).catch(() => {});
     if (typeof window !== 'undefined') {
