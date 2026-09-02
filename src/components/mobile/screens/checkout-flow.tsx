@@ -36,9 +36,10 @@ const INPUT_TEXT_COLOR = '#0B1120';
 // compositing bug: typed text stays invisible until the field is manually
 // selected (the raster is stale). Bouncing a fresh GPU layer + re-affirming
 // the text color on every keystroke fixes the stale raster.
-function forceInputRepaint(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null) {
+function forceInputRepaint(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null, darkMode = false) {
   if (!input || typeof window === 'undefined') return;
-  input.style.setProperty('-webkit-text-fill-color', INPUT_TEXT_COLOR);
+  const textColor = darkMode ? '#F3F4F6' : INPUT_TEXT_COLOR;
+  input.style.setProperty('-webkit-text-fill-color', textColor);
   input.style.transform = 'translateZ(0)';
   requestAnimationFrame(() => {
     if (input) {
@@ -180,15 +181,16 @@ function GlassCard({
   className?: string;
   noPadding?: boolean;
 }) {
+  const darkMode = useMobileStore((s) => s.darkMode);
   return (
     <div
       className={`${noPadding ? '' : 'p-5'} rounded-2xl ${className}`}
       style={{
-        background: 'rgba(255, 255, 255, 0.72)',
+        background: darkMode ? 'rgba(17, 24, 39, 0.85)' : 'rgba(255, 255, 255, 0.72)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        border: '1px solid rgba(255, 255, 255, 0.5)',
-        boxShadow: '0 4px 24px rgba(0, 75, 99, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)',
+        border: `1px solid ${darkMode ? 'rgba(255,255,255,0.12)' : 'rgba(255, 255, 255, 0.5)'}`,
+        boxShadow: darkMode ? '0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(255,255,255,0.05)' : '0 4px 24px rgba(0, 75, 99, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)',
       }}
     >
       {children}
@@ -222,17 +224,18 @@ function FormInput({
 }) {
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const darkMode = useMobileStore((s) => s.darkMode);
 
   return (
     <motion.div className="mb-4" variants={staggerItem}>
-      <label className="block text-sm font-semibold mb-2" style={{ color: COLORS.primary }}>
+      <label className="block text-sm font-semibold mb-2" style={{ color: darkMode ? '#93C5FD' : COLORS.primary }}>
         {label}
         {required && <span className="text-red-500 mr-1">*</span>}
       </label>
       <div
         className="relative rounded-xl overflow-hidden transition-all duration-300"
         style={{
-          border: `2px solid ${error ? COLORS.error : focused ? COLORS.accent : '#E5E5E5'}`,
+          border: `2px solid ${error ? COLORS.error : focused ? COLORS.accent : darkMode ? '#2A3550' : '#E5E5E5'}`,
           boxShadow: focused ? `0 0 0 3px ${COLORS.accent}18` : 'none',
         }}
       >
@@ -250,21 +253,21 @@ function FormInput({
           value={value}
           onChange={(e) => {
             onChange(e.target.value);
-            forceInputRepaint(inputRef.current);
+            forceInputRepaint(inputRef.current, darkMode);
           }}
-          onInput={() => forceInputRepaint(inputRef.current)}
+          onInput={() => forceInputRepaint(inputRef.current, darkMode)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder={placeholder}
           dir={dir}
-          className="w-full py-3.5 px-4 bg-white/60 text-sm outline-none placeholder:text-gray-400"
+          className="w-full py-3.5 px-4 bg-white/60 dark:bg-[#0F172A]/60 text-sm outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
           style={{
             paddingLeft: icon && dir !== 'rtl' ? 44 : 16,
             paddingRight: icon && dir === 'rtl' ? 44 : 16,
             textAlign: dir === 'rtl' ? 'right' : 'left',
-            color: INPUT_TEXT_COLOR,
-            WebkitTextFillColor: INPUT_TEXT_COLOR,
-            caretColor: COLORS.primary,
+            color: darkMode ? '#F3F4F6' : INPUT_TEXT_COLOR,
+            WebkitTextFillColor: darkMode ? '#F3F4F6' : INPUT_TEXT_COLOR,
+            caretColor: darkMode ? COLORS.accent : COLORS.primary,
             userSelect: 'text',
             WebkitUserSelect: 'text',
           }}
@@ -513,6 +516,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
   const { t, language } = useLanguageStore();
   const isRTL = language === 'ar';
   const direction = isRTL ? 'rtl' : 'ltr';
+  const darkMode = useMobileStore((s) => s.darkMode);
 
   // Stores
   const cartItems = useCartStore((s) => s.items);
@@ -1001,14 +1005,14 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
                 setAddress((p) => ({ ...p, city: newCity, area: '' }));
                 setAreaSearchQuery('');
                 if (addressErrors.city) setAddressErrors((p) => ({ ...p, city: undefined }));
-                forceInputRepaint(e.target);
+                forceInputRepaint(e.target, darkMode);
               }}
-              className="w-full py-3.5 px-4 bg-white/60 text-sm outline-none appearance-none"
+              className="w-full py-3.5 px-4 bg-white/60 dark:bg-[#0F172A]/60 text-sm outline-none appearance-none"
               style={{
                 textAlign: isRTL ? 'right' : 'left',
-                color: INPUT_TEXT_COLOR,
-                WebkitTextFillColor: INPUT_TEXT_COLOR,
-                caretColor: COLORS.primary,
+                color: darkMode ? '#F3F4F6' : INPUT_TEXT_COLOR,
+                WebkitTextFillColor: darkMode ? '#F3F4F6' : INPUT_TEXT_COLOR,
+                caretColor: darkMode ? COLORS.accent : COLORS.primary,
                 userSelect: 'text',
                 WebkitUserSelect: 'text',
               }}
@@ -1064,17 +1068,17 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
               value={areaSearchQuery}
               onChange={(e) => {
                 setAreaSearchQuery(e.target.value);
-                forceInputRepaint(e.target);
+                forceInputRepaint(e.target, darkMode);
               }}
-              onInput={(e) => forceInputRepaint(e.currentTarget)}
+              onInput={(e) => forceInputRepaint(e.currentTarget, darkMode)}
               placeholder={selectedRegionId === 'tripoli' ? 'ابحث عن الحي...' : 'ابحث عن المدينة...'}
-              className="w-full py-2.5 px-4 bg-white/60 text-xs outline-none"
+              className="w-full py-2.5 px-4 bg-white/60 dark:bg-[#0F172A]/60 text-xs outline-none"
               style={{
                 textAlign: isRTL ? 'right' : 'left',
                 [isRTL ? 'paddingRight' : 'paddingLeft']: 36,
-                color: INPUT_TEXT_COLOR,
-                WebkitTextFillColor: INPUT_TEXT_COLOR,
-                caretColor: COLORS.primary,
+                color: darkMode ? '#F3F4F6' : INPUT_TEXT_COLOR,
+                WebkitTextFillColor: darkMode ? '#F3F4F6' : INPUT_TEXT_COLOR,
+                caretColor: darkMode ? COLORS.accent : COLORS.primary,
                 userSelect: 'text',
                 WebkitUserSelect: 'text',
               }}
@@ -1085,7 +1089,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
           <div
             className="relative rounded-b-xl overflow-hidden"
             style={{
-              border: `2px solid ${addressErrors.area ? COLORS.error : address.area ? COLORS.accent : '#E5E5E5'}`,
+              border: `2px solid ${addressErrors.area ? COLORS.error : address.area ? COLORS.accent : darkMode ? '#2A3550' : '#E5E5E5'}`,
             }}
           >
             <select
@@ -1095,14 +1099,14 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
                 setAddress((p) => ({ ...p, area: selectedArea }));
                 setAreaSearchQuery('');
                 if (addressErrors.area) setAddressErrors((p) => ({ ...p, area: undefined }));
-                forceInputRepaint(e.target);
+                forceInputRepaint(e.target, darkMode);
               }}
-              className="w-full py-3.5 px-4 bg-white/60 text-sm outline-none appearance-none"
+              className="w-full py-3.5 px-4 bg-white/60 dark:bg-[#0F172A]/60 text-sm outline-none appearance-none"
               style={{
                 textAlign: isRTL ? 'right' : 'left',
-                color: INPUT_TEXT_COLOR,
-                WebkitTextFillColor: INPUT_TEXT_COLOR,
-                caretColor: COLORS.primary,
+                color: darkMode ? '#F3F4F6' : INPUT_TEXT_COLOR,
+                WebkitTextFillColor: darkMode ? '#F3F4F6' : INPUT_TEXT_COLOR,
+                caretColor: darkMode ? COLORS.accent : COLORS.primary,
                 userSelect: 'text',
                 WebkitUserSelect: 'text',
               }}
@@ -1306,7 +1310,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm" style={{ color: COLORS.dark }}>
+                        <span className="font-bold text-sm" style={{ color: (darkMode ? '#F3F4F6' : COLORS.dark) }}>
                           {t(option.labelKey)}
                         </span>
                         {option.recommended && (
@@ -1426,7 +1430,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate" style={{ color: COLORS.dark }}>
+                <p className="text-sm font-semibold truncate" style={{ color: (darkMode ? '#F3F4F6' : COLORS.dark) }}>
                   {isRTL ? item.nameAr : item.nameEn}
                 </p>
                 <p className="text-xs text-gray-400">
@@ -1446,14 +1450,14 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
 
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">{t('common.subtotal')}</span>
-            <span className="font-semibold" style={{ color: COLORS.dark }}>
+            <span className="font-semibold" style={{ color: (darkMode ? '#F3F4F6' : COLORS.dark) }}>
               {subtotal.toFixed(2)} {t('product.currency')}
             </span>
           </div>
 
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">{t('common.delivery')}</span>
-            <span className="font-semibold" style={{ color: deliveryFee === 0 ? COLORS.success : COLORS.dark }}>
+            <span className="font-semibold" style={{ color: deliveryFee === 0 ? COLORS.success : (darkMode ? '#F3F4F6' : COLORS.dark) }}>
               {deliveryFee === 0
                 ? t('common.free')
                 : `${deliveryFee.toFixed(2)} ${t('product.currency')}`}
@@ -1492,7 +1496,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
             <MapPin size={16} style={{ color: COLORS.accent }} />
             <div className="flex-1 min-w-0">
               <p className="text-[10px] text-gray-400">{t('checkout.deliveringTo')}</p>
-              <p className="text-xs font-semibold truncate" style={{ color: COLORS.dark }}>
+              <p className="text-xs font-semibold truncate" style={{ color: (darkMode ? '#F3F4F6' : COLORS.dark) }}>
                 {address.area}, {address.city}
               </p>
             </div>
@@ -1501,7 +1505,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
             {paymentMethod === 'cod' ? <Banknote size={16} style={{ color: COLORS.teal }} /> : <CreditCard size={16} style={{ color: COLORS.accent }} />}
             <div>
               <p className="text-[10px] text-gray-400">{t('common.paymentMethod')}</p>
-              <p className="text-xs font-semibold" style={{ color: COLORS.dark }}>
+              <p className="text-xs font-semibold" style={{ color: (darkMode ? '#F3F4F6' : COLORS.dark) }}>
                 {paymentMethod === 'cod'
                   ? t('checkout.cod')
                   : paymentMethod === 'card'
@@ -1708,22 +1712,22 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Truck size={14} style={{ color: COLORS.teal }} />
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
                 {t('checkout.deliveringTo')}
               </span>
             </div>
-            <span className="text-xs font-semibold" style={{ color: COLORS.dark }}>
+            <span className="text-xs font-semibold" style={{ color: darkMode ? '#F3F4F6' : COLORS.dark }}>
               {address.city} - {address.area}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Banknote size={14} style={{ color: COLORS.teal }} />
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
                 {t('common.paymentMethod')}
               </span>
             </div>
-            <span className="text-xs font-semibold" style={{ color: COLORS.dark }}>
+            <span className="text-xs font-semibold" style={{ color: darkMode ? '#F3F4F6' : COLORS.dark }}>
               {paymentMethod === 'cod'
                 ? t('checkout.cod')
                 : t('payment.card')}
@@ -1732,17 +1736,17 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock size={14} style={{ color: COLORS.teal }} />
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
                 {t('mobile.checkout.estDelivery')}
               </span>
             </div>
-            <span className="text-xs font-semibold" style={{ color: COLORS.dark }}>
+            <span className="text-xs font-semibold" style={{ color: darkMode ? '#F3F4F6' : COLORS.dark }}>
               {currentDeliveryInfo.duration}
             </span>
           </div>
-          <div className="h-px bg-gray-100" />
+          <div className="h-px bg-gray-100 dark:bg-gray-800" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-bold" style={{ color: COLORS.primary }}>
+            <span className="text-sm font-bold" style={{ color: darkMode ? '#93C5FD' : COLORS.primary }}>
               {t('checkout.totalPaid')}
             </span>
             <span className="text-lg font-bold" style={{ color: COLORS.secondary }}>
@@ -1794,7 +1798,7 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
     <MotionConfig reducedMotion="always">
       <motion.div
         className="absolute inset-0 z-50 flex flex-col"
-        style={{ background: '#F4F6F9' }}
+        style={{ background: darkMode ? '#0B1120' : '#F4F6F9' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -1897,9 +1901,9 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
       {/* ─── Bottom Navigation ─── */}
       {currentStep < 3 && (
         <div
-          className="flex-shrink-0 px-5 py-4 border-t border-gray-100"
+          className={`flex-shrink-0 px-5 py-4 border-t ${darkMode ? 'border-gray-800' : 'border-gray-100'}`}
           style={{
-            background: 'rgba(255,255,255,0.9)',
+            background: darkMode ? 'rgba(11,17,32,0.92)' : 'rgba(255,255,255,0.9)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
           }}
@@ -1911,9 +1915,9 @@ export function CheckoutFlow({ onClose, onTrackOrder, initialCoupon }: CheckoutF
                 onClick={handleBack}
                 className="flex-1 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2"
                 style={{
-                  color: COLORS.primary,
-                  background: `${COLORS.primary}08`,
-                  border: `1px solid ${COLORS.primary}15`,
+                  color: darkMode ? '#93C5FD' : COLORS.primary,
+                  background: darkMode ? `${COLORS.primary}22` : `${COLORS.primary}08`,
+                  border: `1px solid ${darkMode ? `${COLORS.primary}40` : `${COLORS.primary}15`}`,
                 }}
                 whileTap={{ scale: 0.97 }}
               >

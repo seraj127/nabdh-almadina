@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Headphones, X, Send, Bot, User, Loader2 } from 'lucide-react';
 import { useLanguageStore } from '@/stores/language-store';
+import { useMobileStore } from '@/components/mobile/lib/mobile-store';
 
 // ─── Types ───
 interface ChatMessage {
@@ -57,6 +58,7 @@ const QUICK_REPLIES_EN = ['Hello', 'I need help', 'Product inquiry', 'Order issu
 // ─── Component ───
 export function MobileChatWidget() {
   const { t, language, direction } = useLanguageStore();
+  const darkMode = useMobileStore((s) => s.darkMode);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -162,7 +164,7 @@ export function MobileChatWidget() {
     <AnimatePresence>
       <motion.div
         className="fixed inset-0 flex flex-col pointer-events-auto"
-        style={{ zIndex: 62, background: '#FFFFFF' }}
+        style={{ zIndex: 62, background: darkMode ? '#0B1120' : '#FFFFFF' }}
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
@@ -234,7 +236,7 @@ export function MobileChatWidget() {
                 className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'text-white rounded-ee-sm'
-                    : 'bg-gray-100 text-gray-800 rounded-es-sm'
+                    : 'bg-gray-100 dark:bg-[#151D2E] text-gray-800 dark:text-gray-100 rounded-es-sm'
                 }`}
                 style={
                   msg.role === 'user'
@@ -257,10 +259,10 @@ export function MobileChatWidget() {
               <div className="w-7 h-7 rounded-full bg-white dark:bg-[#151D2E] shadow-sm flex items-center justify-center shrink-0 text-[#004B63] dark:text-[#00C4E8]">
                 <Bot className="w-3.5 h-3.5" />
               </div>
-              <div className="bg-gray-100 rounded-2xl rounded-es-sm px-4 py-2.5">
+              <div className={`${darkMode ? 'bg-[#151D2E]' : 'bg-gray-100'} rounded-2xl rounded-es-sm px-4 py-2.5`}>
                 <div className="flex items-center gap-1.5">
                   <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00897B] dark:text-[#00A8CC]" />
-                  <span className="text-xs text-gray-400">
+                  <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-400'}`}>
                     {language === 'ar' ? 'يكتب...' : 'Typing...'}
                   </span>
                 </div>
@@ -282,7 +284,7 @@ export function MobileChatWidget() {
                 <motion.button
                   key={i}
                   onClick={() => sendMessage(reply)}
-                  className="text-[11px] px-3 py-1.5 rounded-full border border-gray-200 hover:border-[#00897B] hover:text-[#00897B] transition-all duration-200 text-gray-500 bg-gray-50 hover:bg-[#00897B]/5"
+                  className={`text-[11px] px-3 py-1.5 rounded-full border ${darkMode ? 'border-gray-700 text-gray-300 bg-[#151D2E] hover:border-[#00A8CC] hover:text-[#00A8CC]' : 'border-gray-200 text-gray-500 bg-gray-50 hover:border-[#00897B] hover:text-[#00897B]'} transition-all duration-200 hover:bg-[#00897B]/5`}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -294,7 +296,7 @@ export function MobileChatWidget() {
         )}
 
         {/* ── Input Area ── */}
-        <div className="p-3 border-t border-gray-100 flex-shrink-0 bg-white">
+        <div className={`p-3 border-t ${darkMode ? 'border-gray-800 bg-[#0F172A]' : 'border-gray-100 bg-white'} flex-shrink-0`}>
           <div className="flex items-center gap-2">
             <input
               ref={inputRef}
@@ -302,7 +304,7 @@ export function MobileChatWidget() {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t('mobile.chat.placeholder')}
-              className="flex-1 h-10 text-sm rounded-full px-4 bg-gray-50 border border-gray-200 focus:border-[#00897B] focus:ring-1 focus:ring-[#00897B]/30 outline-none transition-all"
+              className={`flex-1 h-10 text-sm rounded-full px-4 outline-none transition-all ${darkMode ? 'bg-[#151D2E] border border-gray-700 text-gray-100 placeholder:text-gray-500 focus:border-[#00A8CC] focus:ring-1 focus:ring-[#00A8CC]/30' : 'bg-gray-50 border border-gray-200 text-gray-800 placeholder:text-gray-400 focus:border-[#00897B] focus:ring-1 focus:ring-[#00897B]/30'}`}
               disabled={isThinking}
               dir={direction}
             />

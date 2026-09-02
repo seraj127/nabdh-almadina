@@ -133,15 +133,16 @@ function GlassCard({
   className?: string;
   noPadding?: boolean;
 }) {
+  const darkMode = useMobileStore((s) => s.darkMode);
   return (
     <div
       className={`${noPadding ? '' : 'p-4'} rounded-2xl ${className}`}
       style={{
-        background: 'rgba(255, 255, 255, 0.80)',
+        background: darkMode ? 'rgba(17, 24, 39, 0.85)' : 'rgba(255, 255, 255, 0.80)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        border: `1px solid ${COLORS.border}`,
-        boxShadow: '0 2px 16px rgba(0, 75, 99, 0.06)',
+        border: `1px solid ${darkMode ? 'rgba(255,255,255,0.12)' : COLORS.border}`,
+        boxShadow: darkMode ? '0 2px 16px rgba(0, 0, 0, 0.4)' : '0 2px 16px rgba(0, 75, 99, 0.06)',
       }}
     >
       {children}
@@ -156,6 +157,13 @@ export function CartTab() {
   const { t, language } = useLanguageStore();
   const isRTL = language === 'ar';
   const direction = isRTL ? 'rtl' : 'ltr';
+  const darkMode = useMobileStore((s) => s.darkMode);
+
+  // Resolve theme-aware colors
+  const textPrimary = darkMode ? '#F3F4F6' : COLORS.textPrimary;
+  const textSecondary = darkMode ? '#9CA3AF' : COLORS.textSecondary;
+  const surface = darkMode ? '#151D2E' : COLORS.surface;
+  const borderColor = darkMode ? 'rgba(255,255,255,0.12)' : COLORS.border;
 
   // ─── Store Hooks ────────────────────────────────────────────────────
   const items = useCartStore((s) => s.items);
@@ -449,7 +457,7 @@ export function CartTab() {
 
           <motion.h2
             className="text-xl font-bold mb-2"
-            style={{ color: COLORS.textPrimary }}
+            style={{ color: textPrimary }}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -459,7 +467,7 @@ export function CartTab() {
 
           <motion.p
             className="text-sm text-center mb-6"
-            style={{ color: COLORS.textSecondary }}
+            style={{ color: textSecondary }}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -515,7 +523,7 @@ export function CartTab() {
                   >
                     <Icon size={18} style={{ color: badge.color }} />
                   </div>
-                  <span className="text-[10px] font-medium" style={{ color: COLORS.textSecondary }}>
+                  <span className="text-[10px] font-medium" style={{ color: textSecondary }}>
                     {isRTL ? badge.labelAr : badge.labelEn}
                   </span>
                 </div>
@@ -655,7 +663,7 @@ export function CartTab() {
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setShowClearConfirm(false)}
                   className="px-3 py-1.5 rounded-lg text-xs font-bold"
-                  style={{ background: `${COLORS.border}`, color: COLORS.textSecondary }}
+                  style={{ background: `${borderColor}`, color: textSecondary }}
                 >
                   {isRTL ? 'لا' : 'No'}
                 </motion.button>
@@ -740,7 +748,7 @@ export function CartTab() {
                       : 'rgba(255, 255, 255, 0.85)',
                     backdropFilter: 'blur(12px)',
                     WebkitBackdropFilter: 'blur(12px)',
-                    border: `1px solid ${isRemoving ? `${COLORS.error}30` : COLORS.border}`,
+                    border: `1px solid ${isRemoving ? `${COLORS.error}30` : borderColor}`,
                     boxShadow: isRemoving
                       ? `0 2px 12px ${COLORS.error}10`
                       : '0 2px 12px rgba(0,0,0,0.04)',
@@ -751,8 +759,8 @@ export function CartTab() {
                     <div
                       className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 relative"
                       style={{
-                        background: COLORS.surface,
-                        border: `1px solid ${COLORS.border}`,
+                        background: surface,
+                        border: `1px solid ${borderColor}`,
                       }}
                     >
                       {item.image ? (
@@ -787,7 +795,7 @@ export function CartTab() {
                         <div className="flex items-start justify-between gap-2">
                           <h3
                             className="text-sm font-bold truncate"
-                            style={{ color: COLORS.textPrimary }}
+                            style={{ color: textPrimary }}
                           >
                             {isRTL ? item.nameAr : item.nameEn}
                           </h3>
@@ -838,15 +846,15 @@ export function CartTab() {
                         <div
                           className="flex items-center gap-1 rounded-xl overflow-hidden"
                           style={{
-                            background: COLORS.surface,
-                            border: `1px solid ${COLORS.border}`,
+                            background: surface,
+                            border: `1px solid ${borderColor}`,
                           }}
                         >
                           <motion.button
                             whileTap={{ scale: 0.8 }}
                             onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                             className="w-8 h-8 flex items-center justify-center transition-colors"
-                            style={{ color: COLORS.textSecondary }}
+                            style={{ color: textSecondary }}
                             whileHover={{ background: `${COLORS.primary}10` }}
                             disabled={item.quantity <= 1}
                           >
@@ -887,7 +895,7 @@ export function CartTab() {
                             background: isSaved ? `${COLORS.accent}10` : 'transparent',
                           }}
                           whileHover={{
-                            background: isSaved ? `${COLORS.accent}15` : `${COLORS.surface}`,
+                            background: isSaved ? `${COLORS.accent}15` : `${surface}`,
                           }}
                         >
                           {isSaved ? (
@@ -932,10 +940,10 @@ export function CartTab() {
                 <Clock size={18} style={{ color: COLORS.accent }} />
               </div>
               <div className="flex-1">
-                <p className="text-xs" style={{ color: COLORS.textSecondary }}>
+                <p className="text-xs" style={{ color: textSecondary }}>
                   {isRTL ? 'التوصيل المتوقع' : 'Estimated Delivery'}
                 </p>
-                <p className="text-sm font-bold" style={{ color: COLORS.textPrimary }}>
+                <p className="text-sm font-bold" style={{ color: textPrimary }}>
                   {defaultAddress
                     ? deliveryDuration
                     : `2-3 ${isRTL ? 'أيام' : 'days'}`
@@ -976,8 +984,8 @@ export function CartTab() {
                     <div
                       className="flex-1 rounded-xl overflow-hidden flex items-center"
                       style={{
-                        border: `1.5px solid ${couponError ? COLORS.error : COLORS.border}`,
-                        background: COLORS.surface,
+                        border: `1.5px solid ${couponError ? COLORS.error : borderColor}`,
+                        background: surface,
                       }}
                     >
                       <div
@@ -998,7 +1006,7 @@ export function CartTab() {
                         className="flex-1 h-10 text-sm font-medium outline-none bg-transparent placeholder:text-gray-400"
                         style={{
                           textAlign: isRTL ? 'right' : 'left',
-                          color: COLORS.textPrimary,
+                          color: textPrimary,
                         }}
                         dir="ltr"
                         maxLength={20}
@@ -1103,7 +1111,7 @@ export function CartTab() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold" style={{ color: COLORS.textPrimary }}>
+                      <span className="text-sm font-bold" style={{ color: textPrimary }}>
                         {couponCode}
                       </span>
                       {couponPercentage > 0 && (
@@ -1149,17 +1157,17 @@ export function CartTab() {
 
               {/* Subtotal */}
               <div className="flex items-center justify-between mb-2.5">
-                <span className="text-sm" style={{ color: COLORS.textSecondary }}>
+                <span className="text-sm" style={{ color: textSecondary }}>
                   {tx('mobile.cart.subtotal', 'المجموع الفرعي', 'Subtotal')}
                 </span>
-                <span className="text-sm font-semibold" style={{ color: COLORS.textPrimary }}>
+                <span className="text-sm font-semibold" style={{ color: textPrimary }}>
                   {subtotal.toFixed(2)} {tx('product.currency', 'د.ل', 'LYD')}
                 </span>
               </div>
 
               {/* Delivery Fee */}
               <div className="flex items-center justify-between mb-2.5">
-                <span className="text-sm" style={{ color: COLORS.textSecondary }}>
+                <span className="text-sm" style={{ color: textSecondary }}>
                   {tx('mobile.cart.delivery', 'التوصيل', 'Delivery')}
                 </span>
                 {deliveryFee === 0 ? (
@@ -1173,7 +1181,7 @@ export function CartTab() {
                     {tx('mobile.cart.free', 'مجاني', 'Free')}
                   </span>
                 ) : (
-                  <span className="text-sm font-semibold" style={{ color: COLORS.textPrimary }}>
+                  <span className="text-sm font-semibold" style={{ color: textPrimary }}>
                     {deliveryFee.toFixed(2)} {tx('product.currency', 'د.ل', 'LYD')}
                   </span>
                 )}
@@ -1210,7 +1218,7 @@ export function CartTab() {
 
               {/* Total */}
               <div className="flex items-center justify-between">
-                <span className="text-base font-bold" style={{ color: COLORS.textPrimary }}>
+                <span className="text-base font-bold" style={{ color: textPrimary }}>
                   {tx('mobile.cart.total', 'الإجمالي', 'Total')}
                 </span>
                 <motion.span
@@ -1232,8 +1240,8 @@ export function CartTab() {
             variants={itemVariants}
             className="flex items-center justify-around py-3 rounded-2xl"
             style={{
-              background: COLORS.surface,
-              border: `1px solid ${COLORS.border}`,
+              background: surface,
+              border: `1px solid ${borderColor}`,
             }}
           >
             {TRUST_BADGES.map((badge, i) => {
@@ -1251,7 +1259,7 @@ export function CartTab() {
                   </div>
                   <span
                     className="text-[10px] font-medium"
-                    style={{ color: COLORS.textSecondary }}
+                    style={{ color: textSecondary }}
                   >
                     {isRTL ? badge.labelAr : badge.labelEn}
                   </span>
