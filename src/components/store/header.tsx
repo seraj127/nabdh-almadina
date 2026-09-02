@@ -62,6 +62,7 @@ import { ExpandableSearch } from '@/components/store/expandable-search';
 import { ThemeToggle } from '@/components/store/theme-toggle';
 import { NotificationBell } from '@/components/store/notification-bell';
 import { useTheme } from 'next-themes';
+import { syncThemeToServer } from '@/lib/theme-sync';
 
 const navLinks = [
   { key: 'nav.home', href: '#home', icon: Home, color: 'text-nabdh-primary' },
@@ -515,7 +516,7 @@ export function Header() {
                           <div className="grid grid-cols-3 gap-1.5">
                             {/* Light */}
                             <button
-                              onClick={() => setTheme('light')}
+                              onClick={() => { setTheme('light'); syncThemeToServer('light'); }}
                               className={`group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all duration-300 ${
                                 theme === 'light'
                                   ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/30 shadow-sm'
@@ -543,7 +544,7 @@ export function Header() {
                             </button>
                             {/* System */}
                             <button
-                              onClick={() => setTheme('system')}
+                              onClick={() => { setTheme('system'); syncThemeToServer('system'); }}
                               className={`group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all duration-300 ${
                                 theme === 'system'
                                   ? 'border-nabdh-primary bg-nabdh-primary/5 shadow-sm'
@@ -570,7 +571,7 @@ export function Header() {
                             </button>
                             {/* Dark */}
                             <button
-                              onClick={() => setTheme('dark')}
+                              onClick={() => { setTheme('dark'); syncThemeToServer('dark'); }}
                               className={`group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all duration-300 ${
                                 theme === 'dark'
                                   ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 shadow-sm'
@@ -792,7 +793,7 @@ export function Header() {
                           <div className="grid grid-cols-3 gap-1.5">
                             {/* Light */}
                             <button
-                              onClick={() => setTheme('light')}
+                              onClick={() => { setTheme('light'); syncThemeToServer('light'); }}
                               className={`group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all duration-300 ${
                                 theme === 'light'
                                   ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/30 shadow-sm'
@@ -820,7 +821,7 @@ export function Header() {
                             </button>
                             {/* System */}
                             <button
-                              onClick={() => setTheme('system')}
+                              onClick={() => { setTheme('system'); syncThemeToServer('system'); }}
                               className={`group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all duration-300 ${
                                 theme === 'system'
                                   ? 'border-nabdh-primary bg-nabdh-primary/5 shadow-sm'
@@ -847,7 +848,7 @@ export function Header() {
                             </button>
                             {/* Dark */}
                             <button
-                              onClick={() => setTheme('dark')}
+                              onClick={() => { setTheme('dark'); syncThemeToServer('dark'); }}
                               className={`group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border-2 transition-all duration-300 ${
                                 theme === 'dark'
                                   ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 shadow-sm'
@@ -1111,7 +1112,7 @@ export function Header() {
                 <div className="grid grid-cols-3 gap-1.5">
                   {/* Light */}
                   <button
-                    onClick={() => setTheme('light')}
+                    onClick={() => { setTheme('light'); syncThemeToServer('light'); }}
                     className={`group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl border-2 transition-all duration-300 ${
                       theme === 'light'
                         ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/30 shadow-sm'
@@ -1139,7 +1140,7 @@ export function Header() {
                   </button>
                   {/* System */}
                   <button
-                    onClick={() => setTheme('system')}
+                    onClick={() => { setTheme('system'); syncThemeToServer('system'); }}
                     className={`group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl border-2 transition-all duration-300 ${
                       theme === 'system'
                         ? 'border-nabdh-primary bg-nabdh-primary/5 shadow-sm'
@@ -1166,7 +1167,7 @@ export function Header() {
                   </button>
                   {/* Dark */}
                   <button
-                    onClick={() => setTheme('dark')}
+                    onClick={() => { setTheme('dark'); syncThemeToServer('dark'); }}
                     className={`group relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl border-2 transition-all duration-300 ${
                       theme === 'dark'
                         ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 shadow-sm'

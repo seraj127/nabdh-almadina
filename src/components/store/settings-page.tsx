@@ -46,6 +46,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { compressImageToBase64 } from '@/lib/image-compress';
+import { syncThemeToServer } from '@/lib/theme-sync';
 
 // ─── Types ─────────────────────────────────────────────────────────
 type SectionId = 'profile' | 'appearance' | 'security' | 'notifications' | 'addresses' | 'about';
@@ -268,6 +269,12 @@ export function SettingsPage() {
   const isAr = language === 'ar';
   const BackArrow = isRTL ? ArrowRight : ArrowLeft;
   const ForwardArrow = isRTL ? ArrowLeft : ArrowRight;
+
+  // Wrap setTheme to also sync to server
+  const syncTheme = useCallback((newTheme: string) => {
+    setTheme(newTheme);
+    syncThemeToServer(newTheme as 'light' | 'dark' | 'system');
+  }, [setTheme]);
 
   // ─── State ────────────────────────────
   const [activeSection, setActiveSection] = useState<SectionId>('profile');
@@ -829,7 +836,7 @@ export function SettingsPage() {
                           <motion.button
                             key={opt.value}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => setTheme(opt.value)}
+                            onClick={() => syncTheme(opt.value)}
                             className={cn(
                               'relative rounded-xl p-4 border-2 transition-all flex flex-col items-center gap-2',
                               isActive

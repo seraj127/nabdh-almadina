@@ -20,6 +20,7 @@ import { useUIStore } from '@/stores/ui-store';
 import { useShallow } from 'zustand/react/shallow';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { syncThemeToServer } from '@/lib/theme-sync';
 
 /* ─── Types ──────────────────────────────────────────────────── */
 interface Address {
@@ -1003,7 +1004,7 @@ function SettingsTab({ user, isAr, onRefresh }: {
           icon: theme === 'dark' ? Moon : Sun,
           label: isAr ? 'المظهر' : 'Theme',
           value: theme === 'dark' ? (isAr ? 'داكن' : 'Dark') : (isAr ? 'فاتح' : 'Light'),
-          action: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
+          action: () => { const newTheme = theme === 'dark' ? 'light' : 'dark'; setTheme(newTheme); syncThemeToServer(newTheme as 'light' | 'dark'); },
         },
         {
           icon: Globe,

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Monitor } from 'lucide-react';
+import { syncThemeToServer } from '@/lib/theme-sync';
 
 export function ThemeToggle({ size = 'default' }: { size?: 'default' | 'small' }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -24,9 +25,12 @@ export function ThemeToggle({ size = 'default' }: { size?: 'default' | 'small' }
   const handleToggle = () => {
     setIsAnimating(true);
     // Cycle: light → dark → system → light
-    if (theme === 'light') setTheme('dark');
-    else if (theme === 'dark') setTheme('system');
-    else setTheme('light');
+    let next: 'light' | 'dark' | 'system';
+    if (theme === 'light') next = 'dark';
+    else if (theme === 'dark') next = 'system';
+    else next = 'light';
+    setTheme(next);
+    syncThemeToServer(next);
     setTimeout(() => setIsAnimating(false), 500);
   };
 

@@ -201,6 +201,18 @@ export const useUIStore = create<UIState>()((set) => ({
     setTimeout(() => {
       safeCartOp((s) => { s.getState().fetchFromServer().catch(() => {}); });
       safeFavoritesOp((s) => { s.getState().fetchFavorites().catch(() => {}); });
+      // Sync theme from server to apply user's preference across platforms
+      import('@/lib/theme-sync').then(({ fetchThemeFromServer }) => {
+        fetchThemeFromServer().then((serverTheme) => {
+          if (serverTheme && typeof window !== 'undefined') {
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme !== serverTheme) {
+              localStorage.setItem('theme', serverTheme);
+              document.documentElement.classList.toggle('dark', serverTheme === 'dark');
+            }
+          }
+        }).catch(() => {});
+      }).catch(() => {});
     }, 200);
     // ─── Cross-store sync: notify mobile store of login (unified session) ───
     import('@/lib/sync-bridge').then(({ syncAllFromServer, dispatchSyncEvent, syncWebUserToMobile }) => {

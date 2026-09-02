@@ -3,6 +3,7 @@ import { useUIStore } from '@/stores/ui-store';
 import { saveLocal, loadLocal } from './helpers';
 import { LOCAL_PRODUCTS, LOCAL_CATEGORIES } from './constants';
 import { normalizeProduct, readThemeDark, writeThemeDark } from './helpers';
+import { syncThemeToServer, fetchThemeFromServer } from '@/lib/theme-sync';
 import { normalizePhone } from '@/lib/phone-utils';
 import type { Screen, Tab, Product, Category, Subcategory, MobileUser, Address, Review, Order } from './types';
 
@@ -729,6 +730,11 @@ localStorage.removeItem('mobile_user');
     if (typeof document !== 'undefined') {
       document.documentElement.classList.toggle('dark', darkMode);
     }
+    // Persist to server if user is logged in
+    const user = useMobileStore.getState().user;
+    if (user && !user.id.startsWith('local-') && !user.id.startsWith('offline-')) {
+      syncThemeToServer(darkMode ? 'dark' : 'light');
+    }
   },
 
 
@@ -1178,6 +1184,25 @@ export function initMobileStore() {
 
   if (Object.keys(updates).length > 0) {
     useMobileStore.setState(updates);
+  }
+
+  // ─── Sync theme from server if user is logged in ────────────────────────
+  // If user has a server-side theme preference, apply it to localStorage and state
+  const currentUser = useMobileStore.getState().user;
+  if (currentUser && !currentUser.id.startsWith('local-') && !currentUser.id.startsWith('offline-')) {
+    fetchThemeFromServer().then((serverTheme) => {
+      if (serverTheme && serverTheme !== 'system') {
+        const shouldBeDark = serverTheme === 'dark';
+        const currentDark = readThemeDark();
+        if (shouldBeDark !== currentDark) {
+          useMobileStore.setState({ darkMode: shouldBeDark });
+          writeThemeDark(shouldBeDark);
+          if (typeof document !== 'undefined') {
+            document.documentElement.classList.toggle('dark', shouldBeDark);
+          }
+        }
+      }
+    }).catch(() => {});
   }
 
   // ─── Setup cross-component event listeners ───
