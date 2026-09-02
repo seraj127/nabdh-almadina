@@ -319,7 +319,7 @@ export function DashboardView() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
-              {data.lowStockProducts.length === 0 ? (
+              {(data?.lowStockProducts?.length ?? 0) === 0 ? (
                 <p className="text-sm text-center py-4" style={{ color: COLORS.muted }}>
                   {t('common.noData')}
                 </p>

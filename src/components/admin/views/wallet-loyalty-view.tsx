@@ -168,7 +168,7 @@ export function WalletLoyaltyView() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-80 overflow-y-auto custom-scrollbar">
-              {data.wallet.recentTransactions.length === 0 ? (
+              {(data?.wallet?.recentTransactions?.length ?? 0) === 0 ? (
                 <p className="text-sm text-center py-8" style={{ color: COLORS.muted }}>{t('common.noData')}</p>
               ) : (
                 data.wallet.recentTransactions.map((tx) => {
@@ -230,7 +230,7 @@ export function WalletLoyaltyView() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.topMembers.length === 0 ? (
+              {(data?.topMembers?.length ?? 0) === 0 ? (
                 <TableRow style={{ borderColor: COLORS.border }}>
                   <TableCell colSpan={6} className="text-center py-8" style={{ color: COLORS.muted }}>
                     {t('common.noData')}
@@ -290,7 +290,7 @@ export function WalletLoyaltyView() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {data.loyalty.breakdown.length === 0 ? (
+              {(data?.loyalty?.breakdown?.length ?? 0) === 0 ? (
                 <p className="text-sm text-center py-8" style={{ color: COLORS.muted }}>{t('common.noData')}</p>
               ) : (
                 data.loyalty.breakdown.map((item) => {
@@ -337,7 +337,7 @@ export function WalletLoyaltyView() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {data.wallet.breakdown.length === 0 ? (
+              {(data?.wallet?.breakdown?.length ?? 0) === 0 ? (
                 <p className="text-sm text-center py-8" style={{ color: COLORS.muted }}>{t('common.noData')}</p>
               ) : (
                 data.wallet.breakdown.map((item) => {
