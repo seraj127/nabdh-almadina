@@ -1054,7 +1054,7 @@ function SettingsTab({ user, isAr, onRefresh }: {
 
         <div>
           <label className="text-xs text-muted-foreground mb-1 block">{isAr ? 'البريد الإلكتروني' : 'Email'}</label>
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder={isAr ? 'اختياري' : 'Optional'} />
+          <Input value={email} onChange={(e) => setEmail(e.target.value)} type="text" inputMode="email" placeholder={isAr ? 'اختياري' : 'Optional'} />
         </div>
 
         <Button onClick={handleSave} disabled={saving} className="w-full nabdh-gradient text-white gap-1.5">

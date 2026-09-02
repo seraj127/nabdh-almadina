@@ -81,8 +81,12 @@ export function AuthRegisterPage() {
       newErrors.phone = isAr ? 'رقم الهاتف غير صحيح' : 'Invalid phone number';
     }
 
-    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = isAr ? 'البريد الإلكتروني غير صحيح' : 'Invalid email';
+    if (form.email) {
+      // Accept any reasonable real-world email (aligned with HTML5 type=email)
+      const trimmedEmail = form.email.trim();
+      if (trimmedEmail.length < 3 || !/^[^\s@]+@[^\s@]+$/.test(trimmedEmail)) {
+        newErrors.email = isAr ? 'البريد الإلكتروني غير صحيح' : 'Invalid email';
+      }
     }
 
     if (!form.password) {
@@ -333,7 +337,8 @@ export function AuthRegisterPage() {
                   <Mail className="absolute start-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
                     id="reg-email"
-                    type="email"
+                    type="text"
+                    inputMode="email"
                     value={form.email}
                     onChange={(e) => {
                       setForm({ ...form, email: e.target.value });

@@ -767,7 +767,8 @@ export function SettingsPage() {
                       <div>
                         <label className="text-sm font-medium">{t('settings.email')}</label>
                         <Input
-                          type="email"
+                          type="text"
+                          inputMode="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder={t('settings.emailPlaceholder')}
