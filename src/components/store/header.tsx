@@ -288,6 +288,49 @@ export function Header() {
                         </div>
                       </div>
 
+                      {/* Admin Panel Section — shown only for admin role */}
+                      {currentUser?.role === 'admin' && (
+                        <>
+                          <div className="px-3 mt-3">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">
+                              {isAr ? 'لوحة التحكم' : 'Admin Panel'}
+                            </p>
+                          </div>
+                          <div className="px-2 py-1 space-y-0.5">
+                            <DropdownMenuItem
+                              className="cursor-pointer gap-3 px-3 py-2 rounded-xl"
+                              onClick={() => {
+                                setIsUserMenuOpen(false);
+                                if (!isAdminMode) toggleAdminMode();
+                              }}
+                            >
+                              <div className="size-7 rounded-lg bg-cc-active/10 flex items-center justify-center">
+                                <Shield className="size-3.5 text-cc-active" />
+                              </div>
+                              <span className="text-sm font-medium">
+                                {isAr ? 'لوحة التحكم' : 'Control Panel'}
+                              </span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              className="cursor-pointer gap-3 px-3 py-2 rounded-xl"
+                              onClick={() => {
+                                setIsUserMenuOpen(false);
+                                if (!isAdminMode) toggleAdminMode();
+                              }}
+                            >
+                              <div className="size-7 rounded-lg bg-cc-warning/10 flex items-center justify-center">
+                                <Settings className="size-3.5 text-cc-warning" />
+                              </div>
+                              <span className="text-sm font-medium">
+                                {isAr ? 'إعدادات النظام' : 'System Settings'}
+                              </span>
+                            </DropdownMenuItem>
+                          </div>
+                          <div className="mx-3 h-px bg-border/50" />
+                        </>
+                      )}
+
                       {/* Site Navigation Section */}
                       <div className="px-3 mt-3">
                         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">
