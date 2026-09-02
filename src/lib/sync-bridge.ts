@@ -58,6 +58,19 @@ export async function syncWebUserToMobile(user: WebUserLike): Promise<void> {
     try {
       localStorage.setItem('mobile_user', JSON.stringify(adopted));
     } catch { /* ignore */ }
+    // Sync the user avatar to the mobile photo keys. This prevents a previous
+    // account's photo (mobile_user_photo / mobileAvatar) from sticking on a new user.
+    try {
+      if (user.avatar) {
+        useMobileStore.setState({ avatar: user.avatar });
+        localStorage.setItem('mobileAvatar', user.avatar);
+        localStorage.setItem('mobile_user_photo', user.avatar);
+      } else {
+        useMobileStore.setState({ avatar: null });
+        localStorage.setItem('mobileAvatar', JSON.stringify(null));
+        localStorage.removeItem('mobile_user_photo');
+      }
+    } catch { /* ignore */ }
   } catch {
     // Silent fail — might be circular import
   }

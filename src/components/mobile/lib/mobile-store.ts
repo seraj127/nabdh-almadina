@@ -1162,6 +1162,18 @@ export function initMobileStore() {
         ...(useMobileStore.getState().screen === 'splash' || useMobileStore.getState().screen === 'login' ? { screen: 'main' as const } : {}),
       });
       saveLocal('mobile_user', { id: webUser.id, name: webUser.name, phone: toLocalPhone(webUser.phone), email: webUser.email, avatar: webUser.avatar, role: webUser.role });
+      // Sync avatar keys — never carry over the previous account's photo
+      try {
+        if (webUser.avatar) {
+          useMobileStore.setState({ avatar: webUser.avatar });
+          localStorage.setItem('mobileAvatar', webUser.avatar);
+          localStorage.setItem('mobile_user_photo', webUser.avatar);
+        } else {
+          useMobileStore.setState({ avatar: null });
+          localStorage.setItem('mobileAvatar', JSON.stringify(null));
+          localStorage.removeItem('mobile_user_photo');
+        }
+      } catch { /* ignore */ }
     }
   } catch { /* ignore */ }
 
