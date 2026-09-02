@@ -35,14 +35,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Fallback: get userId from request body (for backward compatibility)
-    if (!userId) {
-      try {
-        const body = await request.json();
-        if (body?.userId) userId = body.userId;
-      } catch { /* no body */ }
-    }
-
+    // Security: userId is resolved ONLY from the verified JWT. It must never be
+    // accepted from the request body — otherwise any caller could supply another
+    // user's id and forcibly revoke all of that user's sessions (IDOR).
     if (userId) {
       const searchParams = new URL(request.url).searchParams;
       const single = searchParams.get('single') === 'true';

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { sendPushNotification } from '@/lib/push-notifications'
 import { sendNotificationEmail, notificationTypeToEmailTemplate, sendEmailToUser } from '@/lib/email'
-import { requireAuth } from '@/lib/auth-utils'
+import { requireAuth, requireAdmin } from '@/lib/auth-utils'
 
 export const dynamic = "force-dynamic";
 
@@ -177,9 +177,11 @@ export async function POST(request: NextRequest) {
 // PUT: Create a new notification
 export async function PUT(request: NextRequest) {
   try {
-    const authResult = await requireAuth(request);
-    if (authResult instanceof NextResponse) return authResult;
-    const { userId: authUserId } = authResult;
+    // Creating notifications must be restricted to admins. Restricting this
+    // endpoint prevents any authenticated user from sending notifications to
+    // arbitrary users (they only need to forge a body.userId).
+    const authError = await requireAdmin(request);
+    if (authError) return authError;
 
     const body = await request.json()
     const { userId, titleAr, titleEn, bodyAr, bodyEn, type } = body as {
