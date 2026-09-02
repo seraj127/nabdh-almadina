@@ -1832,7 +1832,7 @@ export const translations: Record<string, Record<Language, string>> = {
   'auth.createAccount': { ar: 'إنشاء حساب جديد', en: 'Create New Account' },
   'auth.signIn': { ar: 'تسجيل الدخول', en: 'Sign In' },
   'auth.signOut': { ar: 'تسجيل الخروج', en: 'Sign Out' },
-  'auth.welcome': { ar: 'مرحباً بك 👋', en: 'Welcome 👋' },
+  'auth.welcome': { ar: 'مرحباً بك', en: 'Welcome' },
   'auth.welcomeDesc': { ar: 'سجّل دخولك للاستمتاع بتجربة تسوق فريدة ومميزة', en: 'Sign in to enjoy a unique and distinctive shopping experience' },
   'auth.phone': { ar: 'رقم الهاتف', en: 'Phone Number' },
   'auth.enterPassword': { ar: 'أدخل كلمة المرور', en: 'Enter password' },
