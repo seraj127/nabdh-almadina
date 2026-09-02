@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Cairo } from "next/font/google";
 import "@/app/globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeSync } from "@/components/theme-sync";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -191,6 +192,7 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem
         >
+          <ThemeSync />
           <a href="#main-content" className="skip-to-content">
             تخطي إلى المحتوى الرئيسي
           </a>

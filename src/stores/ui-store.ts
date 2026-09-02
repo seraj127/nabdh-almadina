@@ -201,15 +201,11 @@ export const useUIStore = create<UIState>()((set) => ({
     setTimeout(() => {
       safeCartOp((s) => { s.getState().fetchFromServer().catch(() => {}); });
       safeFavoritesOp((s) => { s.getState().fetchFavorites().catch(() => {}); });
-      // Sync theme from server to apply user's preference across platforms
+      // Sync theme from server — dispatch event so ThemeSync component applies it via next-themes
       import('@/lib/theme-sync').then(({ fetchThemeFromServer }) => {
         fetchThemeFromServer().then((serverTheme) => {
           if (serverTheme && typeof window !== 'undefined') {
-            const currentTheme = localStorage.getItem('theme');
-            if (currentTheme !== serverTheme) {
-              localStorage.setItem('theme', serverTheme);
-              document.documentElement.classList.toggle('dark', serverTheme === 'dark');
-            }
+            window.dispatchEvent(new CustomEvent('nabdh:theme-sync', { detail: { theme: serverTheme } }));
           }
         }).catch(() => {});
       }).catch(() => {});

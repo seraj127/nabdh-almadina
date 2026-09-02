@@ -109,7 +109,12 @@ export async function PATCH(request: NextRequest) {
     if (email !== undefined) updateData.email = email;
     if (language !== undefined) updateData.language = language;
     if (avatar !== undefined) updateData.avatar = avatar;
-    if (preferences !== undefined) updateData.preferences = preferences;
+    if (preferences !== undefined && typeof preferences === 'object') {
+      // Merge with existing preferences instead of replacing
+      const existing = await db.user.findUnique({ where: { id: userId }, select: { preferences: true } });
+      const existingPrefs = (existing?.preferences && typeof existing.preferences === 'object') ? existing.preferences as Record<string, unknown> : {};
+      updateData.preferences = { ...existingPrefs, ...preferences };
+    }
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
