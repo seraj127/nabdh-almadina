@@ -904,8 +904,8 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Notification Bell - Only visible when logged in */}
-              {isLoggedIn && currentUser && (
+              {/* Notification Bell - Only visible for store users (not admin) */}
+              {isLoggedIn && currentUser && !isAdminUser && (
                 <NotificationBell isAr={isAr} isRTL={isRTL} userId={currentUser.id} />
               )}
 
