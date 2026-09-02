@@ -268,12 +268,20 @@ export function CommandCenter() {
             className="mx-2 mb-2 p-2 rounded-lg flex items-center gap-2"
             style={{ backgroundColor: `${COLORS.border}20` }}
           >
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-              style={{ backgroundColor: `${COLORS.active}30` }}
-            >
-              <User className="h-3.5 w-3.5" style={{ color: COLORS.active }} />
-            </div>
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt={user.name || ''}
+                className="w-7 h-7 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
+                style={{ backgroundColor: `${COLORS.active}30` }}
+              >
+                <User className="h-3.5 w-3.5" style={{ color: COLORS.active }} />
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium truncate" style={{ color: COLORS.text }}>
                 {user.name === 'مدير النظام' ? t('admin.systemAdmin') : user.name}
