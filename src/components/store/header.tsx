@@ -80,6 +80,7 @@ export function Header() {
   const { t, language, setLanguage, direction } = useLanguageStore(useShallow((s) => ({ t: s.t, language: s.language, setLanguage: s.setLanguage, direction: s.direction })));
   const cartItems = useCartStore(useShallow((s) => s.items));
   const { toggleAdminMode, isAdminMode, isLoggedIn, currentUser, login, logout, authView } = useUIStore(useShallow((s) => ({ toggleAdminMode: s.toggleAdminMode, isAdminMode: s.isAdminMode, isLoggedIn: s.isLoggedIn, currentUser: s.currentUser, login: s.login, logout: s.logout, authView: s.authView })));
+  const isAdminUser = currentUser?.role === 'admin';
   const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -272,21 +273,23 @@ export function Header() {
                         </div>
                       </div>
 
-                      {/* Quick Stats */}
-                      <div className="grid grid-cols-3 gap-px bg-border/30 mx-3 mt-3 rounded-xl overflow-hidden">
-                        <div className="bg-background flex flex-col items-center py-2.5 px-1">
-                          <span className="text-base font-bold text-nabdh-primary">{cartCount}</span>
-                          <span className="text-[9px] text-muted-foreground mt-0.5">{t('user.inCart')}</span>
+                      {/* Quick Stats — shown only for non-admin (store users) */}
+                      {!isAdminUser && (
+                        <div className="grid grid-cols-3 gap-px bg-border/30 mx-3 mt-3 rounded-xl overflow-hidden">
+                          <div className="bg-background flex flex-col items-center py-2.5 px-1">
+                            <span className="text-base font-bold text-nabdh-primary">{cartCount}</span>
+                            <span className="text-[9px] text-muted-foreground mt-0.5">{t('user.inCart')}</span>
+                          </div>
+                          <div className="bg-background flex flex-col items-center py-2.5 px-1">
+                            <span className="text-base font-bold text-nabdh-accent">{orderCount}</span>
+                            <span className="text-[9px] text-muted-foreground mt-0.5">{t('user.orders')}</span>
+                          </div>
+                          <div className="bg-background flex flex-col items-center py-2.5 px-1">
+                            <span className="text-base font-bold text-pink-500">{favCount}</span>
+                            <span className="text-[9px] text-muted-foreground mt-0.5">{t('user.favorites')}</span>
+                          </div>
                         </div>
-                        <div className="bg-background flex flex-col items-center py-2.5 px-1">
-                          <span className="text-base font-bold text-nabdh-accent">{orderCount}</span>
-                          <span className="text-[9px] text-muted-foreground mt-0.5">{t('user.orders')}</span>
-                        </div>
-                        <div className="bg-background flex flex-col items-center py-2.5 px-1">
-                          <span className="text-base font-bold text-pink-500">{favCount}</span>
-                          <span className="text-[9px] text-muted-foreground mt-0.5">{t('user.favorites')}</span>
-                        </div>
-                      </div>
+                      )}
 
                       {/* Admin Panel Section — shown only for admin role */}
                       {currentUser?.role === 'admin' && (
@@ -331,122 +334,132 @@ export function Header() {
                         </>
                       )}
 
-                      {/* Site Navigation Section */}
-                      <div className="px-3 mt-3">
-                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">
-                          {t('nav.mainNavigation')}
-                        </p>
-                      </div>
-                      <div className="px-2 py-1 space-y-0.5">
-                        {navLinks.map((link) => {
-                          const Icon = link.icon;
-                          return (
-                            <DropdownMenuItem
-                              key={link.key}
-                              className="cursor-pointer gap-3 px-3 py-2 rounded-xl"
-                              onClick={() => handleNavClick(link.href, (link as any).navigateTo)}
-                            >
-                              <div className={`size-7 rounded-lg bg-muted/50 flex items-center justify-center ${link.color}`}>
-                                <Icon className="size-3.5" />
+                      {/* Site Navigation Section — shown only for non-admin (store users) */}
+                      {!isAdminUser && (
+                        <>
+                          <div className="px-3 mt-3">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">
+                              {t('nav.mainNavigation')}
+                            </p>
+                          </div>
+                          <div className="px-2 py-1 space-y-0.5">
+                            {navLinks.map((link) => {
+                              const Icon = link.icon;
+                              return (
+                                <DropdownMenuItem
+                                  key={link.key}
+                                  className="cursor-pointer gap-3 px-3 py-2 rounded-xl"
+                                  onClick={() => handleNavClick(link.href, (link as any).navigateTo)}
+                                >
+                                  <div className={`size-7 rounded-lg bg-muted/50 flex items-center justify-center ${link.color}`}>
+                                    <Icon className="size-3.5" />
+                                  </div>
+                                  <span className="text-sm font-medium">{t(link.key)}</span>
+                                </DropdownMenuItem>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
+
+                      {/* Account Items — shown only for non-admin (store users) */}
+                      {!isAdminUser && (
+                        <>
+                          <div className="mx-3 h-px bg-border/50" />
+                          <div className="px-3 pt-1">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">
+                              {isAr ? 'حسابي' : 'My Account'}
+                            </p>
+                          </div>
+                          <div className="px-2 py-1 space-y-0.5">
+                            <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('profile'); }}>
+                              <div className="size-7 rounded-lg bg-nabdh-primary/10 flex items-center justify-center">
+                                <UserCircle className="size-3.5 text-nabdh-primary" />
                               </div>
-                              <span className="text-sm font-medium">{t(link.key)}</span>
+                              <span className="text-sm font-medium">{t('user.profile')}</span>
                             </DropdownMenuItem>
-                          );
-                        })}
-                      </div>
 
-                      <div className="mx-3 h-px bg-border/50" />
+                            <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('cart'); }}>
+                              <div className="size-7 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                                <ShoppingCart className="size-3.5 text-emerald-600" />
+                              </div>
+                              <span className="text-sm font-medium">{t('nav.shoppingCart')}</span>
+                              {cartCount > 0 && (
+                                <Badge className="ms-auto bg-nabdh-secondary text-white text-[10px] px-1.5 py-0 border-0 rounded-full">
+                                  {cartCount}
+                                </Badge>
+                              )}
+                            </DropdownMenuItem>
 
-                      {/* Account Items */}
-                      <div className="px-3 pt-1">
-                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-1">
-                          {isAr ? 'حسابي' : 'My Account'}
-                        </p>
-                      </div>
-                      <div className="px-2 py-1 space-y-0.5">
-                        <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('profile'); }}>
-                          <div className="size-7 rounded-lg bg-nabdh-primary/10 flex items-center justify-center">
-                            <UserCircle className="size-3.5 text-nabdh-primary" />
+                            <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('order-tracking'); }}>
+                              <div className="size-7 rounded-lg bg-nabdh-accent/10 flex items-center justify-center">
+                                <PackageSearch className="size-3.5 text-nabdh-accent" />
+                              </div>
+                              <span className="text-sm font-medium">{t('nav.trackOrder')}</span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('favorites'); }}>
+                              <div className="size-7 rounded-lg bg-pink-500/10 flex items-center justify-center relative">
+                                <Heart className="size-3.5 text-pink-500" />
+                                {favCount > 0 && (
+                                  <span className="absolute -top-1 -end-1 min-w-3.5 h-3.5 flex items-center justify-center bg-pink-500 text-white text-[8px] font-bold rounded-full leading-none px-0.5">
+                                    {favCount}
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-sm font-medium">{t('nav.wishlist')}</span>
+                              {favCount > 0 && (
+                                <Badge className="ms-auto bg-pink-500/10 text-pink-500 text-[10px] px-1.5 py-0 border-0 rounded-full hover:bg-pink-500/20">
+                                  {favCount}
+                                </Badge>
+                              )}
+                            </DropdownMenuItem>
                           </div>
-                          <span className="text-sm font-medium">{t('user.profile')}</span>
-                        </DropdownMenuItem>
+                        </>
+                      )}
 
-                        <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('cart'); }}>
-                          <div className="size-7 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                            <ShoppingCart className="size-3.5 text-emerald-600" />
+                      {/* Secondary Items — shown only for non-admin (store users) */}
+                      {!isAdminUser && (
+                        <>
+                          <div className="mx-3 h-px bg-border/50" />
+                          <div className="px-2 py-1 space-y-0.5">
+                            <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('delivery-zones'); }}>
+                              <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
+                                <MapPin className="size-3.5 text-muted-foreground" />
+                              </div>
+                              <span className="text-sm">{isAr ? 'مناطق التوصيل' : 'Delivery Zones'}</span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('points-rewards'); }}>
+                              <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
+                                <Gift className="size-3.5 text-muted-foreground" />
+                              </div>
+                              <span className="text-sm">{t('nav.pointsRewards')}</span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('settings'); }}>
+                              <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
+                                <Settings className="size-3.5 text-muted-foreground" />
+                              </div>
+                              <span className="text-sm">{t('nav.settings')}</span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('contact'); }}>
+                              <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
+                                <PhoneCall className="size-3.5 text-muted-foreground" />
+                              </div>
+                              <span className="text-sm">{t('nav.contact')}</span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('sitemap'); }}>
+                              <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
+                                <TreePine className="size-3.5 text-muted-foreground" />
+                              </div>
+                              <span className="text-sm">{t('sitemap.title')}</span>
+                            </DropdownMenuItem>
                           </div>
-                          <span className="text-sm font-medium">{t('nav.shoppingCart')}</span>
-                          {cartCount > 0 && (
-                            <Badge className="ms-auto bg-nabdh-secondary text-white text-[10px] px-1.5 py-0 border-0 rounded-full">
-                              {cartCount}
-                            </Badge>
-                          )}
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('order-tracking'); }}>
-                          <div className="size-7 rounded-lg bg-nabdh-accent/10 flex items-center justify-center">
-                            <PackageSearch className="size-3.5 text-nabdh-accent" />
-                          </div>
-                          <span className="text-sm font-medium">{t('nav.trackOrder')}</span>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('favorites'); }}>
-                          <div className="size-7 rounded-lg bg-pink-500/10 flex items-center justify-center relative">
-                            <Heart className="size-3.5 text-pink-500" />
-                            {favCount > 0 && (
-                              <span className="absolute -top-1 -end-1 min-w-3.5 h-3.5 flex items-center justify-center bg-pink-500 text-white text-[8px] font-bold rounded-full leading-none px-0.5">
-                                {favCount}
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-sm font-medium">{t('nav.wishlist')}</span>
-                          {favCount > 0 && (
-                            <Badge className="ms-auto bg-pink-500/10 text-pink-500 text-[10px] px-1.5 py-0 border-0 rounded-full hover:bg-pink-500/20">
-                              {favCount}
-                            </Badge>
-                          )}
-                        </DropdownMenuItem>
-                      </div>
-
-                      <div className="mx-3 h-px bg-border/50" />
-
-                      {/* Secondary Items */}
-                      <div className="px-2 py-1 space-y-0.5">
-                        <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('delivery-zones'); }}>
-                          <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
-                            <MapPin className="size-3.5 text-muted-foreground" />
-                          </div>
-                          <span className="text-sm">{isAr ? 'مناطق التوصيل' : 'Delivery Zones'}</span>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('points-rewards'); }}>
-                          <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
-                            <Gift className="size-3.5 text-muted-foreground" />
-                          </div>
-                          <span className="text-sm">{t('nav.pointsRewards')}</span>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('settings'); }}>
-                          <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
-                            <Settings className="size-3.5 text-muted-foreground" />
-                          </div>
-                          <span className="text-sm">{t('nav.settings')}</span>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('contact'); }}>
-                          <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
-                            <PhoneCall className="size-3.5 text-muted-foreground" />
-                          </div>
-                          <span className="text-sm">{t('nav.contact')}</span>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2 rounded-xl" onClick={() => { setIsUserMenuOpen(false); useUIStore.getState().navigateTo('sitemap'); }}>
-                          <div className="size-7 rounded-lg bg-muted/60 flex items-center justify-center">
-                            <TreePine className="size-3.5 text-muted-foreground" />
-                          </div>
-                          <span className="text-sm">{t('sitemap.title')}</span>
-                        </DropdownMenuItem>
-                      </div>
+                        </>
+                      )}
 
                       <div className="mx-3 h-px bg-border/50" />
 
