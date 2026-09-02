@@ -633,7 +633,8 @@ export function ContactPage() {
 
                   {/* Email */}
                   <Input
-                    type="email"
+                    type="text"
+                    inputMode="email"
                     placeholder={t('contact.emailPlaceholder')}
                     dir="ltr"
                     className="h-11 text-start"

@@ -328,11 +328,11 @@ export function EditProfileOverlay({ onClose, user, darkMode, isRTL, direction, 
               dir="ltr"
             />
             <InputField
-              label={isRTL ? 'البريد الإلكتروني' : 'Email'}
+label={isRTL ? 'البريد الإلكتروني' : 'Email'}
               value={email}
               onChange={setEmail}
               placeholder="email@example.com"
-              type="email"
+              type="text"
               darkMode={darkMode}
               isRTL={isRTL}
               dir="ltr"
@@ -903,11 +903,11 @@ export function ReportBugOverlay({ onClose, darkMode, isRTL, direction }: {
             </div>
 
             <InputField
-              label={isRTL ? 'البريد الإلكتروني (اختياري)' : 'Email (optional)'}
+label={isRTL ? 'البريد الإلكتروني (اختياري)' : 'Email (optional)'}
               value={email}
               onChange={setEmail}
               placeholder="email@example.com"
-              type="email"
+              type="text"
               darkMode={darkMode}
               isRTL={isRTL}
               dir="ltr"
@@ -2014,10 +2014,10 @@ export function ContactUsOverlay({ onClose, darkMode, isRTL, direction }: {
               />
               <InputField
                 label={isRTL ? 'البريد الإلكتروني' : 'Email'}
-                value={email}
+value={email}
                 onChange={setEmail}
                 placeholder="email@example.com"
-                type="email"
+                type="text"
                 darkMode={darkMode}
                 isRTL={isRTL}
                 dir="ltr"

@@ -1385,7 +1385,8 @@ function RegisterScreen() {
             </label>
             <div className="relative">
               <input
-                type="email"
+                type="text"
+                inputMode="email"
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

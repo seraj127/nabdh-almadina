@@ -482,7 +482,8 @@ export function ContactScreen() {
                     {t('mobile.contact.emailLabel')}
                   </label>
                   <input
-                    type="email"
+                    type="text"
+                    inputMode="email"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setFormError(''); }}
                     placeholder={t('mobile.contact.emailPlaceholder')}

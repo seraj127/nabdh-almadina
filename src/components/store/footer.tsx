@@ -299,7 +299,8 @@ export function Footer() {
             <form onSubmit={handleSubscribe} className="space-y-2">
               <div className="flex gap-2">
                 <Input
-                  type="email"
+                  type="text"
+                  inputMode="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('footer.newsletterPlaceholder')}
