@@ -350,6 +350,16 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
         set({ user: u, screen: 'main', loading: false, isReturningUser: data.isReturningUser || false });
         saveLocal('mobile_user', u);
         useUIStore.getState().login({ id: u.id, name: u.name, phone: u.phone, email: u.email, avatar: u.avatar, role: u.role });
+        // Clear the locally-stored avatar if this account has none, otherwise sync it
+        if (u.avatar) {
+          set({ avatar: u.avatar });
+          saveLocal('mobileAvatar', u.avatar);
+          try { localStorage.setItem('mobile_user_photo', u.avatar); } catch { /* ignore */ }
+        } else {
+          set({ avatar: null });
+          saveLocal('mobileAvatar', null);
+          try { localStorage.removeItem('mobile_user_photo'); } catch { /* ignore */ }
+        }
         get().fetchUserProfile();
         get().fetchAddresses();
         get().fetchOrders();
@@ -381,6 +391,10 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
         set({ user: u, screen: 'main', loading: false });
         saveLocal('mobile_user', u);
         useUIStore.getState().login({ id: u.id, name: u.name, phone: u.phone, email: u.email, avatar: undefined, role: u.role });
+        // New accounts have no avatar — clear any leftover image from a previous session
+        set({ avatar: null });
+        saveLocal('mobileAvatar', null);
+        try { localStorage.removeItem('mobile_user_photo'); } catch { /* ignore */ }
         return true;
       }
     } catch {
@@ -419,7 +433,11 @@ export const useMobileStore = create<MobileAppState>((set, get) => ({
       accountSubTarget: null,
       favorites: [],
     });
-    localStorage.removeItem('mobile_user');
+localStorage.removeItem('mobile_user');
+    // Clear any leftover avatar from the previous account so a new user does not see it
+    set({ avatar: null });
+    saveLocal('mobileAvatar', null);
+    try { localStorage.removeItem('mobile_user_photo'); } catch { /* ignore */ }
     // Also clear web favorites to keep in sync
     import('@/lib/sync-bridge').then(({ syncMobileToFavoritesStore }) => {
       syncMobileToFavoritesStore([]);
