@@ -946,21 +946,6 @@ export function Header() {
                 )}
               </Button>
 
-              {/* Admin Toggle */}
-              <Button
-                variant={isAdminMode ? 'default' : 'ghost'}
-                size="icon"
-                onClick={toggleAdminMode}
-                aria-label={t('nav.admin')}
-                className={`hidden sm:inline-flex ${
-                  isAdminMode
-                    ? 'bg-cc-active text-cc-bg hover:bg-cc-active/90'
-                    : 'text-foreground/70 hover:text-nabdh-primary'
-                }`}
-              >
-                <Shield className="size-5" />
-              </Button>
-
               {/* Mobile Menu Toggle */}
               <Button
                 variant="ghost"
