@@ -14,7 +14,7 @@ import {
   Settings, ChevronLeft, ChevronRight, Truck, Tag,
   Wallet, Award, Gift, RefreshCw, Info,
   Clock, Camera, LogOut, X, Check, Share2, Copy, Star, ShoppingBag,
-  FileText, Phone, Sparkles, Image as ImageIcon, Upload, Trash2, Download, ArrowRight, ArrowLeft
+  FileText, Phone, Sparkles, Image as ImageIcon, Upload, Trash2, ArrowRight, ArrowLeft
 } from 'lucide-react';
 import { PrivacyOverlay, HelpOverlay, AboutOverlay, ContactUsOverlay } from './profile-overlays';
 import { AdvancedSettingsScreen } from './settings-screen';
@@ -1623,23 +1623,6 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 </span>
                 {isRtl ? <ChevronLeft size={16} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} /> : <ChevronRight size={16} style={{ color: darkMode ? '#6B7280' : '#9CA3AF' }} />}
               </motion.button>
-
-              {/* Admin Dashboard Access */}
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={() => useUIStore.getState().toggleAdminMode()}
-                className="w-full flex items-center gap-3 px-4 py-3"
-              >
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${COLORS.info}15`, color: COLORS.info }}>
-                  <Sparkles size={18} />
-                </div>
-                <span className="flex-1 text-start text-sm font-medium" style={{ color: darkMode ? '#E5E7EB' : COLORS.textPrimary }}>
-                  {isRtl ? 'لوحة التحكم' : 'Admin Dashboard'}
-                </span>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md" style={{ background: `${COLORS.info}15`, color: COLORS.info }}>
-                  {isRtl ? 'مدير' : 'Admin'}
-                </span>
-              </motion.button>
             </motion.div>
 
             {/* ─── Support (hidden for admin) ─── */}
@@ -1663,10 +1646,9 @@ export function ProfileTab({ user, onLogout, onGoToLogin, darkMode, setDarkMode 
                 { icon: <Headphones size={18} />, label: isRtl ? 'مركز المساعدة' : 'Help Center', color: COLORS.info, bgColor: `${COLORS.info}10`, action: () => setShowHelp(true) },
                 { icon: <Info size={18} />, label: isRtl ? 'حول التطبيق' : 'About', color: COLORS.teal, bgColor: `${COLORS.teal}10`, action: () => setShowAbout(true) },
                 { icon: <Share2 size={18} />, label: isRtl ? 'مشاركة التطبيق' : 'Share App', color: COLORS.purple, bgColor: `${COLORS.purple}10` },
-                { icon: <Download size={18} />, label: isRtl ? 'تحميل التطبيق APK' : 'Download App APK', color: COLORS.success, bgColor: `${COLORS.success}10`, action: () => { window.location.hash = 'download'; } },
                 { icon: <Phone size={18} />, label: isRtl ? 'تواصل معنا' : 'Contact Us', color: COLORS.secondary, bgColor: `${COLORS.secondary}10`, action: () => setShowContact(true) },
               ].map((item, i) => {
-                const totalCount = 5;
+                const totalCount = 4;
                 return (
                   <motion.button
                     key={i}
