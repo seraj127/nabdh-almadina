@@ -108,3 +108,5 @@ MOBILE_APP_STATE.md
 gen-log.txt
 .vercel
 .env*
+test-results/
+e2e/screenshot.cjs
