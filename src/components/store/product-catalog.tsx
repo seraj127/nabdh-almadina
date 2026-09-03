@@ -82,7 +82,7 @@ function InfiniteMarquee({
       {/* Left Arrow — overlaid on left side */}
       <button
         onClick={() => handleScroll('left')}
-        className="absolute start-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/90 dark:bg-white/10 shadow-md border border-gray-200/60 dark:border-gray-700/40 hover:bg-white dark:hover:bg-white/20 transition-all active:scale-90"
+        className="absolute start-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/90 dark:bg-white/10 shadow-md border border-gray-200/60 dark:border-gray-700/40 hover:bg-white dark:hover:bg-white/20 transition-all active:scale-90"
         aria-label={isRTL ? 'تمرير لليمين' : 'Scroll right'}
       >
         <ChevronRight size={16} className="text-gray-600 dark:text-gray-300" />
@@ -91,7 +91,7 @@ function InfiniteMarquee({
       {/* Right Arrow — overlaid on right side */}
       <button
         onClick={() => handleScroll('right')}
-        className="absolute end-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/90 dark:bg-white/10 shadow-md border border-gray-200/60 dark:border-gray-700/40 hover:bg-white dark:hover:bg-white/20 transition-all active:scale-90"
+        className="absolute end-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/90 dark:bg-white/10 shadow-md border border-gray-200/60 dark:border-gray-700/40 hover:bg-white dark:hover:bg-white/20 transition-all active:scale-90"
         aria-label={isRTL ? 'تمرير لليسار' : 'Scroll left'}
       >
         <ChevronLeft size={16} className="text-gray-600 dark:text-gray-300" />

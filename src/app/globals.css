@@ -630,25 +630,28 @@
   background: var(--surface-overlay);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  /* Reserve side space for the overlay arrows so they never cover the buttons */
+  padding-left: 56px;
+  padding-right: 56px;
 }
 
-/* Fade masks on edges — Theme-Aware */
+/* Fade masks on edges — Theme-Aware (placed inside the reserved arrow gutters) */
 .marquee-fade-start,
 .marquee-fade-end {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 60px;
+  width: 32px;
   z-index: 2;
   pointer-events: none;
 }
 .marquee-fade-start {
-  left: 0;
-  background: linear-gradient(to right, var(--background), transparent);
+  left: 56px;
+  background: linear-gradient(to right, var(--surface-overlay), transparent);
 }
 .marquee-fade-end {
-  right: 0;
-  background: linear-gradient(to left, var(--background), transparent);
+  right: 56px;
+  background: linear-gradient(to left, var(--surface-overlay), transparent);
 }
 
 /* Viewport clips the content */

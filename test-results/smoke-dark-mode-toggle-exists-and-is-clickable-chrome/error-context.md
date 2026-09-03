@@ -1,0 +1,940 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: smoke.spec.ts >> dark mode toggle exists and is clickable
+- Location: e2e\smoke.spec.ts:15:5
+
+# Error details
+
+```
+Test timeout of 60000ms exceeded.
+```
+
+```
+Error: page.goto: Test timeout of 60000ms exceeded.
+Call log:
+  - navigating to "https://nabdh-almadina.vercel.app/", waiting until "networkidle"
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "تخطي إلى المحتوى الرئيسي" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e6]:
+        - link "نبض المدينة نبض المدينة" [ref=e7] [cursor=pointer]:
+          - /url: "#home"
+          - img "نبض المدينة" [ref=e9]
+          - generic [ref=e10]: نبض المدينة
+        - generic [ref=e11]:
+          - button "بحث" [ref=e13]
+          - button "Toggle theme" [ref=e17]
+          - button [ref=e25]
+          - button "السلة" [ref=e29]
+          - button "المفضلة" [ref=e30]
+    - main [ref=e31]:
+      - generic [ref=e40]:
+        - heading "نبض المدينة" [level=1] [ref=e41]
+        - paragraph [ref=e42]: تسوق أفضل المنتجات بأفضل الأسعار
+        - paragraph [ref=e43]: اكتشف تشكيلة واسعة من المنتجات المميزة مع توصيل سريع لجميع مناطق ليبيا
+        - generic [ref=e44]:
+          - button "تسوق الآن" [ref=e45]
+          - button "عرض العروض" [ref=e46]
+        - generic [ref=e47]:
+          - generic [ref=e48]: جودة مضمونة
+          - generic [ref=e53]: توصيل سريع
+          - generic [ref=e60]: دفع آمن
+          - generic [ref=e64]: دعم على مدار الساعة
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - heading "منتجاتنا" [level=2] [ref=e72]
+            - paragraph [ref=e73]: 25 جميع المنتجات
+          - generic [ref=e74]:
+            - button "تصفية" [ref=e76]
+            - combobox [ref=e78] [cursor=pointer]:
+              - option "الأحدث" [selected]
+              - 'option "السعر: من الأقل"'
+              - 'option "السعر: من الأعلى"'
+              - option "الأكثر شعبية"
+        - generic [ref=e79]:
+          - button "تمرير لليمين" [ref=e80]
+          - button "تمرير لليسار" [ref=e83]
+          - generic [ref=e88]:
+            - button "💻 إلكترونيات (0)" [ref=e89]:
+              - generic [ref=e90]: 💻
+              - text: إلكترونيات
+              - generic [ref=e91]: (0)
+            - button "📱 هواتف وأجهزة لوحية (0)" [ref=e92]:
+              - generic [ref=e93]: 📱
+              - text: هواتف وأجهزة لوحية
+              - generic [ref=e94]: (0)
+            - button "🏠 أجهزة منزلية (0)" [ref=e95]:
+              - generic [ref=e96]: 🏠
+              - text: أجهزة منزلية
+              - generic [ref=e97]: (0)
+            - button "👔 ملابس رجالية (0)" [ref=e98]:
+              - generic [ref=e99]: 👔
+              - text: ملابس رجالية
+              - generic [ref=e100]: (0)
+            - button "👗 ملابس نسائية (0)" [ref=e101]:
+              - generic [ref=e102]: 👗
+              - text: ملابس نسائية
+              - generic [ref=e103]: (0)
+            - button "⚡ أجهزة كهربائية (0)" [ref=e104]:
+              - generic [ref=e105]: ⚡
+              - text: أجهزة كهربائية
+              - generic [ref=e106]: (0)
+            - button "💄 مستحضرات تجميل (0)" [ref=e107]:
+              - generic [ref=e108]: 💄
+              - text: مستحضرات تجميل
+              - generic [ref=e109]: (0)
+            - button "🏋️ رياضة ولياقة (0)" [ref=e110]:
+              - generic [ref=e111]: 🏋️
+              - text: رياضة ولياقة
+              - generic [ref=e112]: (0)
+            - button "📚 كتب ومستلزمات مكتبية (0)" [ref=e113]:
+              - generic [ref=e114]: 📚
+              - text: كتب ومستلزمات مكتبية
+              - generic [ref=e115]: (0)
+            - button "🍽️ أغذية ومشروبات (0)" [ref=e116]:
+              - generic [ref=e117]: 🍽️
+              - text: أغذية ومشروبات
+              - generic [ref=e118]: (0)
+            - button "🛋️ أثاث ومنزل (0)" [ref=e119]:
+              - generic [ref=e120]: 🛋️
+              - text: أثاث ومنزل
+              - generic [ref=e121]: (0)
+            - button "💎 إكسسوارات (0)" [ref=e122]:
+              - generic [ref=e123]: 💎
+              - text: إكسسوارات
+              - generic [ref=e124]: (0)
+        - generic [ref=e125]:
+          - generic [ref=e126] [cursor=pointer]:
+            - generic [ref=e127]:
+              - img "كريم مرطب للبشرة الجافة 200 مل" [ref=e129]
+              - generic [ref=e130]: متوفر
+              - generic:
+                - generic:
+                  - button "معاينة" [ref=e131]
+                  - button [ref=e132]
+            - generic [ref=e133]:
+              - paragraph [ref=e134]: عناية بالبشرة
+              - heading "كريم مرطب للبشرة الجافة 200 مل" [level=3] [ref=e135]
+              - generic [ref=e136]: (78)
+              - generic [ref=e149]:
+                - generic [ref=e150]: 95.00 د.ل
+                - generic [ref=e151]: 120.00 د.ل
+              - button "أضف للسلة" [ref=e153]
+          - generic [ref=e154] [cursor=pointer]:
+            - generic [ref=e155]:
+              - img "ماكينة قهوة إسبريسو أوتوماتيك" [ref=e157]
+              - generic [ref=e158]: متوفر
+              - generic:
+                - generic:
+                  - button "معاينة" [ref=e159]
+                  - button [ref=e160]
+            - generic [ref=e161]:
+              - paragraph [ref=e162]: ماكينات قهوة
+              - heading "ماكينة قهوة إسبريسو أوتوماتيك" [level=3] [ref=e163]
+              - generic [ref=e164]: (23)
+              - generic [ref=e177]:
+                - generic [ref=e178]: 1800.00 د.ل
+                - generic [ref=e179]: 2100.00 د.ل
+              - button "أضف للسلة" [ref=e181]
+          - generic [ref=e182] [cursor=pointer]:
+            - generic [ref=e183]:
+              - img "خلاط كهربائي متعدد السرعات" [ref=e185]
+              - generic [ref=e186]: متوفر
+              - generic:
+                - generic:
+                  - button "معاينة" [ref=e187]
+                  - button [ref=e188]
+            - generic [ref=e189]:
+              - paragraph [ref=e190]: خلاطات
+              - heading "خلاط كهربائي متعدد السرعات" [level=3] [ref=e191]
+              - generic [ref=e192]: (41)
+              - generic [ref=e205]:
+                - generic [ref=e206]: 280.00 د.ل
+                - generic [ref=e207]: 350.00 د.ل
+              - button "أضف للسلة" [ref=e209]
+          - generic [ref=e210] [cursor=pointer]:
+            - generic [ref=e211]:
+              - img "عباية سوداء مطرزة فاخرة" [ref=e213]
+              - generic [ref=e214]: متوفر
+              - generic:
+                - generic:
+                  - button "معاينة" [ref=e215]
+                  - button [ref=e216]
+            - generic [ref=e217]:
+              - paragraph [ref=e218]: عبايات
+              - heading "عباية سوداء مطرزة فاخرة" [level=3] [ref=e219]
+              - generic [ref=e220]: (189)
+              - generic [ref=e233]:
+                - generic [ref=e234]: 350.00 د.ل
+                - generic [ref=e235]: 420.00 د.ل
+              - button "أضف للسلة" [ref=e237]
+          - generic [ref=e238] [cursor=pointer]:
+            - generic [ref=e239]:
+              - img "قميص رجالي كتان فاخر" [ref=e241]
+              - generic [ref=e242]: متوفر
+              - generic:
+                - generic:
+                  - button "معاينة" [ref=e243]
+                  - button [ref=e244]
+            - generic [ref=e245]:
+              - paragraph [ref=e246]: قمصان
+              - heading "قميص رجالي كتان فاخر" [level=3] [ref=e247]
+              - generic [ref=e248]: (56)
+              - generic [ref=e261]:
+                - generic [ref=e262]: 180.00 د.ل
+                - generic [ref=e263]: 220.00 د.ل
+              - button "أضف للسلة" [ref=e265]
+          - generic [ref=e266] [cursor=pointer]:
+            - generic [ref=e267]:
+              - img "كتاب أسرار النجاح المالي" [ref=e269]
+              - generic [ref=e270]: متوفر
+              - generic:
+                - generic:
+                  - button "معاينة" [ref=e271]
+                  - button [ref=e272]
+            - generic [ref=e273]:
+              - paragraph [ref=e274]: كتب
+              - heading "كتاب أسرار النجاح المالي" [level=3] [ref=e275]
+              - generic [ref=e276]: (45)
+              - generic [ref=e289]:
+                - generic [ref=e290]: 45.00 د.ل
+                - generic [ref=e291]: 55.00 د.ل
+              - button "أضف للسلة" [ref=e293]
+          - generic [ref=e294] [cursor=pointer]:
+            - generic [ref=e295]:
+              - img "تمور ليبية فاخرة 1 كجم" [ref=e297]
+              - generic [ref=e298]: متوفر
+              - generic:
+                - generic:
+                  - button "معاينة" [ref=e299]
+                  - button [ref=e300]
+            - generic [ref=e301]:
+              - paragraph [ref=e302]: تمور ومكسرات
+              - heading "تمور ليبية فاخرة 1 كجم" [level=3] [ref=e303]
+              - generic [ref=e304]: (234)
+              - generic [ref=e317]:
+                - generic [ref=e318]: 120.00 د.ل
+                - generic [ref=e319]: 150.00 د.ل
+              - button "أضف للسلة" [ref=e321]
+          - generic [ref=e322] [cursor=pointer]:
+            - generic [ref=e323]:
+              - img "صالون 3 قطع مودرن" [ref=e325]
+              - generic [ref=e326]: متوفر
+              - generic:
+                - generic:
+                  - button "معاينة" [ref=e327]
+                  - button [ref=e328]
+            - generic [ref=e329]:
+              - paragraph [ref=e330]: صالونات
+              - heading "صالون 3 قطع مودرن" [level=3] [ref=e331]
+              - generic [ref=e332]: (18)
+              - generic [ref=e345]:
+                - generic [ref=e346]: 6500.00 د.ل
+                - generic [ref=e347]: 7500.00 د.ل
+              - button "أضف للسلة" [ref=e349]
+          - generic [ref=e350] [cursor=pointer]:
+            - generic [ref=e351]:
+              - img "عطر عود ملكي فاخر" [ref=e353]
+              - generic [ref=e354]: متوفر
+              - generic:
+                - generic:
+                  - button "معاينة" [ref=e355]
+                  - button [ref=e356]
+            - generic [ref=e357]:
+              - paragraph [ref=e358]: عطور
+              - heading "عطر عود ملكي فاخر" [level=3] [ref=e359]
+              - generic [ref=e360]: (156)
+              - generic [ref=e373]:
+                - generic [ref=e374]: 850.00 د.ل
+                - generic [ref=e375]: 1000.00 د.ل
+              - button "أضف للسلة" [ref=e377]
+        - button "عرض المزيد" [ref=e379]
+        - paragraph [ref=e381]: 1 / 3
+      - generic [ref=e382]:
+        - generic [ref=e384]:
+          - generic [ref=e386]:
+            - heading "الأكثر مبيعاً" [level=2] [ref=e387]
+            - paragraph [ref=e388]: أعلى المنتجات تقييماً من اختيار عملائنا
+          - generic [ref=e389]:
+            - button "Pause" [ref=e391]
+            - button "Next" [ref=e393]
+            - button "Previous" [ref=e395]
+        - generic [ref=e399]:
+          - generic [ref=e401] [cursor=pointer]:
+            - generic [ref=e402]:
+              - img "كريم مرطب للبشرة الجافة 200 مل" [ref=e404]
+              - generic [ref=e405]: "-21%"
+              - generic [ref=e407]: متوفر
+            - generic [ref=e408]:
+              - paragraph [ref=e409]: عناية بالبشرة
+              - heading "كريم مرطب للبشرة الجافة 200 مل" [level=3] [ref=e410]
+              - generic [ref=e411]: 4.3 (78)
+              - generic [ref=e424]:
+                - generic [ref=e425]: 95.00 د.ل
+                - generic [ref=e426]: 120.00 د.ل
+              - button "أضف للسلة" [ref=e428]
+          - generic [ref=e430] [cursor=pointer]:
+            - generic [ref=e431]:
+              - img "ماكينة قهوة إسبريسو أوتوماتيك" [ref=e433]
+              - generic [ref=e434]: "-14%"
+              - generic [ref=e436]: متوفر
+            - generic [ref=e437]:
+              - paragraph [ref=e438]: ماكينات قهوة
+              - heading "ماكينة قهوة إسبريسو أوتوماتيك" [level=3] [ref=e439]
+              - generic [ref=e440]: 4.5 (23)
+              - generic [ref=e453]:
+                - generic [ref=e454]: 1800.00 د.ل
+                - generic [ref=e455]: 2100.00 د.ل
+              - button "أضف للسلة" [ref=e457]
+          - generic [ref=e459] [cursor=pointer]:
+            - generic [ref=e460]:
+              - img "خلاط كهربائي متعدد السرعات" [ref=e462]
+              - generic [ref=e463]: "-20%"
+              - generic [ref=e465]: متوفر
+            - generic [ref=e466]:
+              - paragraph [ref=e467]: خلاطات
+              - heading "خلاط كهربائي متعدد السرعات" [level=3] [ref=e468]
+              - generic [ref=e469]: 4.2 (41)
+              - generic [ref=e482]:
+                - generic [ref=e483]: 280.00 د.ل
+                - generic [ref=e484]: 350.00 د.ل
+              - button "أضف للسلة" [ref=e486]
+          - generic [ref=e488] [cursor=pointer]:
+            - generic [ref=e489]:
+              - img "عباية سوداء مطرزة فاخرة" [ref=e491]
+              - generic [ref=e492]: "-17%"
+              - generic [ref=e494]: متوفر
+            - generic [ref=e495]:
+              - paragraph [ref=e496]: عبايات
+              - heading "عباية سوداء مطرزة فاخرة" [level=3] [ref=e497]
+              - generic [ref=e498]: 4.7 (189)
+              - generic [ref=e511]:
+                - generic [ref=e512]: 350.00 د.ل
+                - generic [ref=e513]: 420.00 د.ل
+              - button "أضف للسلة" [ref=e515]
+          - generic [ref=e517] [cursor=pointer]:
+            - generic [ref=e518]:
+              - img "قميص رجالي كتان فاخر" [ref=e520]
+              - generic [ref=e521]: "-18%"
+              - generic [ref=e523]: متوفر
+            - generic [ref=e524]:
+              - paragraph [ref=e525]: قمصان
+              - heading "قميص رجالي كتان فاخر" [level=3] [ref=e526]
+              - generic [ref=e527]: 4.4 (56)
+              - generic [ref=e540]:
+                - generic [ref=e541]: 180.00 د.ل
+                - generic [ref=e542]: 220.00 د.ل
+              - button "أضف للسلة" [ref=e544]
+          - generic [ref=e546] [cursor=pointer]:
+            - generic [ref=e547]:
+              - img "كتاب أسرار النجاح المالي" [ref=e549]
+              - generic [ref=e550]: "-18%"
+              - generic [ref=e552]: متوفر
+            - generic [ref=e553]:
+              - paragraph [ref=e554]: كتب
+              - heading "كتاب أسرار النجاح المالي" [level=3] [ref=e555]
+              - generic [ref=e556]: 4.2 (45)
+              - generic [ref=e569]:
+                - generic [ref=e570]: 45.00 د.ل
+                - generic [ref=e571]: 55.00 د.ل
+              - button "أضف للسلة" [ref=e573]
+          - generic [ref=e575] [cursor=pointer]:
+            - generic [ref=e576]:
+              - img "تمور ليبية فاخرة 1 كجم" [ref=e578]
+              - generic [ref=e579]: "-20%"
+              - generic [ref=e581]: متوفر
+            - generic [ref=e582]:
+              - paragraph [ref=e583]: تمور ومكسرات
+              - heading "تمور ليبية فاخرة 1 كجم" [level=3] [ref=e584]
+              - generic [ref=e585]: 4.9 (234)
+              - generic [ref=e598]:
+                - generic [ref=e599]: 120.00 د.ل
+                - generic [ref=e600]: 150.00 د.ل
+              - button "أضف للسلة" [ref=e602]
+          - generic [ref=e604] [cursor=pointer]:
+            - generic [ref=e605]:
+              - img "كريم مرطب للبشرة الجافة 200 مل" [ref=e607]
+              - generic [ref=e608]: "-21%"
+              - generic [ref=e610]: متوفر
+            - generic [ref=e611]:
+              - paragraph [ref=e612]: عناية بالبشرة
+              - heading "كريم مرطب للبشرة الجافة 200 مل" [level=3] [ref=e613]
+              - generic [ref=e614]: 4.3 (78)
+              - generic [ref=e627]:
+                - generic [ref=e628]: 95.00 د.ل
+                - generic [ref=e629]: 120.00 د.ل
+              - button "أضف للسلة" [ref=e631]
+          - generic [ref=e633] [cursor=pointer]:
+            - generic [ref=e634]:
+              - img "ماكينة قهوة إسبريسو أوتوماتيك" [ref=e636]
+              - generic [ref=e637]: "-14%"
+              - generic [ref=e639]: متوفر
+            - generic [ref=e640]:
+              - paragraph [ref=e641]: ماكينات قهوة
+              - heading "ماكينة قهوة إسبريسو أوتوماتيك" [level=3] [ref=e642]
+              - generic [ref=e643]: 4.5 (23)
+              - generic [ref=e656]:
+                - generic [ref=e657]: 1800.00 د.ل
+                - generic [ref=e658]: 2100.00 د.ل
+              - button "أضف للسلة" [ref=e660]
+          - generic [ref=e662] [cursor=pointer]:
+            - generic [ref=e663]:
+              - img "خلاط كهربائي متعدد السرعات" [ref=e665]
+              - generic [ref=e666]: "-20%"
+              - generic [ref=e668]: متوفر
+            - generic [ref=e669]:
+              - paragraph [ref=e670]: خلاطات
+              - heading "خلاط كهربائي متعدد السرعات" [level=3] [ref=e671]
+              - generic [ref=e672]: 4.2 (41)
+              - generic [ref=e685]:
+                - generic [ref=e686]: 280.00 د.ل
+                - generic [ref=e687]: 350.00 د.ل
+              - button "أضف للسلة" [ref=e689]
+          - generic [ref=e691] [cursor=pointer]:
+            - generic [ref=e692]:
+              - img "عباية سوداء مطرزة فاخرة" [ref=e694]
+              - generic [ref=e695]: "-17%"
+              - generic [ref=e697]: متوفر
+            - generic [ref=e698]:
+              - paragraph [ref=e699]: عبايات
+              - heading "عباية سوداء مطرزة فاخرة" [level=3] [ref=e700]
+              - generic [ref=e701]: 4.7 (189)
+              - generic [ref=e714]:
+                - generic [ref=e715]: 350.00 د.ل
+                - generic [ref=e716]: 420.00 د.ل
+              - button "أضف للسلة" [ref=e718]
+          - generic [ref=e720] [cursor=pointer]:
+            - generic [ref=e721]:
+              - img "قميص رجالي كتان فاخر" [ref=e723]
+              - generic [ref=e724]: "-18%"
+              - generic [ref=e726]: متوفر
+            - generic [ref=e727]:
+              - paragraph [ref=e728]: قمصان
+              - heading "قميص رجالي كتان فاخر" [level=3] [ref=e729]
+              - generic [ref=e730]: 4.4 (56)
+              - generic [ref=e743]:
+                - generic [ref=e744]: 180.00 د.ل
+                - generic [ref=e745]: 220.00 د.ل
+              - button "أضف للسلة" [ref=e747]
+          - generic [ref=e749] [cursor=pointer]:
+            - generic [ref=e750]:
+              - img "كتاب أسرار النجاح المالي" [ref=e752]
+              - generic [ref=e753]: "-18%"
+              - generic [ref=e755]: متوفر
+            - generic [ref=e756]:
+              - paragraph [ref=e757]: كتب
+              - heading "كتاب أسرار النجاح المالي" [level=3] [ref=e758]
+              - generic [ref=e759]: 4.2 (45)
+              - generic [ref=e772]:
+                - generic [ref=e773]: 45.00 د.ل
+                - generic [ref=e774]: 55.00 د.ل
+              - button "أضف للسلة" [ref=e776]
+          - generic [ref=e778] [cursor=pointer]:
+            - generic [ref=e779]:
+              - img "تمور ليبية فاخرة 1 كجم" [ref=e781]
+              - generic [ref=e782]: "-20%"
+              - generic [ref=e784]: متوفر
+            - generic [ref=e785]:
+              - paragraph [ref=e786]: تمور ومكسرات
+              - heading "تمور ليبية فاخرة 1 كجم" [level=3] [ref=e787]
+              - generic [ref=e788]: 4.9 (234)
+              - generic [ref=e801]:
+                - generic [ref=e802]: 120.00 د.ل
+                - generic [ref=e803]: 150.00 د.ل
+              - button "أضف للسلة" [ref=e805]
+          - generic [ref=e807] [cursor=pointer]:
+            - generic [ref=e808]:
+              - img "كريم مرطب للبشرة الجافة 200 مل" [ref=e810]
+              - generic [ref=e811]: "-21%"
+              - generic [ref=e813]: متوفر
+            - generic [ref=e814]:
+              - paragraph [ref=e815]: عناية بالبشرة
+              - heading "كريم مرطب للبشرة الجافة 200 مل" [level=3] [ref=e816]
+              - generic [ref=e817]: 4.3 (78)
+              - generic [ref=e830]:
+                - generic [ref=e831]: 95.00 د.ل
+                - generic [ref=e832]: 120.00 د.ل
+              - button "أضف للسلة" [ref=e834]
+          - generic [ref=e836] [cursor=pointer]:
+            - generic [ref=e837]:
+              - img "ماكينة قهوة إسبريسو أوتوماتيك" [ref=e839]
+              - generic [ref=e840]: "-14%"
+              - generic [ref=e842]: متوفر
+            - generic [ref=e843]:
+              - paragraph [ref=e844]: ماكينات قهوة
+              - heading "ماكينة قهوة إسبريسو أوتوماتيك" [level=3] [ref=e845]
+              - generic [ref=e846]: 4.5 (23)
+              - generic [ref=e859]:
+                - generic [ref=e860]: 1800.00 د.ل
+                - generic [ref=e861]: 2100.00 د.ل
+              - button "أضف للسلة" [ref=e863]
+          - generic [ref=e865] [cursor=pointer]:
+            - generic [ref=e866]:
+              - img "خلاط كهربائي متعدد السرعات" [ref=e868]
+              - generic [ref=e869]: "-20%"
+              - generic [ref=e871]: متوفر
+            - generic [ref=e872]:
+              - paragraph [ref=e873]: خلاطات
+              - heading "خلاط كهربائي متعدد السرعات" [level=3] [ref=e874]
+              - generic [ref=e875]: 4.2 (41)
+              - generic [ref=e888]:
+                - generic [ref=e889]: 280.00 د.ل
+                - generic [ref=e890]: 350.00 د.ل
+              - button "أضف للسلة" [ref=e892]
+          - generic [ref=e894] [cursor=pointer]:
+            - generic [ref=e895]:
+              - img "عباية سوداء مطرزة فاخرة" [ref=e897]
+              - generic [ref=e898]: "-17%"
+              - generic [ref=e900]: متوفر
+            - generic [ref=e901]:
+              - paragraph [ref=e902]: عبايات
+              - heading "عباية سوداء مطرزة فاخرة" [level=3] [ref=e903]
+              - generic [ref=e904]: 4.7 (189)
+              - generic [ref=e917]:
+                - generic [ref=e918]: 350.00 د.ل
+                - generic [ref=e919]: 420.00 د.ل
+              - button "أضف للسلة" [ref=e921]
+          - generic [ref=e923] [cursor=pointer]:
+            - generic [ref=e924]:
+              - img "قميص رجالي كتان فاخر" [ref=e926]
+              - generic [ref=e927]: "-18%"
+              - generic [ref=e929]: متوفر
+            - generic [ref=e930]:
+              - paragraph [ref=e931]: قمصان
+              - heading "قميص رجالي كتان فاخر" [level=3] [ref=e932]
+              - generic [ref=e933]: 4.4 (56)
+              - generic [ref=e946]:
+                - generic [ref=e947]: 180.00 د.ل
+                - generic [ref=e948]: 220.00 د.ل
+              - button "أضف للسلة" [ref=e950]
+          - generic [ref=e952] [cursor=pointer]:
+            - generic [ref=e953]:
+              - img "كتاب أسرار النجاح المالي" [ref=e955]
+              - generic [ref=e956]: "-18%"
+              - generic [ref=e958]: متوفر
+            - generic [ref=e959]:
+              - paragraph [ref=e960]: كتب
+              - heading "كتاب أسرار النجاح المالي" [level=3] [ref=e961]
+              - generic [ref=e962]: 4.2 (45)
+              - generic [ref=e975]:
+                - generic [ref=e976]: 45.00 د.ل
+                - generic [ref=e977]: 55.00 د.ل
+              - button "أضف للسلة" [ref=e979]
+          - generic [ref=e981] [cursor=pointer]:
+            - generic [ref=e982]:
+              - img "تمور ليبية فاخرة 1 كجم" [ref=e984]
+              - generic [ref=e985]: "-20%"
+              - generic [ref=e987]: متوفر
+            - generic [ref=e988]:
+              - paragraph [ref=e989]: تمور ومكسرات
+              - heading "تمور ليبية فاخرة 1 كجم" [level=3] [ref=e990]
+              - generic [ref=e991]: 4.9 (234)
+              - generic [ref=e1004]:
+                - generic [ref=e1005]: 120.00 د.ل
+                - generic [ref=e1006]: 150.00 د.ل
+              - button "أضف للسلة" [ref=e1008]
+      - generic [ref=e1010]:
+        - generic [ref=e1011]:
+          - generic [ref=e1012]: مميزاتنا
+          - heading "لماذا نحن؟" [level=2] [ref=e1015]
+          - paragraph [ref=e1016]: نؤمن بأن تجربة التسوق يجب أن تكون استثنائية من البداية للنهاية
+        - generic [ref=e1017]:
+          - generic [ref=e1020]:
+            - generic [ref=e1021]: 100% أصلي
+            - heading "جودة مضمونة" [level=3] [ref=e1026]
+            - paragraph [ref=e1027]: جميع منتجاتنا أصلية ومضمونة
+            - generic [ref=e1028]: اعرف المزيد
+          - generic [ref=e1035]:
+            - generic [ref=e1036]: 24h توصيل
+            - heading "توصيل سريع" [level=3] [ref=e1043]
+            - paragraph [ref=e1044]: توصيل سريع لجميع مناطق ليبيا
+            - generic [ref=e1045]: اعرف المزيد
+          - generic [ref=e1052]:
+            - generic [ref=e1053]: 256 بتشفير
+            - heading "دفع آمن" [level=3] [ref=e1057]
+            - paragraph [ref=e1058]: معاملات مالية آمنة ومشفرة
+            - generic [ref=e1059]: اعرف المزيد
+          - generic [ref=e1066]:
+            - generic [ref=e1067]: 14 يوم إرجاع
+            - heading "إرجاع سهل" [level=3] [ref=e1072]
+            - paragraph [ref=e1073]: سياسة إرجاع مرنة وسهلة
+            - generic [ref=e1074]: اعرف المزيد
+        - generic [ref=e1084]:
+          - generic [ref=e1085]:
+            - generic [ref=e1092]: 0+
+            - paragraph [ref=e1094]: عميل سعيد
+          - generic [ref=e1095]:
+            - generic [ref=e1101]: 0+
+            - paragraph [ref=e1103]: منتج متوفر
+          - generic [ref=e1104]:
+            - generic [ref=e1108]: 0%
+            - paragraph [ref=e1110]: معدل الرضا
+          - generic [ref=e1111]:
+            - generic [ref=e1116]: 0/7
+            - paragraph [ref=e1118]: دعم متواصل
+      - region [ref=e1119]:
+        - generic [ref=e1120]:
+          - generic [ref=e1121]:
+            - generic: عرض لفترة محدودة
+            - heading "العروض الخاصة" [level=2] [ref=e1122]
+            - paragraph [ref=e1123]: لا تفوّت أفضل العروض والتخفيضات الحصرية
+          - generic [ref=e1124]:
+            - generic [ref=e1125]: ينتهي في
+            - generic [ref=e1130]:
+              - generic [ref=e1131]:
+                - generic [ref=e1132]: "22"
+                - generic [ref=e1136]: ساعة
+              - generic [ref=e1137]: ":"
+              - generic [ref=e1138]:
+                - generic [ref=e1139]: "46"
+                - generic [ref=e1143]: دقيقة
+              - generic [ref=e1144]: ":"
+              - generic [ref=e1145]:
+                - generic [ref=e1146]: "16"
+                - generic [ref=e1150]: ثانية
+          - generic [ref=e1153]:
+            - generic [ref=e1154]:
+              - generic [ref=e1155]:
+                - img "كريم مرطب للبشرة الجافة 200 مل" [ref=e1157]
+                - generic [ref=e1158]: 21%
+                - generic [ref=e1161]: متوفر
+                - generic:
+                  - generic:
+                    - button "معاينة" [ref=e1162]
+                    - button [ref=e1163]
+              - generic [ref=e1164]:
+                - paragraph [ref=e1165]: عناية بالبشرة
+                - heading "كريم مرطب للبشرة الجافة 200 مل" [level=3] [ref=e1166]
+                - generic [ref=e1167]: (78)
+                - generic [ref=e1180]:
+                  - generic [ref=e1181]:
+                    - generic [ref=e1182]: 120.00 د.ل
+                    - generic [ref=e1183]: وفّر 25.00
+                  - generic [ref=e1184]:
+                    - generic [ref=e1185]: "95.00"
+                    - generic [ref=e1186]: د.ل
+                - button "أضف للسلة" [ref=e1188]
+            - generic [ref=e1189]:
+              - generic [ref=e1190]:
+                - img "ماكينة قهوة إسبريسو أوتوماتيك" [ref=e1192]
+                - generic [ref=e1193]: 14%
+                - generic [ref=e1196]: متوفر
+                - generic:
+                  - generic:
+                    - button "معاينة" [ref=e1197]
+                    - button [ref=e1198]
+              - generic [ref=e1199]:
+                - paragraph [ref=e1200]: ماكينات قهوة
+                - heading "ماكينة قهوة إسبريسو أوتوماتيك" [level=3] [ref=e1201]
+                - generic [ref=e1202]: (23)
+                - generic [ref=e1215]:
+                  - generic [ref=e1216]:
+                    - generic [ref=e1217]: 2100.00 د.ل
+                    - generic [ref=e1218]: وفّر 300.00
+                  - generic [ref=e1219]:
+                    - generic [ref=e1220]: "1800.00"
+                    - generic [ref=e1221]: د.ل
+                - button "أضف للسلة" [ref=e1223]
+            - generic [ref=e1224]:
+              - generic [ref=e1225]:
+                - img "خلاط كهربائي متعدد السرعات" [ref=e1227]
+                - generic [ref=e1228]: 20%
+                - generic [ref=e1231]: متوفر
+                - generic:
+                  - generic:
+                    - button "معاينة" [ref=e1232]
+                    - button [ref=e1233]
+              - generic [ref=e1234]:
+                - paragraph [ref=e1235]: خلاطات
+                - heading "خلاط كهربائي متعدد السرعات" [level=3] [ref=e1236]
+                - generic [ref=e1237]: (41)
+                - generic [ref=e1250]:
+                  - generic [ref=e1251]:
+                    - generic [ref=e1252]: 350.00 د.ل
+                    - generic [ref=e1253]: وفّر 70.00
+                  - generic [ref=e1254]:
+                    - generic [ref=e1255]: "280.00"
+                    - generic [ref=e1256]: د.ل
+                - button "أضف للسلة" [ref=e1258]
+            - generic [ref=e1259]:
+              - generic [ref=e1260]:
+                - img "عباية سوداء مطرزة فاخرة" [ref=e1262]
+                - generic [ref=e1263]: 17%
+                - generic [ref=e1266]: متوفر
+                - generic:
+                  - generic:
+                    - button "معاينة" [ref=e1267]
+                    - button [ref=e1268]
+              - generic [ref=e1269]:
+                - paragraph [ref=e1270]: عبايات
+                - heading "عباية سوداء مطرزة فاخرة" [level=3] [ref=e1271]
+                - generic [ref=e1272]: (189)
+                - generic [ref=e1285]:
+                  - generic [ref=e1286]:
+                    - generic [ref=e1287]: 420.00 د.ل
+                    - generic [ref=e1288]: وفّر 70.00
+                  - generic [ref=e1289]:
+                    - generic [ref=e1290]: "350.00"
+                    - generic [ref=e1291]: د.ل
+                - button "أضف للسلة" [ref=e1293]
+            - generic [ref=e1294]:
+              - generic [ref=e1295]:
+                - img "قميص رجالي كتان فاخر" [ref=e1297]
+                - generic [ref=e1298]: 18%
+                - generic [ref=e1301]: متوفر
+                - generic:
+                  - generic:
+                    - button "معاينة" [ref=e1302]
+                    - button [ref=e1303]
+              - generic [ref=e1304]:
+                - paragraph [ref=e1305]: قمصان
+                - heading "قميص رجالي كتان فاخر" [level=3] [ref=e1306]
+                - generic [ref=e1307]: (56)
+                - generic [ref=e1320]:
+                  - generic [ref=e1321]:
+                    - generic [ref=e1322]: 220.00 د.ل
+                    - generic [ref=e1323]: وفّر 40.00
+                  - generic [ref=e1324]:
+                    - generic [ref=e1325]: "180.00"
+                    - generic [ref=e1326]: د.ل
+                - button "أضف للسلة" [ref=e1328]
+          - button "عرض جميع العروض" [ref=e1330]
+      - generic [ref=e1332]:
+        - generic [ref=e1333]:
+          - generic [ref=e1334]: تقييمات حقيقية
+          - heading "آراء العملاء" [level=2] [ref=e1338]
+          - paragraph [ref=e1339]: ماذا يقول عملاؤنا
+          - generic [ref=e1340]:
+            - generic [ref=e1352]: "4.7"
+            - generic [ref=e1353]: (6 تقييم)
+        - generic [ref=e1355]:
+          - generic [ref=e1356]:
+            - generic [ref=e1357]:
+              - paragraph [ref=e1363]: “طلبت هاتفاً ووصل خلال يومين فقط. تغليف ممتاز وآمن”
+              - generic [ref=e1375]:
+                - generic [ref=e1376]: خ
+                - generic [ref=e1377]:
+                  - paragraph [ref=e1378]: خالد المصري
+                  - paragraph [ref=e1379]: عميل من الزاوية
+            - generic:
+              - button "التالي" [ref=e1380]
+              - button "السابق" [ref=e1383]
+          - generic [ref=e1386]:
+            - button [ref=e1387]
+            - button [ref=e1388]
+            - button [ref=e1389]
+            - button [ref=e1390]
+            - button [ref=e1391]
+            - button [ref=e1393]
+        - generic [ref=e1394]:
+          - generic [ref=e1397]:
+            - paragraph [ref=e1414]: “منتجات ممتازة وتوصيل سريع! أنصح الجميع بالتجربة”
+            - generic [ref=e1415]:
+              - generic [ref=e1416]: أ
+              - generic [ref=e1417]:
+                - paragraph [ref=e1418]: أحمد محمد
+                - paragraph [ref=e1419]: عميل من طرابلس
+          - generic [ref=e1423]:
+            - paragraph [ref=e1440]: “أفضل متجر إلكتروني في ليبيا. الخدمة رائعة والأسعار منافسة”
+            - generic [ref=e1441]:
+              - generic [ref=e1442]: ف
+              - generic [ref=e1443]:
+                - paragraph [ref=e1444]: فاطمة علي
+                - paragraph [ref=e1445]: عميلة من بنغازي
+          - generic [ref=e1449]:
+            - paragraph [ref=e1466]: “تجربة تسوق سهلة ومريحة. سأطلب مرة أخرى بالتأكيد”
+            - generic [ref=e1467]:
+              - generic [ref=e1468]: ع
+              - generic [ref=e1469]:
+                - paragraph [ref=e1470]: عمر حسن
+                - paragraph [ref=e1471]: عميل من مصراتة
+          - generic [ref=e1475]:
+            - paragraph [ref=e1492]: “جودة المنتجات تفوق التوقعات! خدمة العملاء ممتازة ومتجاوبة”
+            - generic [ref=e1493]:
+              - generic [ref=e1494]: س
+              - generic [ref=e1495]:
+                - paragraph [ref=e1496]: سارة عبدالله
+                - paragraph [ref=e1497]: عميلة من سبها
+          - generic [ref=e1501]:
+            - paragraph [ref=e1518]: “طلبت هاتفاً ووصل خلال يومين فقط. تغليف ممتاز وآمن”
+            - generic [ref=e1519]:
+              - generic [ref=e1520]: خ
+              - generic [ref=e1521]:
+                - paragraph [ref=e1522]: خالد المصري
+                - paragraph [ref=e1523]: عميل من الزاوية
+          - generic [ref=e1527]:
+            - paragraph [ref=e1544]: “الأسعار الأفضل في السوق الليبي. عروض مميزة باستمرار”
+            - generic [ref=e1545]:
+              - generic [ref=e1546]: ن
+              - generic [ref=e1547]:
+                - paragraph [ref=e1548]: نورا السنوسي
+                - paragraph [ref=e1549]: عميلة من البيضاء
+      - generic [ref=e1552]:
+        - generic [ref=e1553]:
+          - heading "نحن هنا لمساعدتك" [level=2] [ref=e1554]
+          - paragraph [ref=e1555]: تواصل معنا بأي طريقة تناسبك أو تصفح صفحة التواصل الكاملة
+        - generic [ref=e1560]:
+          - generic [ref=e1561]:
+            - heading "تواصل معنا" [level=3] [ref=e1562]
+            - paragraph [ref=e1563]: نحن هنا لمساعدتك — تواصل معنا بأي طريقة تناسبك
+            - generic [ref=e1564]:
+              - button "صفحة تواصل معنا" [ref=e1565]
+              - button "WhatsApp" [ref=e1569]
+          - generic [ref=e1572]:
+            - link "اتصل بنا 091 234 5678" [ref=e1573] [cursor=pointer]:
+              - /url: tel:+218912345678
+              - generic [ref=e1577]: اتصل بنا
+              - generic [ref=e1578]: 091 234 5678
+            - link "واتساب متاح الآن" [ref=e1579] [cursor=pointer]:
+              - /url: https://wa.me/218912345678
+              - generic [ref=e1583]: واتساب
+              - generic [ref=e1584]: متاح الآن
+            - link "البريد الإلكتروني info@nabdh.ly" [ref=e1585] [cursor=pointer]:
+              - /url: mailto:info@nabdh.ly
+              - generic [ref=e1590]: البريد الإلكتروني
+              - generic [ref=e1591]: info@nabdh.ly
+            - button "ساعات العمل 9AM - 10PM" [ref=e1592]:
+              - generic [ref=e1597]: ساعات العمل
+              - generic [ref=e1598]: 9AM - 10PM
+        - generic [ref=e1599]: نرد على جميع الرسائل خلال 24 ساعة
+    - contentinfo [ref=e1603]:
+      - generic [ref=e1605]:
+        - generic [ref=e1606]:
+          - generic [ref=e1607]:
+            - img "نبض المدينة" [ref=e1609]
+            - heading "نبض المدينة" [level=3] [ref=e1610]
+          - paragraph [ref=e1611]: متجرك الإلكتروني الأول في ليبيا - جودة وأمان في كل طلب
+          - generic [ref=e1612]:
+            - link "طرابلس، ليبيا" [ref=e1613] [cursor=pointer]:
+              - /url: "#"
+            - link "0926999231" [ref=e1618] [cursor=pointer]:
+              - /url: tel:+218926999231
+            - link "info@nabdh.ly" [ref=e1622] [cursor=pointer]:
+              - /url: mailto:info@nabdh.ly
+            - link "WhatsApp" [ref=e1627] [cursor=pointer]:
+              - /url: https://wa.me/218926999231
+          - generic [ref=e1631]:
+            - paragraph [ref=e1632]: تابعنا
+            - generic [ref=e1633]:
+              - link "Facebook" [ref=e1634] [cursor=pointer]:
+                - /url: https://facebook.com/nabdh.ly
+              - link "Instagram" [ref=e1637] [cursor=pointer]:
+                - /url: https://instagram.com/nabdh.ly
+              - link "X (Twitter)" [ref=e1641] [cursor=pointer]:
+                - /url: https://twitter.com/nabdh_ly
+              - link "YouTube" [ref=e1644] [cursor=pointer]:
+                - /url: https://youtube.com/@nabdh.ly
+        - generic [ref=e1648]:
+          - heading "روابط سريعة" [level=4] [ref=e1649]
+          - list [ref=e1651]:
+            - listitem [ref=e1652]:
+              - link "الرئيسية" [ref=e1653] [cursor=pointer]:
+                - /url: "#home"
+            - listitem [ref=e1655]:
+              - link "المنتجات" [ref=e1656] [cursor=pointer]:
+                - /url: "#products"
+            - listitem [ref=e1658]:
+              - link "العروض" [ref=e1659] [cursor=pointer]:
+                - /url: "#offers"
+            - listitem [ref=e1661]:
+              - link "تواصل معنا" [ref=e1662] [cursor=pointer]:
+                - /url: "#contact"
+            - listitem [ref=e1664]:
+              - link "خريطة الموقع" [ref=e1665] [cursor=pointer]:
+                - /url: "#sitemap"
+        - generic [ref=e1667]:
+          - heading "خدمة العملاء" [level=4] [ref=e1668]
+          - list [ref=e1670]:
+            - listitem [ref=e1671]:
+              - link "مركز المساعدة" [ref=e1672] [cursor=pointer]:
+                - /url: "#faq"
+            - listitem [ref=e1674]:
+              - link "سياسة الشحن" [ref=e1675] [cursor=pointer]:
+                - /url: "#shipping"
+            - listitem [ref=e1677]:
+              - link "سياسة الإرجاع" [ref=e1678] [cursor=pointer]:
+                - /url: "#returns"
+            - listitem [ref=e1680]:
+              - link "سياسة الخصوصية" [ref=e1681] [cursor=pointer]:
+                - /url: "#privacy"
+            - listitem [ref=e1683]:
+              - link "الشروط والأحكام" [ref=e1684] [cursor=pointer]:
+                - /url: "#terms"
+          - button "محادثة مباشرة" [ref=e1686]
+        - generic [ref=e1690]:
+          - heading "النشرة البريدية" [level=4] [ref=e1691]
+          - paragraph [ref=e1693]: متجرك الإلكتروني الأول في ليبيا - جودة وأمان في كل طلب
+          - generic [ref=e1695]:
+            - textbox "أدخل بريدك الإلكتروني" [ref=e1696]
+            - button [ref=e1697]
+      - generic [ref=e1699]:
+        - generic [ref=e1700]:
+          - link "Facebook" [ref=e1701] [cursor=pointer]:
+            - /url: https://facebook.com/nabdh.ly
+          - link "Instagram" [ref=e1705] [cursor=pointer]:
+            - /url: https://instagram.com/nabdh.ly
+          - link "X (Twitter)" [ref=e1710] [cursor=pointer]:
+            - /url: https://twitter.com/nabdh_ly
+          - link "YouTube" [ref=e1714] [cursor=pointer]:
+            - /url: https://youtube.com/@nabdh.ly
+        - generic [ref=e1719]:
+          - generic [ref=e1720]: جودة مضمونة
+          - generic [ref=e1725]: دفع آمن
+          - generic [ref=e1730]: سياسة الخصوصية
+        - paragraph [ref=e1735]: © 2026 نبض المدينة. جميع الحقوق محفوظة
+        - generic [ref=e1736]: تطوير Bits للبرمجيات
+    - generic [ref=e1738]:
+      - button "فتح المحادثة" [ref=e1741]
+      - generic [ref=e1745]: AI
+  - alert [ref=e1749]
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from '@playwright/test';
+  2  | 
+  3  | /**
+  4  |  * Smoke E2E against the live deployment.
+  5  |  * Guards the critical public storefront path and the dark-mode toggle which
+  6  |  * was recently fixed for contrast + cross-device sync.
+  7  |  */
+  8  | test('storefront loads and renders the header', async ({ page }) => {
+  9  |   await page.goto('/', { waitUntil: 'networkidle' });
+  10 |   await expect(page).toHaveTitle(/نبض/);
+  11 |   // Header is fixed at the top of the page.
+  12 |   await expect(page.locator('header').first()).toBeVisible();
+  13 | });
+  14 | 
+  15 | test('dark mode toggle exists and is clickable', async ({ page }) => {
+> 16 |   await page.goto('/', { waitUntil: 'networkidle' });
+     |              ^ Error: page.goto: Test timeout of 60000ms exceeded.
+  17 |   const toggle = page.getByRole('button', { name: 'Toggle theme' });
+  18 |   await toggle.waitFor({ state: 'visible', timeout: 20_000 });
+  19 |   await toggle.click();
+  20 |   // Clicking cycles the theme; at minimum the button must remain usable.
+  21 |   await expect(toggle).toBeVisible();
+  22 | });
+  23 | 
+  24 | test('mobile app overlay can be reached from the web root', async ({ page }) => {
+  25 |   await page.goto('/', { waitUntil: 'domcontentloaded' });
+  26 |   // The mobile app should mount without a runtime crash (no error overlay).
+  27 |   await expect(page.locator('body')).not.toContainText('Application error');
+  28 | });
+  29 | 
+```

@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+
+export const dynamic = 'force-dynamic'
 
 export const runtime = 'nodejs';
 
-// POST /api/newsletter — Subscribe an email
+// POST /api/newsletter â€” Subscribe an email
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -70,7 +72,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE /api/newsletter — Unsubscribe an email
+// DELETE /api/newsletter â€” Unsubscribe an email
 export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();

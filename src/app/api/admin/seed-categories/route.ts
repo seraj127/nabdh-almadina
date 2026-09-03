@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth-utils'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/admin/seed-categories — Seed 4 new product categories
 export async function GET(request: NextRequest) {
   const authError = await requireAdmin(request)

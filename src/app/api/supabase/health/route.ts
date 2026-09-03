@@ -1,5 +1,7 @@
-import { NextResponse } from 'next/server'
+﻿import { NextResponse } from 'next/server'
 import { getDatabaseStatus } from '@/lib/db'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const status = getDatabaseStatus()
@@ -29,25 +31,25 @@ function getSetupSteps() {
 
   if (supabaseUrl && supabaseKey && supabaseDbUrl) {
     return [
-      '✅ Supabase environment variables configured',
-      '✅ Database connection will use Supabase PostgreSQL',
-      'ℹ️ Run SQL migration: supabase/migrations/001_initial_schema.sql',
-      'ℹ️ Seed data: supabase/seed.sql',
+      'âœ… Supabase environment variables configured',
+      'âœ… Database connection will use Supabase PostgreSQL',
+      'â„¹ï¸ڈ Run SQL migration: supabase/migrations/001_initial_schema.sql',
+      'â„¹ï¸ڈ Seed data: supabase/seed.sql',
     ]
   }
 
   return [
-    '1️⃣ Create a Supabase project at https://supabase.com',
-    '2️⃣ Get your project URL and keys from Project Settings > API',
-    '3️⃣ Add these to .env:\n' +
+    '1ï¸ڈâƒ£ Create a Supabase project at https://supabase.com',
+    '2ï¸ڈâƒ£ Get your project URL and keys from Project Settings > API',
+    '3ï¸ڈâƒ£ Add these to .env:\n' +
       '   NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co\n' +
       '   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...\n' +
       '   SUPABASE_DATABASE_URL=postgresql://postgres:...\n' +
       '   SUPABASE_SERVICE_ROLE_KEY=eyJ...',
-    '4️⃣ Run SQL migration in Supabase SQL Editor:\n' +
+    '4ï¸ڈâƒ£ Run SQL migration in Supabase SQL Editor:\n' +
       '   supabase/migrations/001_initial_schema.sql',
-    '5️⃣ Seed data in Supabase SQL Editor:\n' +
+    '5ï¸ڈâƒ£ Seed data in Supabase SQL Editor:\n' +
       '   supabase/seed.sql',
-    '6️⃣ Restart the development server',
+    '6ï¸ڈâƒ£ Restart the development server',
   ]
 }
