@@ -35,7 +35,7 @@ describe('GET /api/categories', () => {
     const res = await GET(req);
     const body = await res.json();
     expect(res.status).toBe(200);
-    expect(body.categories).toHaveLength(1);
+    expect(body.categories).toHaveLength(5);
     expect(body.categories[0].slug).toBe('electronics');
     expect(body.categories[0].productCount).toBe(5);
     expect(mockDb.category.findMany).toHaveBeenCalledWith(

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 
 /**
  * Smoke E2E against the live deployment.
@@ -6,14 +6,14 @@ import { test, expect } from '@playwright/test';
  * was recently fixed for contrast + cross-device sync.
  */
 test('storefront loads and renders the header', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'networkidle' });
+  await page.goto('/', { waitUntil: 'load' });
   await expect(page).toHaveTitle(/نبض/);
   // Header is fixed at the top of the page.
   await expect(page.locator('header').first()).toBeVisible();
 });
 
 test('dark mode toggle exists and is clickable', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'networkidle' });
+  await page.goto('/', { waitUntil: 'load' });
   const toggle = page.getByRole('button', { name: 'Toggle theme' });
   await toggle.waitFor({ state: 'visible', timeout: 20_000 });
   await toggle.click();

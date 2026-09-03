@@ -188,8 +188,78 @@ export async function GET(request: NextRequest) {
       }
     })
 
+    // Merge the 4 extra seed categories (defined in seed-categories) so their
+    // buttons appear in the storefront marquee even before they are persisted.
+    // Skipped when filtering by slug/parentId or when an explicit subcategory
+    // list is requested, to avoid polluting those responses.
+    const extraSeedCategories = [
+      {
+        id: 'seed-antiques-gifts',
+        nameAr: 'التحف والهدايا والجداريات',
+        nameEn: 'Antiques, Gifts & Wall Decor',
+        slug: 'antiques-gifts',
+        description: 'تشكيلة فاخرة من التحف والهدايا والجداريات بتصاميم شرقية أصيلة',
+        icon: '🎁',
+        image: '/products/accessories-wallart-gifts.png',
+        sortOrder: 13,
+        phase: 'ACTIVE_MVP',
+        isActive: true,
+        parentId: null,
+        productCount: 0,
+        children: [],
+      },
+      {
+        id: 'seed-ornamental-plants',
+        nameAr: 'نباتات الزينة',
+        nameEn: 'Ornamental Plants',
+        slug: 'ornamental-plants',
+        description: 'تشكيلة رائعة من نباتات الزينة الداخلية والخارجية لتزيين منزلك',
+        icon: '🌿',
+        image: '/products/ornamental-plants.png',
+        sortOrder: 14,
+        phase: 'ACTIVE_MVP',
+        isActive: true,
+        parentId: null,
+        productCount: 0,
+        children: [],
+      },
+      {
+        id: 'seed-pet-supplies',
+        nameAr: 'مستلزمات الحيوانات',
+        nameEn: 'Pet Supplies',
+        slug: 'pet-supplies',
+        description: 'كل ما يحتاجه حيوانك الأليف من طعام وألعاب ومستلزمات عناية',
+        icon: '🐾',
+        image: '/products/pet-supplies.png',
+        sortOrder: 15,
+        phase: 'ACTIVE_MVP',
+        isActive: true,
+        parentId: null,
+        productCount: 0,
+        children: [],
+      },
+      {
+        id: 'seed-kids-toys',
+        nameAr: 'ألعاب الأطفال',
+        nameEn: 'Kids Toys',
+        slug: 'kids-toys',
+        description: 'ألعاب تعليمية وترفيهية آمنة وممتعة لجميع الأعمار',
+        icon: '🧸',
+        image: '/products/kids-toys.png',
+        sortOrder: 16,
+        phase: 'ACTIVE_MVP',
+        isActive: true,
+        parentId: null,
+        productCount: 0,
+        children: [],
+      },
+    ]
+
+    const existingSlugs = new Set(transformedCategories.map((c) => c.slug))
+    const merged = extraSeedCategories.filter((c) => !existingSlugs.has(c.slug))
+
     return NextResponse.json({
-      categories: transformedCategories,
+      categories: [...transformedCategories, ...merged],
     })
   } catch (error) {
     console.error('Error fetching categories:', error)
