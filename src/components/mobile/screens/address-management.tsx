@@ -108,7 +108,7 @@ interface AddressManagementProps {
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════
 export function AddressManagement({ onClose, darkMode, direction, isRTL, t }: AddressManagementProps) {
-  console.log('[DEBUG] AddressManagement rendered, addresses:', useMobileStore.getState().addresses.length);
+  // DEBUG log removed for production
   // Use the mobile store for addresses (synced with DB)
   const addresses = useMobileStore((s) => s.addresses);
   const storeAddAddress = useMobileStore((s) => s.addAddress);
