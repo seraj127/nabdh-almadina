@@ -289,6 +289,7 @@ export function ProductCatalog() {
             <select
               value={sort}
               onChange={(e) => handleSortChange(e.target.value)}
+              aria-label={language === 'ar' ? 'ترتيب المنتجات' : 'Sort products'}
               className="w-[160px] h-9 appearance-none rounded-md border border-input bg-transparent px-3 py-2 pr-8 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 cursor-pointer"
             >
               <option value="newest">{t('product.sort.newest')}</option>

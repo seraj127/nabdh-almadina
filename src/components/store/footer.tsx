@@ -311,6 +311,7 @@ export function Footer() {
                 <Button
                   type="submit"
                   size="icon"
+                  aria-label={isAr ? 'الاشتراك في النشرة البريدية' : 'Subscribe to newsletter'}
                   disabled={subscribeStatus === 'loading'}
                   className="shrink-0 bg-nabdh-accent dark:bg-[#00C9E8] hover:bg-nabdh-accent/90 dark:hover:bg-[#00B5D4] text-white dark:text-[#0A0F1C] size-10 transition-all hover:scale-105 hover:shadow-lg hover:shadow-nabdh-accent/20 dark:hover:shadow-[#00C9E8]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
