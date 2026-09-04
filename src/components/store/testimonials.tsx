@@ -224,6 +224,7 @@ export function Testimonials() {
                 <button
                   key={i}
                   onClick={() => setCurrentIndex(i)}
+                  aria-label={isRTL ? `عرض الشهادة ${i + 1}` : `Go to testimonial ${i + 1}`}
                   className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
                   style={{
                     width: i === currentIndex ? '2rem' : '0.6rem',

@@ -212,6 +212,7 @@ export function Header() {
               {/* Unified Menu Button — combines user account + site navigation */}
               <DropdownMenu dir={direction} open={isUserMenuOpen} onOpenChange={setIsUserMenuOpen}>
                 <DropdownMenuTrigger
+                  aria-label={isLoggedIn && currentUser ? (isRTL ? 'قائمة الحساب' : 'Account menu') : (isRTL ? 'فتح قائمة الحساب' : 'Open account menu')}
                   className={`inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 gap-1.5 ${
                     isLoggedIn
                       ? 'bg-nabdh-primary/10 text-nabdh-primary hover:bg-nabdh-primary/20 px-2 sm:px-3 h-9'
