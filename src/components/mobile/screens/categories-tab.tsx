@@ -938,3 +938,5 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
     </div>
   );
 }
+
+// trigger rebuild after CI keystore fix
