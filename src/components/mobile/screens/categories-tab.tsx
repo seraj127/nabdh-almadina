@@ -940,3 +940,5 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
 }
 
 // trigger rebuild after CI keystore fix
+
+// trigger rebuild after gradle password env fix
