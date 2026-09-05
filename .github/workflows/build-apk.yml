@@ -10,6 +10,7 @@ on:
       - 'src/stores/**'
       - 'android/**'
       - 'capacitor.config.json'
+      - 'capacitor.config.ts'
       - 'next.config.ts'
       - 'package.json'
       - 'prisma/**'
