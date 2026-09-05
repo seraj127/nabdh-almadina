@@ -44,6 +44,10 @@ jobs:
       - name: Build static export (mobile)
         env:
           BUILD_MOBILE: '1'
+          # Required by next.config.ts: the mobile build must know where the
+          # deployed server lives so the exported definition can fetch from it.
+          CAPACITOR_SERVER_URL: https://nabdh-almadina.vercel.app
+          NEXT_PUBLIC_APP_URL: https://nabdh-almadina.vercel.app
         run: npx next build
 
       - name: Sync Capacitor android
