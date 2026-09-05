@@ -74,12 +74,15 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Check per-user limit
+    // Check per-user limit — ignore cancelled orders so a cancelled purchase
+    // (stock reservation released, loyalty refunded) does NOT consume the
+    // user's allowance for this coupon and permanently lock them out.
     if (coupon.perUserLimit && body.userId) {
       const userUsageCount = await db.order.count({
         where: {
           userId: body.userId,
           couponId: coupon.id,
+          status: { notIn: ['cancelled'] },
         },
       })
       if (userUsageCount >= coupon.perUserLimit) {

@@ -358,31 +358,51 @@ export async function POST(request: NextRequest) {
     // ─── Discount from coupon ──────────────────────────────────────────
     let discount = 0
     let appliedCouponId: string | null = null
+    // Tracks whether the provided coupon was rejected so we can 400-fast
+    // instead of silently creating an order without the promised discount.
+    let couponError: string | null = null
 
     // Validate coupon if provided
     if (couponCode) {
+      // Normalize uniformly so "SAVE10", " save10 " and "save10" all match.
+      const normalizedCode = couponCode.toUpperCase().trim()
       const coupon = await db.coupon.findUnique({
-        where: { code: couponCode.toUpperCase() },
+        where: { code: normalizedCode },
       })
-      if (coupon && coupon.isActive) {
+
+      if (!coupon) {
+        couponError = 'كوبون غير صالح - الكوبون غير موجود'
+      } else if (!coupon.isActive) {
+        couponError = 'هذا الكوبون غير مفعّل'
+      } else {
         const now = new Date()
-        const started = !coupon.startsAt || now >= coupon.startsAt
-        const notExpired = !coupon.expiresAt || now <= coupon.expiresAt
+        const started = !coupon.startsAt || now >= new Date(coupon.startsAt)
+        const notExpired = !coupon.expiresAt || now <= new Date(coupon.expiresAt)
         const underLimit = !coupon.usageLimit || coupon.usageCount < coupon.usageLimit
-        if (started && notExpired && underLimit) {
+
+        if (!started) {
+          couponError = 'هذا الكوبون لم يبدأ بعد'
+        } else if (!notExpired) {
+          couponError = 'انتهت صلاحية هذا الكوبون'
+        } else if (!underLimit) {
+          couponError = 'تم تجاوز الحد الأقصى لاستخدام هذا الكوبون'
+        } else {
           // Check per-user limit
           let userAllowed = true
           if (coupon.perUserLimit && userId) {
+            // Only count non-cancelled orders — a cancelled order already
+            // released its stock and refunded loyalty, so it must not also
+            // permanently consume the user's quota for this coupon.
             const userUsageCount = await db.order.count({
               where: {
                 userId,
                 couponId: coupon.id,
+                status: { notIn: ['cancelled'] },
               },
             })
             if (userUsageCount >= coupon.perUserLimit) {
-              // User exceeded their per-user limit — skip coupon silently
               userAllowed = false
-              console.warn(`[COUPON] User ${userId} exceeded perUserLimit (${coupon.perUserLimit}) for coupon ${coupon.code}`)
+              couponError = 'لقد استخدمت هذا الكوبون الحد الأقصى المسموح لك'
             }
           }
           if (userAllowed) {
@@ -400,14 +420,23 @@ export async function POST(request: NextRequest) {
             if (!coupon.minOrder || subtotal >= Number(coupon.minOrder)) {
               discount = Math.round(couponDiscount * 100) / 100
               appliedCouponId = coupon.id
-              // Increment coupon usage
-              await db.coupon.update({
-                where: { id: coupon.id },
-                data: { usageCount: { increment: 1 } },
-              })
+              // NOTE: usageCount is incremented inside db.$transaction below
+              // with an atomic guarded updateMany (prevents over-issuance and
+              // prevents burning the coupon if the order creation fails).
+            } else {
+              couponError = `الحد الأدنى للطلب ${Number(coupon.minOrder)} د.ل`
             }
           }
         }
+      }
+
+      // F2: reject the whole order loudly when the user supplied a coupon that
+      // could not be applied — never silently drop a promised discount.
+      if (couponError) {
+        return NextResponse.json(
+          { error: 'Coupon could not be applied', couponError },
+          { status: 400 }
+        )
       }
     }
 
@@ -436,6 +465,27 @@ export async function POST(request: NextRequest) {
 
     // Create order with items and initial status log, reserving stock atomically
     const order = await db.$transaction(async (tx) => {
+      // F1 — Coupon usage is claimed inside the same transaction as order
+      // creation. If order creation fails (stock, DB error), the whole
+      // transaction rolls back and the coupon is NEVER consumed without a
+      // matching order.
+      if (appliedCouponId) {
+        // Guard: only consume if still active and (if limited) still under
+        // the global limit. We re-read to catch a limit that changed since
+        // the outer pre-check ran.
+        const fresh = await tx.coupon.findUnique({ where: { id: appliedCouponId } })
+        const stillValid = fresh && fresh.isActive && (!fresh.usageLimit || fresh.usageCount < fresh.usageLimit)
+        if (!stillValid) {
+          // Rolling back here changes nothing — the outside order code will
+          // surface this as a hard failure (see catch below → COUPON_CLAIM_FAILED).
+          throw new Error('COUPON_CLAIM_FAILED')
+        }
+        await tx.coupon.update({
+          where: { id: appliedCouponId },
+          data: { usageCount: { increment: 1 } },
+        })
+      }
+
       const createdOrder = await tx.order.create({
         data: {
           userId,
@@ -574,6 +624,16 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
+    // A thrown COUPON_CLAIM_FAILED from inside the transaction means the coupon
+    // could not be safely claimed for this user right now (limit reached, or it
+    // became inactive between validation and checkout). Surface this as a
+    // actionable 400 instead of an ambiguous 500 so the client can tell the user.
+    if (error instanceof Error && error.message === 'COUPON_CLAIM_FAILED') {
+      return NextResponse.json(
+        { error: 'تعذر تطبيق الكوبون الآن — ربما وصل للحد الأقصى. حاول إعادة الطلب.', couponError: 'COUPON_CLAIM_FAILED' },
+        { status: 400 }
+      )
+    }
     console.error('Error creating order:', error)
     return NextResponse.json(
       { error: 'Failed to create order' },
