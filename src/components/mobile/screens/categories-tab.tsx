@@ -10,8 +10,8 @@ import { ProductCard } from '../components/product-card';
 import type { Product, Category, Subcategory } from '../lib/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search, X, ChevronLeft, ChevronRight, Package, Loader2,
-  Layers, RefreshCw, Sparkles, Grid3X3, SlidersHorizontal, ArrowUpDown
+  Search, ChevronLeft, ChevronRight, Package, Loader2,
+  Layers, RefreshCw, Sparkles, SlidersHorizontal, ArrowUpDown
 } from 'lucide-react';
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -196,7 +196,6 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
   const toggleFavorite = useMobileStore((s) => s.toggleFavorite);
   const darkMode = useMobileStore((s) => s.darkMode);
 
-  const [catSearch, setCatSearch] = useState('');
   const [selectedSubSlug, setSelectedSubSlug] = useState<string | null>(null);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [catProducts, setCatProducts] = useState<Product[]>([]);
@@ -215,11 +214,9 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
     [selectedCatId, categories]
   );
 
-  const filteredCategories = useMemo(() => {
-    if (!catSearch) return categories;
-    const q = catSearch.toLowerCase();
-    return categories.filter((c) => c.nameAr.includes(catSearch) || c.nameEn.toLowerCase().includes(q));
-  }, [categories, catSearch]);
+  // The categories-tab search bar now navigates to the full search screen and
+  // performs no local filtering, so we always render the full category list.
+  const filteredCategories = categories;
 
   const groupedCategories = useMemo(
     () => groupCategories(filteredCategories),
@@ -765,28 +762,18 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
             </motion.div>
           </div>
 
-          {/* Search bar */}
-          <div className="relative">
-            <Search size={16} className={`absolute ${isRtl ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-white/40`} />
-            <input
-              type="text"
-              value={catSearch}
-              onChange={(e) => setCatSearch(e.target.value)}
-              placeholder={isRtl ? 'ابحث عن قسم...' : 'Search categories...'}
-              className={`w-full ${isRtl ? 'pr-10 pl-10' : 'pl-10 pr-10'} py-3 rounded-xl bg-white/10 backdrop-blur-md text-sm text-white outline-none placeholder:text-white/40 border border-white/10 focus:border-white/25 transition-colors`}
-              dir={direction}
-            />
-            {catSearch && (
-              <motion.button
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                onClick={() => setCatSearch('')}
-                className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center`}
-              >
-                <X size={12} className="text-white" />
-              </motion.button>
-            )}
-          </div>
+          {/* Search bar — navigates to the global search screen (consistent with Home) */}
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            onClick={() => useMobileStore.getState().setScreen('search')}
+            className="relative w-full flex items-center gap-2.5 py-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/10 transition-colors text-start"
+            style={{ paddingInlineStart: '2.5rem', paddingInlineEnd: '0.75rem' }}
+          >
+            <Search size={16} className={`absolute ${isRtl ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-white/40 pointer-events-none`} />
+            <span className="text-sm text-white/40 select-none">
+              {isRtl ? 'ابحث عن منتج...' : 'Search products...'}
+            </span>
+          </motion.button>
         </div>
       </div>
 
@@ -944,24 +931,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
       </div>
 
       {/* Search empty state */}
-      {catSearch && filteredCategories.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="py-20 text-center px-6"
-        >
-          <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl ${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} flex items-center justify-center`}>
-            <Grid3X3 size={24} className={`${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-          </div>
-          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} text-sm font-semibold`}>{isRtl ? 'لا توجد نتائج' : 'No results found'}</p>
-          <button
-            onClick={() => setCatSearch('')}
-            className="mt-3 text-[#4DB6AC] text-xs font-semibold"
-          >
-            {isRtl ? 'مسح البحث' : 'Clear search'}
-          </button>
-        </motion.div>
-      )}
+      {/* Previously-gated "no results" state removed — search field now navigates to the real search screen */}
 
       {/* Bottom spacer */}
       <div className="h-4" />
