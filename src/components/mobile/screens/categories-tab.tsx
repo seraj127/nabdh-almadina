@@ -194,6 +194,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
   const fetchCategories = useMobileStore((s) => s.fetchCategories);
   const favorites = useMobileStore((s) => s.favorites);
   const toggleFavorite = useMobileStore((s) => s.toggleFavorite);
+  const darkMode = useMobileStore((s) => s.darkMode);
 
   const [catSearch, setCatSearch] = useState('');
   const [selectedSubSlug, setSelectedSubSlug] = useState<string | null>(null);
@@ -360,14 +361,14 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
         <div className="px-4 mt-5 space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="space-y-3">
-              <div className="h-5 w-28 rounded bg-[#21262D] animate-pulse" />
+              <div className={`h-5 w-28 rounded ${darkMode ? 'bg-[#21262D]' : 'bg-[#F3F4F6]'} animate-pulse`} />
               <div className="grid grid-cols-2 gap-3">
                 {Array.from({ length: 4 }).map((_, j) => (
-                  <div key={j} className="rounded-2xl bg-[#161B22] border border-[#30363D] animate-pulse overflow-hidden">
-                    <div className="h-24 bg-[#21262D]" />
+                  <div key={j} className={`rounded-2xl ${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} animate-pulse overflow-hidden`}>
+                    <div className={`h-24 ${darkMode ? 'bg-[#21262D]' : 'bg-[#F3F4F6]'}`} />
                     <div className="px-3 pb-3 pt-2 space-y-1.5">
-                      <div className="h-3 w-4/5 mx-auto rounded bg-[#21262D]" />
-                      <div className="h-2 w-1/2 mx-auto rounded bg-[#21262D]" />
+                      <div className={`h-3 w-4/5 mx-auto rounded ${darkMode ? 'bg-[#21262D]' : 'bg-[#F3F4F6]'}`} />
+                      <div className={`h-2 w-1/2 mx-auto rounded ${darkMode ? 'bg-[#21262D]' : 'bg-[#F3F4F6]'}`} />
                     </div>
                   </div>
                 ))}
@@ -394,12 +395,12 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#161B22] border border-[#30363D] flex items-center justify-center"
+            className={`w-20 h-20 mx-auto mb-5 rounded-2xl ${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} flex items-center justify-center`}
           >
-            <Package size={32} className="text-gray-500" />
+            <Package size={32} className={`${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
           </motion.div>
-          <p className="text-gray-300 text-base font-semibold">{isRtl ? 'لا توجد أقسام حالياً' : 'No categories available'}</p>
-          <p className="text-gray-500 text-sm mt-2">{isRtl ? 'سيتم إضافة أقسام قريباً' : 'Categories will be added soon'}</p>
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} text-base font-semibold`}>{isRtl ? 'لا توجد أقسام حالياً' : 'No categories available'}</p>
+          <p className={`${darkMode ? 'text-gray-500' : 'text-gray-400'} text-sm mt-2`}>{isRtl ? 'سيتم إضافة أقسام قريباً' : 'Categories will be added soon'}</p>
           <button
             onClick={handleRetry}
             className="mt-6 flex items-center gap-2 mx-auto px-5 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-95"
@@ -507,10 +508,10 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
           <div className="px-4 pt-4 pb-2">
             <div className="flex items-center gap-2 mb-3">
               <Layers size={13} className="text-[#4DB6AC]" />
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              <span className={`text-xs font-bold ${darkMode ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wider`}>
                 {isRtl ? 'التصنيفات الفرعية' : 'Subcategories'}
               </span>
-              <div className="flex-1 h-px bg-[#21262D]" />
+              <div className={`flex-1 h-px ${darkMode ? 'bg-[#21262D]' : 'bg-[#F3F4F6]'}`} />
               <span className="text-[11px] text-[#4DB6AC] font-bold bg-[#004B63]/15 px-2 py-0.5 rounded-full">
                 {subcategories.length}
               </span>
@@ -528,7 +529,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
                   selectedSubSlug === null
                     ? 'text-white shadow-lg'
-                    : 'bg-[#161B22] border border-[#30363D] text-gray-300'
+                    : `${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} ${darkMode ? 'text-gray-300' : 'text-gray-700'}`
                 }`}
                 style={selectedSubSlug === null ? { background: catGroup?.gradient || 'linear-gradient(135deg, #004B63, #00897B)' } : {}}
               >
@@ -549,7 +550,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                     className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
                       isSelected
                         ? 'text-white shadow-lg'
-                        : 'bg-[#161B22] border border-[#30363D] text-gray-300 hover:bg-[#21262D]'
+                        : `${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} ${darkMode ? 'text-gray-300' : 'text-gray-700'} ${darkMode ? 'hover:bg-[#21262D]' : 'hover:bg-[#F3F4F6]'}`
                     }`}
                     style={isSelected ? { background: catGroup?.gradient || 'linear-gradient(135deg, #004B63, #00897B)' } : {}}
                   >
@@ -567,7 +568,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
           {/* Sort + Filter bar */}
           {catProducts.length > 1 && (
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs text-gray-400 font-medium">
+              <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} font-medium`}>
                 {catProducts.filter((p) => {
                   if (catFilter === 'in_stock') return p.inStock !== false;
                   if (catFilter === 'on_sale') return p.comparePrice && p.comparePrice > p.price;
@@ -586,7 +587,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                       catFilter !== 'all'
                         ? 'bg-[#004B63]/20 border border-[#004B63]/40 text-[#4DB6AC]'
-                        : 'bg-[#161B22] border border-[#30363D] text-gray-300'
+                        : `${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} ${darkMode ? 'text-gray-300' : 'text-gray-700'}`
                     }`}
                   >
                     <SlidersHorizontal size={12} />
@@ -599,7 +600,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute end-0 top-full mt-1 bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden z-30 shadow-xl min-w-[140px]"
+                        className={`absolute end-0 top-full mt-1 ${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} rounded-xl overflow-hidden z-30 shadow-xl min-w-[140px]`}
                       >
                         {([
                           { key: 'all' as const, label: isRtl ? 'الكل' : 'All', icon: '📋' },
@@ -610,7 +611,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                             key={opt.key}
                             onClick={() => { setCatFilter(opt.key); setShowFilterMenu(false); }}
                             className={`w-full text-start px-4 py-2.5 text-xs font-medium transition-colors flex items-center gap-2 ${
-                              catFilter === opt.key ? 'bg-[#004B63]/20 text-[#4DB6AC]' : 'text-gray-300 hover:bg-[#21262D]'
+                              catFilter === opt.key ? 'bg-[#004B63]/20 text-[#4DB6AC]' : `${darkMode ? 'text-gray-300' : 'text-gray-700'} ${darkMode ? 'hover:bg-[#21262D]' : 'hover:bg-[#F3F4F6]'}`
                             }`}
                           >
                             <span>{opt.icon}</span>
@@ -626,7 +627,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                   <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={() => { setShowSortMenu(!showSortMenu); setShowFilterMenu(false); }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161B22] border border-[#30363D] text-xs font-semibold text-gray-300"
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg ${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} text-xs font-semibold ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}
                   >
                     <ArrowUpDown size={12} />
                     {catSort === 'newest' ? (isRtl ? 'الأحدث' : 'Newest') :
@@ -640,7 +641,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute end-0 top-full mt-1 bg-[#161B22] border border-[#30363D] rounded-xl overflow-hidden z-30 shadow-xl min-w-[120px]"
+                        className={`absolute end-0 top-full mt-1 ${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} rounded-xl overflow-hidden z-30 shadow-xl min-w-[120px]`}
                       >
                         {([
                           { key: 'newest' as const, label: isRtl ? 'الأحدث' : 'Newest' },
@@ -651,7 +652,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                             key={opt.key}
                             onClick={() => { setCatSort(opt.key); setShowSortMenu(false); }}
                             className={`w-full text-start px-4 py-2.5 text-xs font-medium transition-colors ${
-                              catSort === opt.key ? 'bg-[#004B63]/20 text-[#4DB6AC]' : 'text-gray-300 hover:bg-[#21262D]'
+                              catSort === opt.key ? 'bg-[#004B63]/20 text-[#4DB6AC]' : `${darkMode ? 'text-gray-300' : 'text-gray-700'} ${darkMode ? 'hover:bg-[#21262D]' : 'hover:bg-[#F3F4F6]'}`
                             }`}
                           >
                             {opt.label}
@@ -667,7 +668,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
           {loadingProducts ? (
             <div className="grid grid-cols-2 gap-3">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-56 rounded-2xl bg-[#161B22] animate-pulse border border-[#30363D]" />
+                <div key={i} className={`h-56 rounded-2xl ${darkMode ? 'bg-[#161B22]' : 'bg-white'} animate-pulse border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'}`} />
               ))}
             </div>
           ) : catProducts.length === 0 ? (
@@ -676,10 +677,10 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
               animate={{ opacity: 1, scale: 1 }}
               className="py-20 text-center"
             >
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#161B22] border border-[#30363D] flex items-center justify-center">
-                <Search size={24} className="text-gray-500" />
+              <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl ${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} flex items-center justify-center`}>
+                <Search size={24} className={`${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
               </div>
-              <p className="text-gray-300 text-sm font-semibold">
+              <p className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} text-sm font-semibold`}>
                 {isRtl ? 'لا توجد منتجات في هذا القسم' : 'No products in this category'}
               </p>
               {selectedSubSlug && (
@@ -802,10 +803,10 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="bg-[#161B22] rounded-xl p-3 border border-[#30363D] text-center"
+              className={`${darkMode ? 'bg-[#161B22]' : 'bg-white'} rounded-xl p-3 border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} text-center`}
             >
               <p className="text-lg font-bold" style={{ color: stat.color }}>{stat.value}</p>
-              <p className="text-[10px] text-gray-500 font-semibold">{stat.label}</p>
+              <p className={`text-[10px] ${darkMode ? 'text-gray-500' : 'text-gray-400'} font-semibold`}>{stat.label}</p>
             </motion.div>
           ))}
         </div>
@@ -848,7 +849,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                 <h2 className="text-sm font-bold text-gray-200">
                   {isRtl ? group.nameAr : group.nameEn}
                 </h2>
-                <p className="text-[10px] text-gray-500 font-medium">
+                <p className={`text-[10px] ${darkMode ? 'text-gray-500' : 'text-gray-400'} font-medium`}>
                   {cats.length} {isRtl ? 'قسم' : 'sections'}
                 </p>
               </div>
@@ -949,10 +950,10 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
           animate={{ opacity: 1 }}
           className="py-20 text-center px-6"
         >
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#161B22] border border-[#30363D] flex items-center justify-center">
-            <Grid3X3 size={24} className="text-gray-500" />
+          <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl ${darkMode ? 'bg-[#161B22]' : 'bg-white'} border ${darkMode ? 'border-[#30363D]' : 'border-[#E5E7EB]'} flex items-center justify-center`}>
+            <Grid3X3 size={24} className={`${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
           </div>
-          <p className="text-gray-300 text-sm font-semibold">{isRtl ? 'لا توجد نتائج' : 'No results found'}</p>
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-700'} text-sm font-semibold`}>{isRtl ? 'لا توجد نتائج' : 'No results found'}</p>
           <button
             onClick={() => setCatSearch('')}
             className="mt-3 text-[#4DB6AC] text-xs font-semibold"
