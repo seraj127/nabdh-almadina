@@ -53,35 +53,10 @@ jobs:
       - name: Sync Capacitor android
         run: npx cap sync android
 
-      - name: Ensure signing keystore exists
-        shell: bash
-        env:
-          NABD_KEYSTORE_PASSWORD: ${{ secrets.NABD_KEYSTORE_PASSWORD }}
-        run: |
-          set -e
-          if [ -f android/nabd-release-key.jks ]; then
-            echo "Using checked-in release keystore."
-          else
-            echo "No checked-in keystore found — generating a CI-only release key."
-            PASS="${NABD_KEYSTORE_PASSWORD:-ci-generated}"
-            keytool -genkey -v \
-              -keystore android/nabd-release-key.jks \
-              -alias nabd \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000 \
-              -storepass "$PASS" \
-              -keypass "$PASS" \
-              -dname "CN=Nabd Al-Madina, OU=App, O=Nabd, L=Tripoli, ST=Tripoli, C=LY"
-            echo "Generated temporary CI-only keystore."
-            # Export the password so the Gradle step below uses the same one
-            echo "NABD_KEYSTORE_PASSWORD=$PASS" >> "$GITHUB_ENV"
-          fi
-
       - name: Build release APK
         working-directory: android
         env:
-          NABD_KEYSTORE_PASSWORD: ${{ env.NABD_KEYSTORE_PASSWORD }}
+          NABD_KEYSTORE_PASSWORD: ${{ secrets.NABD_KEYSTORE_PASSWORD }}
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload APK artifact
