@@ -1,7 +1,7 @@
 'use client';
 
 import { patchFetchForNative } from '@/lib/api-bridge';
-import { fetchThemeFromServer } from '@/lib/theme-sync';
+import { fetchPreferencesFromServer } from '@/lib/profile-sync';
 patchFetchForNative();
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -283,9 +283,16 @@ function SplashScreen() {
           // If a user is already logged in (persisted session), skip straight to the main screen
           const savedUser = useMobileStore.getState().user;
           if (savedUser && savedUser.id) {
-            fetchThemeFromServer().then((theme) => {
-              if (theme === 'dark') { useMobileStore.getState().setDarkMode(true); localStorage.setItem('theme', 'dark'); }
-              else if (theme === 'light') { useMobileStore.getState().setDarkMode(false); localStorage.setItem('theme', 'light'); }
+            // Fetch theme AND language from the server together so a returning user
+            // gets their preferences restored (language was previously never fetched
+            // — users would see Arabic/English from localStorage instead of their
+            // server-saved choice on a different device).
+            fetchPreferencesFromServer().then((prefs) => {
+              if (prefs?.theme === 'dark') { useMobileStore.getState().setDarkMode(true); localStorage.setItem('theme', 'dark'); }
+              else if (prefs?.theme === 'light') { useMobileStore.getState().setDarkMode(false); localStorage.setItem('theme', 'light'); }
+              if (prefs?.language) {
+                useLanguageStore.getState().applyServerLanguage(prefs.language);
+              }
               setScreen('main');
             }).catch(() => setScreen('main'));
           } else {
@@ -769,9 +776,15 @@ function LoginScreen() {
     if (success) {
       setLoginSuccess(true);
       try {
-        const theme = await fetchThemeFromServer();
-        if (theme === 'dark') { useMobileStore.getState().setDarkMode(true); localStorage.setItem('theme', 'dark'); }
-        else if (theme === 'light') { useMobileStore.getState().setDarkMode(false); localStorage.setItem('theme', 'light'); }
+        // Fetch BOTH theme and language from the server after login so the
+        // app restores the user's saved preferences regardless of the device
+        // or browser they last used (fixes the language-drop bug).
+        const prefs = await fetchPreferencesFromServer();
+        if (prefs?.theme === 'dark') { useMobileStore.getState().setDarkMode(true); localStorage.setItem('theme', 'dark'); }
+        else if (prefs?.theme === 'light') { useMobileStore.getState().setDarkMode(false); localStorage.setItem('theme', 'light'); }
+        if (prefs?.language) {
+          useLanguageStore.getState().applyServerLanguage(prefs.language);
+        }
       } catch { /* ignore */ }
     } else {
       setError(t('mobile.login.errorCredentials'));

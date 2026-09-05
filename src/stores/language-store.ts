@@ -47,11 +47,12 @@ export const useLanguageStore = create<LanguageState>()((set, get) => ({
         import('@/stores/ui-store').then(({ useUIStore }) => {
           const cu = useUIStore.getState().currentUser;
           if (cu?.id && !cu.id.startsWith('local-') && !cu.id.startsWith('offline-')) {
-            fetch('/api/auth/profile', {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ language: lang }),
-            }).catch(() => { /* offline — local only */ });
+            // Route through the unified profile-sync helper so the write benefits
+            // from retries + normalization (prevents silent language-drop on the
+            // web / mobile divergence).
+            import('@/lib/profile-sync').then(({ syncLanguageToServer }) => {
+              syncLanguageToServer(lang).catch(() => { /* offline – local only */ });
+            }).catch(() => { /* ignore */ });
           }
         }).catch(() => { /* ignore */ });
       },

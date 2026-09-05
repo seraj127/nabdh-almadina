@@ -1,24 +1,38 @@
+'use client';
+
 // ─── Server-side theme sync (persists in user.preferences) ────────────
-// Used by both mobile and web to keep theme in sync across platforms.
+// Kept as a thin wrapper around the shared profile-sync helpers so legacy
+// call-sites continue to work while new code gets retries, language support
+// and consistent error surfacing.
+//
+// New code should prefer the unified helpers directly:
+//   import { pushPreferencesToServer, fetchPreferencesFromServer } from '@/lib/profile-sync'
+//
+// Domain guarantees:
+//   - fetchThemeFromServer returns the user's stored theme or null
+//   - syncThemeToServer PATCHes to /api/auth/profile, retries on 5xx,
+//     returns true on success / false on permanent failure.
 
-export async function syncThemeToServer(theme: 'light' | 'dark' | 'system'): Promise<void> {
-  try {
-    const res = await fetch('/api/auth/profile', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ preferences: { theme } }),
-    });
-    if (!res.ok) console.warn('Theme sync failed:', res.status);
-  } catch { /* ignore — offline or unauthenticated */ }
+import {
+  fetchPreferencesFromServer,
+  syncThemeToServer as _syncThemeToServer,
+  syncLanguageToServer as _syncLanguageToServer,
+  type ThemeValue,
+  type LangValue,
+} from './profile-sync';
+
+export type { ThemeValue, LangValue };
+
+export async function syncThemeToServer(theme: ThemeValue): Promise<void> {
+  // Prefer the robust retrying variant; ignore its boolean return for
+  // backward compatibility with existing call sites.
+  await _syncThemeToServer(theme);
 }
 
-export async function fetchThemeFromServer(): Promise<'light' | 'dark' | 'system' | null> {
-  try {
-    const res = await fetch('/api/auth/profile');
-    if (!res.ok) return null;
-    const data = await res.json();
-    const theme = data?.user?.preferences?.theme;
-    if (theme === 'light' || theme === 'dark' || theme === 'system') return theme;
-  } catch { /* ignore */ }
-  return null;
+export async function fetchThemeFromServer(): Promise<ThemeValue | null> {
+  const prefs = await fetchPreferencesFromServer();
+  return prefs?.theme ?? null;
 }
+
+// Re-export language variants so existing imports keep working.
+export { _syncLanguageToServer as syncLanguageToServer };

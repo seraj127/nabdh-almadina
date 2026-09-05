@@ -197,18 +197,35 @@ export const useUIStore = create<UIState>()((set) => ({
     const update = { isLoggedIn: true, currentUser: user, authView: targetView as AuthView, isReturningUser: isReturning || false, pendingAuthView: null as AuthView | null };
     set(update);
     saveUIState(update);
-    // Fetch user-specific data from server after login
+
+    // ─── Immediate preferences restore (theme + language) ─────────────
+    // Previously this happened inside `setTimeout(..., 200)` and dispatched a
+    // `nabdh:theme-sync` CustomEvent, which raced the listener registration
+    // and only synced the theme (language was missed entirely).
+    // Now: fetch both via the shared helper, apply directly to next-themes
+    // / language store, and skip the fragile event round-trip.
+    if (typeof window !== 'undefined') {
+      import('@/lib/profile-sync')
+        .then(({ fetchPreferencesFromServer }) => fetchPreferencesFromServer())
+        .then((prefs) => {
+          if (!prefs) return;
+          if (prefs.theme) {
+            window.dispatchEvent(new CustomEvent('nabdh:theme-sync', { detail: { theme: prefs.theme } }));
+          }
+          if (prefs.language) {
+            import('@/stores/language-store').then(({ useLanguageStore }) => {
+              useLanguageStore.getState().applyServerLanguage(prefs.language!);
+            }).catch(() => {});
+          }
+        })
+        .catch(() => { /* offline — keep local */ });
+    }
+
+    // Fetch user-specific data from server after login (debounced to let the
+    // cookie/session settle, but no events are relied upon for correctness).
     setTimeout(() => {
       safeCartOp((s) => { s.getState().fetchFromServer().catch(() => {}); });
       safeFavoritesOp((s) => { s.getState().fetchFavorites().catch(() => {}); });
-      // Sync theme from server — dispatch event so ThemeSync component applies it via next-themes
-      import('@/lib/theme-sync').then(({ fetchThemeFromServer }) => {
-        fetchThemeFromServer().then((serverTheme) => {
-          if (serverTheme && typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('nabdh:theme-sync', { detail: { theme: serverTheme } }));
-          }
-        }).catch(() => {});
-      }).catch(() => {});
     }, 200);
     // ─── Cross-store sync: notify mobile store of login (unified session) ───
     import('@/lib/sync-bridge').then(({ syncAllFromServer, dispatchSyncEvent, syncWebUserToMobile }) => {
