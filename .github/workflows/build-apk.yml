@@ -100,7 +100,7 @@ jobs:
       - name: Build release APK
         working-directory: android
         env:
-          NABD_KEYSTORE_PASSWORD: ${{ env.NABD_KEYSTORE_PASSWORD || secrets.NABD_KEYSTORE_PASSWORD }}
+          NABD_KEYSTORE_PASSWORD: ${{ env.NABD_KEYSTORE_PASSWORD }}
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload APK artifact
