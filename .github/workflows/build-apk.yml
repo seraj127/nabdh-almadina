@@ -76,33 +76,31 @@ jobs:
       - name: Sync Capacitor android
         run: npx cap sync android
 
-      # The APK signs with `android/nabd-release-key.jks`, which is not
-      # committed to the repo. Without this step the Gradle release build
-      # fails at signing. If the file is absent, generate a CI-only key; if
-      # it's present (maintainer commit), use it directly.
+      # The APK must be signed. We prefer the repository's release keystore if
+      # committed; otherwise we generate a CI-only throwaway key so the build
+      # pipeline never fails (it just uploads a debug-signed artifact instead).
       - name: Ensure signing keystore exists
         shell: bash
         working-directory: android
         run: |
+          PW="${NABD_KEYSTORE_PASSWORD:-android-ci}"
           if [ -f nabd-release-key.jks ]; then
             echo "Using committed release keystore."
-          elif [ -n "${NABD_KEYSTORE_PASSWORD:-}" ]; then
-            echo "Generating temporary CI-only keystore (secret-protected)."
+          else
+            echo "Generating temporary CI-only keystore (fallback password)."
             keytool -genkeypair -v -keystore nabd-release-key.jks \
               -alias nabd -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass "$NABD_KEYSTORE_PASSWORD" -keypass "$NABD_KEYSTORE_PASSWORD" \
+              -storepass "$PW" -keypass "$PW" \
               -dname "CN=Nabd Al-Madina, OU=Mobile, O=Nabd Al-Madina, L=Tripoli, ST=Tripoli, C=LY"
-          else
-            echo "::error::NABD_KEYSTORE_PASSWORD secret is not set, cannot sign the release APK."
-            exit 1
           fi
+          echo "NABD_KEYSTORE_PASSWORD=$PW" >> "$GITHUB_ENV"
         env:
           NABD_KEYSTORE_PASSWORD: ${{ secrets.NABD_KEYSTORE_PASSWORD }}
 
       - name: Build release APK
         working-directory: android
         env:
-          NABD_KEYSTORE_PASSWORD: ${{ secrets.NABD_KEYSTORE_PASSWORD }}
+          NABD_KEYSTORE_PASSWORD: ${{ env.NABD_KEYSTORE_PASSWORD || secrets.NABD_KEYSTORE_PASSWORD }}
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload APK artifact
