@@ -32,9 +32,28 @@ function createPrismaClient(): DatabaseClient {
   })
 }
 
-export const db = globalForPrisma.prisma ?? createPrismaClient()
+function getPrisma(): DatabaseClient {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = createPrismaClient()
+  }
+  return globalForPrisma.prisma
+}
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
+// Lazy export — defers Prisma client creation until first actual use.
+//
+// This prevents `next build` from throwing during "collecting page data"
+// for API routes: Next only _imports_ the route module at build time (so the
+// module-level side effects matter), but it does not run handlers, so the
+// database client is never needed. Previously `export const db = createPrismaClient()`
+// ran eagerly at import time and threw when SUPABASE_DATABASE_URL wasn't set
+// in the build environment, breaking the mobile APK build.
+export const db = new Proxy({} as DatabaseClient, {
+  get(_target, prop) {
+    return getPrisma()[prop as keyof DatabaseClient]
+  },
+})
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = globalForPrisma.prisma
 
 export function getDatabaseStatus() {
   return {
