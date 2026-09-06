@@ -130,7 +130,12 @@
   --error-text: #991B1B;
 }
 
+:root {
+  color-scheme: light;
+}
+
 .dark {
+  color-scheme: dark;
   /* ═══ Nabdh Dark Mode — Deep Ocean Navy with Teal Accents ═══ */
   /* WCAG AAA contrast: primary on bg >7:1, foreground >12:1 */
   --background: #0A0F1C;
