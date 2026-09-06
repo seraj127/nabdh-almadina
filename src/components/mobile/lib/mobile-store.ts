@@ -470,6 +470,7 @@ localStorage.removeItem('mobile_user');
     const limit = 20;
     const offset = (page - 1) * limit;
 
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     try {
       const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
       if (search) params.set('search', search);
@@ -478,7 +479,9 @@ localStorage.removeItem('mobile_user');
       if (subcatSlug) {
         params.set('subcategory', subcatSlug);
       }
-      const res = await fetch(`/api/products?${params}`);
+      const controller = new AbortController();
+      timeoutId = setTimeout(() => controller.abort(), 20000);
+      const res = await fetch(`/api/products?${params}`, { signal: controller.signal });
       if (res.ok) {
         const data = await res.json();
         const newProducts = (data.products || []).map(normalizeProduct);
@@ -495,6 +498,8 @@ localStorage.removeItem('mobile_user');
       }
     } catch (e) {
       console.warn('Fetch products API failed, using local fallback:', e);
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
     }
     // Fallback to local data
     let filtered = LOCAL_PRODUCTS;

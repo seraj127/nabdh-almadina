@@ -157,6 +157,7 @@ export function SearchScreen() {
   const setSelectedProduct = useMobileStore((s) => s.setSelectedProduct);
   const fetchProducts = useMobileStore((s) => s.fetchProducts);
   const searchHasMore = useMobileStore((s) => s.searchHasMore);
+  const searchLoadedHasMore = useMobileStore((s) => s.productsHasMore);
 
   // Local state
   const [localQuery, setLocalQuery] = useState(searchQuery);
@@ -753,7 +754,7 @@ export function SearchScreen() {
               ))}
             </div>
             {/* Load More for Search */}
-            {searchHasMore ? (
+            {searchHasMore && searchLoadedHasMore ? (
               <div className="flex justify-center mt-4 mb-2">
                 <motion.button
                   whileTap={{ scale: 0.95 }}
