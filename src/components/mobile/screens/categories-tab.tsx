@@ -727,7 +727,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
   // MAIN CATEGORIES VIEW — Grouped Premium Layout with Real Images
   // ═══════════════════════════════════════════════════════════════════
   return (
-    <div className="pb-20 min-h-screen bg-[#0D1117]" dir={direction}>
+    <div className={`pb-20 min-h-screen ${darkMode ? 'bg-[#0D1117]' : 'bg-white'}`} dir={direction}>
       {/* Premium Header */}
       <div className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #004B63 0%, #00897B 100%)' }}>
         {/* Decorative elements */}
@@ -833,7 +833,7 @@ export function CategoriesTab({ categories, products, onSelectProduct }: {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-sm font-bold text-gray-200">
+                <h2 className={`text-sm font-bold ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                   {isRtl ? group.nameAr : group.nameEn}
                 </h2>
                 <p className={`text-[10px] ${darkMode ? 'text-gray-500' : 'text-gray-400'} font-medium`}>
