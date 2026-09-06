@@ -66,11 +66,18 @@ function AppContent() {
   const language = useLanguageStore((s) => s.language);
   const direction = language === 'ar' ? 'rtl' : 'ltr';
 
-  // Detect native app inside component (not module-level) to avoid hydration mismatch
-  const [isNativeApp] = useState(() =>
-    typeof window !== 'undefined' &&
-    (window as unknown as Record<string, unknown>).Capacitor !== undefined
-  );
+  // Detect native app after mount only — reading window during render causes
+  // hydration mismatch (SSR renders StoreView, WebView render would mount MobileApp).
+  // Set in a one-time effect so initial HTML is identical on server and client.
+  const [isNativeApp, setIsNativeApp] = useState(false);
+  useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      (window as unknown as Record<string, unknown>).Capacitor !== undefined
+    ) {
+      setIsNativeApp(true);
+    }
+  }, []);
 
   const [appView, setAppView] = useState<AppView>('store');
   const [previousView, setPreviousView] = useState<AppView>('mobile');
