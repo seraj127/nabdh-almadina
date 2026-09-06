@@ -4,6 +4,12 @@ import { Prisma } from '@/generated/sqlite'
 
 export const dynamic = "force-dynamic";
 
+// Cap how many products we load for in-memory filtering/pagination.
+// Products are small in number, so fetching all available rows once and
+// slicing in JS avoids offset misalignment when sold-out rows (which are
+// filtered OUT after the SQL query) would otherwise be skipped by skip/take.
+const MAX_FETCH = 200
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -29,7 +35,6 @@ export async function GET(request: NextRequest) {
       where.isActive = true
       // Hide sold-out products from the public storefront (availableStock = stock - reservedStock).
       // Admin ("all") can still see and manage products that are out of stock.
-      where.stock = { gt: 0 }
     }
 
     // Search filter
@@ -71,15 +76,14 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    // Get total count
-    const total = await db.product.count({ where })
-
-    // Get products
+    // Fetch ALL matching products (bounded) so we can filter sold-out items
+    // BEFORE paginating. This keeps `total` and pages consistent — SQL-level
+    // skip/take would otherwise count sold-out rows toward offset, causing
+    // available products to be skipped and the last page to be empty.
     const products = await db.product.findMany({
       where,
       orderBy,
-      take: limit,
-      skip: offset,
+      take: MAX_FETCH,
       include: {
         category: {
           select: {
@@ -92,15 +96,20 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Hide any product that is effectively sold out (stock - reservedStock <= 0)
-    // as an extra safety layer on top of the SQL WHERE (stock > 0) filter.
-    const availableProducts = products.filter(
-      (product) =>
-        (Number(product.stock) || 0) - (Number(product.reservedStock) || 0) > 0
-    )
+    // Hide any product that is effectively sold out (stock - reservedStock <= 0).
+    // Extra safety layer: some products may have stock > 0 but still be sold
+    // out because all stock is reserved.
+    const soldOutFilter = (p: typeof products[number]) => {
+      if (isActiveParam === 'all') return true // admin sees everything, even sold out
+      return (Number(p.stock) || 0) - (Number(p.reservedStock) || 0) > 0
+    }
+    const availableProducts = products.filter(soldOutFilter)
+
+    const total = availableProducts.length
+    const pagedProducts = availableProducts.slice(offset, offset + limit)
 
     // Transform products: convert Decimal to number, parse images JSON string
-    const transformedProducts = availableProducts.map((product) => {
+    const transformedProducts = pagedProducts.map((product) => {
       const { price, comparePrice, costPrice, weight, rating, images, ...rest } = product
 
       // Parse images field (may be JSON string or array)

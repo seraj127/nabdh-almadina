@@ -1443,18 +1443,17 @@ export function HomeTab({ products, categories, searchQuery, setSearchQuery, onS
             {/* Load More / All Loaded */}
             {hasMore ? (
               <div className="flex justify-center mt-4 mb-2">
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={() => {
                     if (loadingMore) return;
                     setLoadingMore(true);
                     useMobileStore.getState().loadMore().then(() => setLoadingMore(false));
                   }}
                   disabled={loadingMore}
-                  className="px-6 py-2.5 rounded-xl bg-white dark:bg-[#151D2E] border border-gray-200 dark:border-[#1E2A42] text-sm font-semibold text-[#004B63] dark:text-[#00C4E8] disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl bg-white dark:bg-[#151D2E] border border-gray-200 dark:border-[#1E2A42] text-sm font-semibold text-[#004B63] dark:text-[#00C4E8] active:scale-95 transition-transform duration-100 disabled:opacity-50"
                 >
                   {loadingMore ? t('common.loading') : t('common.showMore')}
-                </motion.button>
+                </button>
               </div>
             ) : (
               <p className="text-center text-xs text-gray-400 dark:text-[#6B7F96] py-4">

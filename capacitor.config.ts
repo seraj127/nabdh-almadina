@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
 
 const rawServerUrl = process.env.CAPACITOR_SERVER_URL || process.env.NEXT_PUBLIC_APP_URL
 // Cache-busting: append a unique param so the WebView always fetches fresh JS
-const BUILD_ID = '20260906-1'
+const BUILD_ID = '20260906-5'
 const serverUrl = rawServerUrl ? `${rawServerUrl}?_cb=${BUILD_ID}` : undefined
 
 const config: CapacitorConfig = {
@@ -12,12 +12,10 @@ const config: CapacitorConfig = {
   ...(serverUrl ? {
     server: {
       url: serverUrl,
-      androidScheme: 'https',
       cleartext: false,
     },
   } : {
     server: {
-      androidScheme: 'https',
       cleartext: false,
     },
   }),
